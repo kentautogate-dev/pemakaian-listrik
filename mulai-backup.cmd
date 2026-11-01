@@ -21,8 +21,14 @@ echo   Tutup jendela ini untuk menghentikan helper.
 echo ================================================
 echo.
 
-start "Helper Backup Listrik" cmd /k node "%~dp0server-backup.js"
+powershell -NoProfile -Command "if (Get-NetTCPConnection -LocalPort 8787 -State Listen -ErrorAction SilentlyContinue) { exit 0 } else { exit 1 }"
+if errorlevel 1 (
+  echo Menyalakan helper...
+  start "Helper Backup Listrik" cmd /k node "%~dp0server-backup.js"
+  timeout /t 2 >nul
+) else (
+  echo Helper sudah aktif di http://127.0.0.1:8787 - tidak perlu dinyalakan lagi.
+)
 
-timeout /t 2 >nul
 start "" "%~dp0index.html"
 exit /b 0

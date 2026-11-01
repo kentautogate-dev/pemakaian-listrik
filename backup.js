@@ -162,9 +162,10 @@
     if (folder) {
       var urlFolder = "file:///" + folder.replace(/\\/g, "/");
       html += "<ol class='langkah'>" +
-        "<li>Buka folder aplikasi:<br><code>" + esc(folder) + "</code> " +
-        '<a class="tautan" href="' + esc(urlFolder) + '" target="_blank" rel="noopener">buka folder</a></li>' +
-        "<li>Klik dua kali <code>mulai-backup.cmd</code>. Jendela hitam <b>Helper Backup Listrik</b> akan terbuka, dan aplikasi ikut terbuka di tab baru.</li>" +
+        "<li><b>Cara otomatis:</b> klik tombol <b>Nyalakan helper otomatis</b> di atas. (Butuh pemasangan sekali: <code>pasang-otomatis.cmd</code>.)</li>" +
+        "<li><b>Cara manual:</b> buka folder aplikasi:<br><code>" + esc(folder) + "</code> " +
+        '<a class="tautan" href="' + esc(urlFolder) + '" target="_blank" rel="noopener">buka folder</a>, ' +
+        "lalu klik dua kali <code>mulai-backup.cmd</code>.</li>" +
         "<li>Kembali ke halaman ini — status akan hijau otomatis (halaman ini mencoba tiap 3 detik), atau tekan <b>Coba lagi</b>.</li>" +
         "</ol>";
     } else {

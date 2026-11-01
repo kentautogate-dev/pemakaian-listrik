@@ -407,6 +407,18 @@ code {
 
 /* ---------- halaman backup ---------- */
 .banner-aksi { display: flex; align-items: center; gap: 10px; margin-top: 9px; flex-wrap: wrap; }
+.tombol-tautan {
+  display: inline-flex; align-items: center; justify-content: center;
+  padding: 9px 13px; border-radius: 10px; text-decoration: none;
+  font: inherit; font-size: 0.92rem; font-weight: 650;
+}
+.tombol-tautan.primary {
+  background: linear-gradient(150deg, #0d9488, #0f766e);
+  color: #fff;
+  box-shadow: 0 12px 24px -16px rgba(13, 148, 136, 0.95);
+}
+.tombol-tautan.primary:hover { filter: brightness(1.06); }
+.tombol-tautan:focus-visible { outline: 2px solid var(--aksen); outline-offset: 2px; }
 .banner-isi { margin-top: 8px; }
 .banner-isi .langkah, .banner-rincian .langkah {
   margin: 8px 0 0; padding-left: 20px; display: grid; gap: 6px; font-size: 0.85rem;

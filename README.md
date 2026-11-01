@@ -72,9 +72,10 @@ Karena browser tidak boleh menulis ke `L:\` atau menjalankan `git push` sendiri,
 ### Sekali persiapan
 
 1. Pastikan **Node.js** terpasang (`node -v` di Command Prompt). Git dibutuhkan untuk backup GitHub.
-2. Nyalakan helper: klik dua kali **shortcut `Backup Listrik` di Desktop**, atau **`mulai-backup.cmd`** di folder aplikasi.
-   Jendela hitam **Helper Backup Listrik** akan terbuka dan aplikasi ikut terbuka.
-   (Halaman Backup & Restore di aplikasi juga menampilkan langkah ini lengkap dengan path folder Anda.)
+2. **Pasang otomatisasi sekali** (disarankan): klik dua kali **`pasang-otomatis.cmd`**.
+   Setelah itu helper **menyala sendiri setiap Windows login** (di latar belakang, tanpa jendela),
+   dan tombol **“Nyalakan helper otomatis”** di halaman Backup & Restore bisa dipakai kapan saja.
+   Baca bagian [Otomatisasi helper](#otomatisasi-helper) di bawah.
 3. Buka halaman **Backup & Restore** → isi:
    - **Folder backup di L:\\** (default `L:\BACKUP_PEMAKAIAN_LISTRIK`),
    - **URL repo GitHub** (opsional) — buat dulu repo **kosong** di GitHub, mis. `https://github.com/kentautogate-dev/pemakaian-listrik.git`,
@@ -88,7 +89,27 @@ Karena browser tidak boleh menulis ke `L:\` atau menjalankan `git push` sendiri,
 > Jika muncul pesan helper belum aktif padahal jendela helper terbuka, tekan **Coba lagi**; panduan pemecahan masalah ada
 > di bagian “Jika ada masalah” di bawah.
 
-Helper tidak perlu dinyalakan untuk pemakaian harian aplikasi — hanya saat mau backup/restore.
+### Otomatisasi helper
+
+Browser tidak diizinkan menjalankan `.cmd` langsung (keamanan), jadi otomatisasi dilakukan lewat Windows:
+
+| Cara | Hasil |
+|---|---|
+| `pasang-otomatis.cmd` (sekali) | Helper otomatis menyala saat login Windows (tanpa jendela) |
+| Tombol **“Nyalakan helper otomatis”** di halaman Backup | Sekali klik → helper menyala (±3 detik status jadi hijau) |
+
+Cara kerjanya:
+- Auto-start: shortcut `Helper Backup Listrik.lnk` di folder **Startup** Windows → `wscript.exe` menjalankan
+  `jalankan-helper.vbs` → helper start di latar belakang, log di `uji\helper-otomatis.log`.
+- Tombol halaman: link `backup-listrik://mulai` memakai **protokol khusus Windows** yang didaftarkan di
+  `HKCU\Software\Classes\backup-listrik` (hanya untuk pengguna ini, tanpa admin). Saat diklik, Windows mungkin
+  menampilkan konfirmasi **“Open Backup Listrik?”** — pilih **Buka/Open**.
+
+Membatalkan otomatisasi: jalankan **`hapus-otomatis.cmd`** (menghapus shortcut Startup + entri protokol).
+Helper tetap bisa dinyalakan manual lewat `mulai-backup.cmd` atau shortcut Desktop `Backup Listrik`.
+
+> `mulai-backup.cmd` sekarang pintar: kalau helper sudah aktif (port 8787 hidup), ia hanya membuka aplikasi —
+> tidak menyalakan helper kedua.
 
 ### Cara backup
 
@@ -123,7 +144,9 @@ Helper tidak perlu dinyalakan untuk pemakaian harian aplikasi — hanya saat mau
 
 | Gejala | Solusi |
 |---|---|
-| Halaman backup bilang helper belum aktif | Jalankan `mulai-backup.cmd`; pastikan port 8787 tidak dipakai program lain |
+| Halaman backup bilang helper belum aktif | Klik tombol **Nyalakan helper otomatis** (pasang dulu `pasang-otomatis.cmd`), atau jalankan `mulai-backup.cmd`; pastikan port 8787 tidak dipakai program lain |
+| Tombol “Nyalakan helper otomatis” tidak bereaksi | Jalankan `pasang-otomatis.cmd` sekali; setelah itu coba lagi. Windows mungkin menampilkan konfirmasi “Open Backup Listrik?” — pilih Buka/Open |
+| Helper tidak menyala sendiri saat login | Pasang ulang `pasang-otomatis.cmd`; pastikan tidak dihapus dari folder Startup Windows |
 | Drive L:\ tidak terdeteksi | Pastikan drive L: terpasang; helper membuat folder backup otomatis saat backup pertama |
 | **“Repository not found” saat backup GitHub** | Klik tombol **Cek repo GitHub** di Pengaturan backup — hasilnya menunjukkan apakah akun/URL/repo bermasalah. Tiga penyebab umum: (a) repo belum dibuat, (b) **username di URL salah**, (c) repo private & belum login. Buat repo **kosong** di https://github.com/new, cek username Anda di halaman profil GitHub (username ≠ email/nama tampilan), lalu jalankan `login-github.cmd` sekali. |
 | Push GitHub gagal (login) | Jalankan `login-github.cmd` sekali, selesaikan jendela login GitHub, lalu coba backup lagi |
@@ -169,8 +192,11 @@ Lihat `analisa/laporan-analisa-oktober-2026.html` (siap cetak A4, ada versi `.md
 | `app.js` | Antarmuka, tabel, grafik, impor/ekspor |
 | `backup.js` | Halaman Backup & Restore (bar persen, log, snapshot, commit) |
 | `server-backup.js` | Helper lokal Node.js: backup/restore ke L:\ dan GitHub (port 8787) |
-| `mulai-backup.cmd` | Nyalakan helper + buka aplikasi |
+| `mulai-backup.cmd` | Nyalakan helper + buka aplikasi (aman dijalankan berulang) |
 | `hentikan-backup.cmd` | Hentikan helper (port 8787) |
+| `pasang-otomatis.cmd` / `pasang-otomatis.ps1` | Pasang otomatisasi: auto-start saat login + tombol `backup-listrik://` |
+| `hapus-otomatis.cmd` | Lepas otomatisasi (hapus auto-start & protokol tombol) |
+| `jalankan-helper.vbs` | Menjalankan helper tanpa jendela (dipakai auto-start & tombol) |
 | `login-github.cmd` / `login-github.ps1` | Login GitHub sekali untuk backup (Git Credential Manager) |
 | `data-oktober-2026.js` | Data catatan Oktober 2026 |
 | `backup-config.json` | Pengaturan folder L:\ & repo GitHub (dibuat otomatis oleh helper) |

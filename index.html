@@ -189,10 +189,17 @@
       <b>Helper backup belum aktif.</b>
       <div id="bk-offlineIsi" class="banner-isi"></div>
       <div class="banner-aksi">
+        <a class="tombol-tautan primary" id="bk-nyalakan" href="backup-listrik://mulai"
+           title="Nyalakan helper otomatis (butuh pemasangan sekali lewat pasang-otomatis.cmd)">Nyalakan helper otomatis</a>
         <button type="button" class="primary" id="bk-cobaLagi">Coba lagi</button>
         <button type="button" class="ghost" id="bk-salinPerintah">Salin perintah manual</button>
         <span class="muted" id="bk-offlineInfo"></span>
       </div>
+      <p class="hint">
+        Tombol otomatis butuh pemasangan sekali: jalankan <code>pasang-otomatis.cmd</code>.
+        Setelah itu helper juga menyala sendiri setiap Windows login. Windows bisa menampilkan
+        konfirmasi <b>“Open Backup Listrik?”</b> — pilih <b>Buka / Open</b>.
+      </p>
       <details class="banner-rincian">
         <summary>Helper sudah dijalankan tapi masih belum aktif?</summary>
         <ol class="langkah">
