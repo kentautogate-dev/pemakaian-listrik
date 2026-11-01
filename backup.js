@@ -584,8 +584,9 @@
           (hasil.jumlahBerkas ? " (" + hasil.jumlahBerkas + " berkas project)" : ""));
       }
       if (hasil.commit) {
-        tambahLog(null, 100, "GitHub: commit " + hasil.commit + " dikirim ke " + (hasil.remote || "remote") +
-          " (cabang " + (hasil.cabang || "-") + ").");
+        var github = hasil.github || hasil;
+        tambahLog(null, 100, "GitHub: commit " + hasil.commit + " dikirim ke " + (github.remote || "remote") +
+          " (cabang " + (github.cabang || "-") + ").");
       }
       window.AplikasiListrik.toast("Backup selesai.", "ok");
       return;

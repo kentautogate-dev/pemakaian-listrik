@@ -77,10 +77,12 @@ Karena browser tidak boleh menulis ke `L:\` atau menjalankan `git push` sendiri,
    (Halaman Backup & Restore di aplikasi juga menampilkan langkah ini lengkap dengan path folder Anda.)
 3. Buka halaman **Backup & Restore** → isi:
    - **Folder backup di L:\\** (default `L:\BACKUP_PEMAKAIAN_LISTRIK`),
-   - **URL repo GitHub** (opsional) — buat dulu repo **kosong** di GitHub, mis. `https://github.com/username/pemakaian-listrik.git`,
+   - **URL repo GitHub** (opsional) — buat dulu repo **kosong** di GitHub, mis. `https://github.com/kentautogate-dev/pemakaian-listrik.git`,
    - **Cabang** (default `main`).
+   Tekan **Cek repo GitHub** untuk memastikan akun & repo-nya sudah benar — hasil hijau berarti siap backup.
+   (Kalau repo dibuat dengan README, aplikasi otomatis menyelaraskan riwayat saat backup pertama.)
 4. Untuk GitHub, login sekali: tutup dulu, klik dua kali **`login-github.cmd`**, ikuti jendela login GitHub.
-   Setelah berhasil, tombol backup GitHub bisa dipakai.
+   Setelah berhasil, tombol backup GitHub bisa dipakai. (Kalau login sudah tersimpan di komputer, langkah ini bisa dilewati.)
 
 > Status di halaman backup akan berubah hijau otomatis (±3 detik) setelah helper dinyalakan — tidak perlu memuat ulang.
 > Jika muncul pesan helper belum aktif padahal jendela helper terbuka, tekan **Coba lagi**; panduan pemecahan masalah ada
@@ -123,7 +125,7 @@ Helper tidak perlu dinyalakan untuk pemakaian harian aplikasi — hanya saat mau
 |---|---|
 | Halaman backup bilang helper belum aktif | Jalankan `mulai-backup.cmd`; pastikan port 8787 tidak dipakai program lain |
 | Drive L:\ tidak terdeteksi | Pastikan drive L: terpasang; helper membuat folder backup otomatis saat backup pertama |
-| **“Repository not found” saat backup GitHub** | Tiga penyebab: (a) repo belum dibuat, (b) **username di URL salah**, (c) repo private & belum login. Buat repo **kosong** di https://github.com/new, cek username Anda di halaman profil GitHub (username ≠ email/nama tampilan), contoh URL benar: `https://github.com/kentautogate-dev/pemakaian-listrik.git`, lalu jalankan `login-github.cmd` sekali |
+| **“Repository not found” saat backup GitHub** | Klik tombol **Cek repo GitHub** di Pengaturan backup — hasilnya menunjukkan apakah akun/URL/repo bermasalah. Tiga penyebab umum: (a) repo belum dibuat, (b) **username di URL salah**, (c) repo private & belum login. Buat repo **kosong** di https://github.com/new, cek username Anda di halaman profil GitHub (username ≠ email/nama tampilan), lalu jalankan `login-github.cmd` sekali. |
 | Push GitHub gagal (login) | Jalankan `login-github.cmd` sekali, selesaikan jendela login GitHub, lalu coba backup lagi |
 | Push ditolak (`non-fast-forward`/`rejected`) | Repo GitHub berisi commit yang tidak ada di lokal; pulihkan lewat Restore → GitHub, atau buat repo baru yang kosong |
 | Cek cepat bantuan | Buka `http://127.0.0.1:8787/api/status` di browser; bila muncul `{"ok":true,...}` helper sehat |
