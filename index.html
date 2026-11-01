@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="id" data-tema="terang">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Pencatat pemakaian kWh listrik rumah dari angka sisa token/meteran, otomatis menghitung pemakaian dan biaya.">
+<title>Pemakaian Listrik Rumah — Catatan kWh &amp; Biaya</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="wrap">
+
+  <header class="top">
+    <div class="brand">
+      <div class="logo" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M13.2 1.8 3.6 13.4a.6.6 0 0 0 .46.98H9l-1.2 7.2a.6.6 0 0 0 1.06.5l9.6-11.6a.6.6 0 0 0-.46-.98H13l1.2-7.2a.6.6 0 0 0-1-.5Z"/></svg>
+      </div>
+      <div class="brand-teks">
+        <h1>Pemakaian Listrik Rumah</h1>
+        <div class="sub" id="subline">Memuat data…</div>
+      </div>
+    </div>
+    <div class="top-aksi">
+      <button type="button" id="btnTema" class="ghost" title="Ganti tema terang/gelap">Tema</button>
+      <button type="button" id="btnImpor" class="ghost" title="Impor catatan CSV / backup JSON">Impor</button>
+      <button type="button" id="btnEkspor" class="ghost" title="Ekspor CSV, backup JSON, atau cetak laporan">Ekspor</button>
+      <button type="button" id="btnPengaturan" class="ghost" title="Atur nama rumah, tarif, dan data">Pengaturan</button>
+    </div>
+  </header>
+
+  <nav class="nav-laman" id="navLaman" aria-label="Pilih halaman">
+    <button type="button" data-laman="pencatatan" class="on">Catatan Listrik</button>
+    <button type="button" data-laman="backup">Backup &amp; Restore</button>
+  </nav>
+
+  <div id="halaman-pencatatan">
+
+  <div id="banner" class="banner hidden" role="alert"></div>
+
+  <section id="stats" class="stats" aria-label="Ringkasan pemakaian"></section>
+
+  <section class="grid grid-dua">
+    <!-- FORM CATAT -->
+    <div class="card">
+      <h2><span class="dot"></span><span id="formTitle">Catat Sisa Token</span></h2>
+      <form id="form" novalidate>
+        <input type="hidden" id="editId">
+        <div class="field">
+          <label for="tanggal">Tanggal catat</label>
+          <input type="date" id="tanggal" required>
+          <div class="hint" id="hintTanggal">Biasanya dicatat pagi di jam yang sama setiap hari.</div>
+        </div>
+        <div class="row-dua">
+          <div class="field">
+            <label for="sisa">Sisa kWh di meteran</label>
+            <input type="text" id="sisa" inputmode="decimal" placeholder="mis. 1.286" autocomplete="off">
+            <div class="hint">Angka sisa kWh yang tampil di meteran/token.</div>
+          </div>
+          <div class="field">
+            <label for="masuk">Token masuk (kWh)</label>
+            <input type="text" id="masuk" inputmode="decimal" placeholder="mis. 109" autocomplete="off">
+            <div class="hint">Isi bila mengisi token sebelum angka sisa ini dicatat.</div>
+          </div>
+        </div>
+        <div class="field">
+          <label for="catatan">Catatan (opsional)</label>
+          <input type="text" id="catatan" maxlength="120" placeholder="mis. tambah token 109 kWh, hujan, rumah kosong">
+        </div>
+        <div id="pratinjau" class="pratinjau">Isi <b>sisa kWh</b> untuk melihat perhitungan sebelum disimpan.</div>
+        <div class="form-aksi">
+          <button type="submit" class="primary" id="btnSimpan">Simpan catatan</button>
+          <button type="button" class="ghost hidden" id="btnBatal">Batal</button>
+        </div>
+        <p class="hint kecil">Pintasan: <kbd>Ctrl</kbd> + <kbd>Enter</kbd> untuk menyimpan.</p>
+      </form>
+    </div>
+
+    <!-- GRAFIK -->
+    <div class="card">
+      <h2><span class="dot"></span>Grafik pemakaian</h2>
+      <div class="alat-grafik">
+        <div class="seg" id="segMode" role="group" aria-label="Tampilan grafik">
+          <button type="button" data-mode="harian" class="on">Harian</button>
+          <button type="button" data-mode="mingguan">Mingguan</button>
+          <button type="button" data-mode="bulanan">Bulanan</button>
+        </div>
+        <div class="seg" id="segMetrik" role="group" aria-label="Satuan grafik">
+          <button type="button" data-metrik="kwh" class="on">kWh</button>
+          <button type="button" data-metrik="rp">Rupiah</button>
+        </div>
+        <span class="muted" id="chartInfo"></span>
+      </div>
+      <div id="chart" class="grafik"></div>
+      <div class="grafik-catatan" id="chartCap"></div>
+    </div>
+  </section>
+
+  <section class="grid grid-dua">
+    <!-- ANALISA -->
+    <div class="card">
+      <h2><span class="dot"></span>Analisa otomatis</h2>
+      <ul class="insight" id="insight"></ul>
+    </div>
+
+    <!-- TOKEN & POLA -->
+    <div class="card">
+      <h2><span class="dot"></span>Token &amp; pola pemakaian</h2>
+      <div id="polaHari" class="pola"></div>
+      <div id="tokenInfo" class="token"></div>
+      <div class="kalkulator">
+        <label for="kalkToken">Kalkulator beli token</label>
+        <div class="row-dua">
+          <input type="text" id="kalkToken" inputmode="numeric" placeholder="mis. 200.000 (Rp)">
+          <output id="kalkHasil" class="kalk-hasil">—</output>
+        </div>
+        <div class="hint">Ubah rupiah pembelian menjadi kWh pada harga yang diatur.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TABEL -->
+  <section class="card">
+    <div class="tabs" id="tabs" role="tablist">
+      <button type="button" data-tab="harian" class="on" role="tab">Catatan harian</button>
+      <button type="button" data-tab="bulanan" role="tab">Rekap bulanan</button>
+    </div>
+
+    <div id="tab-harian">
+      <div class="filterbar">
+        <label for="pilihBulan">Bulan</label>
+        <select id="pilihBulan"></select>
+        <span class="muted" id="infoHarian"></span>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Tanggal</th>
+              <th class="num">Sisa kWh</th>
+              <th class="num">Token masuk</th>
+              <th class="num">Pemakaian</th>
+              <th class="num">Biaya</th>
+              <th>Catatan</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="tbodyHarian"></tbody>
+        </table>
+      </div>
+      <div class="kosong hidden" id="kosongHarian">
+        Belum ada catatan pada bulan ini. Catat sisa kWh dua hari berturut-turut untuk mulai menghitung pemakaian.
+      </div>
+    </div>
+
+    <div id="tab-bulanan" class="hidden">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Bulan</th>
+              <th class="num">Pemakaian</th>
+              <th class="num">Biaya</th>
+              <th class="num">Hari catat</th>
+              <th class="num">kWh/hari</th>
+              <th class="num">Token masuk</th>
+              <th class="num">Sisa token</th>
+            </tr>
+          </thead>
+          <tbody id="tbodyBulanan"></tbody>
+        </table>
+      </div>
+      <div class="kosong hidden" id="kosongBulanan">Rekap bulanan muncul setelah ada catatan.</div>
+    </div>
+  </section>
+
+  <p class="catatan-kaki">
+    Data disimpan otomatis di browser ini (localStorage). Simpan cadangan berkala lewat <b>Ekspor → JSON</b> atau
+    halaman <b>Backup &amp; Restore</b>.
+    Harga default Rp 1.835/kWh mengikuti catatan manual; ubah di <b>Pengaturan</b>.
+  </p>
+
+  </div><!-- /halaman-pencatatan -->
+
+  <!-- ================= HALAMAN: BACKUP & RESTORE ================= -->
+  <div id="halaman-backup" class="hidden">
+
+    <div id="bk-offline" class="banner hidden" role="alert">
+      <b>Helper backup belum aktif.</b>
+      <div id="bk-offlineIsi" class="banner-isi"></div>
+      <div class="banner-aksi">
+        <button type="button" class="primary" id="bk-cobaLagi">Coba lagi</button>
+        <button type="button" class="ghost" id="bk-salinPerintah">Salin perintah manual</button>
+        <span class="muted" id="bk-offlineInfo"></span>
+      </div>
+      <details class="banner-rincian">
+        <summary>Helper sudah dijalankan tapi masih belum aktif?</summary>
+        <ol class="langkah">
+          <li>Tunggu 2–3 detik lalu tekan <b>Coba lagi</b> (halaman ini juga mencoba otomatis setiap 3 detik).</li>
+          <li>Pastikan jendela hitam <code>Helper Backup Listrik</code> masih terbuka. Kalau tertutup, jalankan <code>mulai-backup.cmd</code> lagi.</li>
+          <li>Kalau ada pesan port 8787 dipakai: jalankan <code>hentikan-backup.cmd</code>, lalu <code>mulai-backup.cmd</code> lagi.</li>
+          <li>Kalau jendela hitam langsung tertutup: cek Node.js di Command Prompt dengan <code>node -v</code>. Bila error, pasang Node.js dari nodejs.org.</li>
+          <li>Uji manual: buka <code>http://127.0.0.1:8787/api/status</code> di tab browser. Bila muncul <code>{"ok":true,...}</code> berarti helper sehat.</li>
+        </ol>
+      </details>
+    </div>
+
+    <section class="grid grid-dua">
+      <div class="card">
+        <h2><span class="dot"></span>Status sistem</h2>
+        <ul class="status-list" id="bk-status">
+          <li>Memeriksa helper backup…</li>
+        </ul>
+        <div class="form-aksi">
+          <button type="button" class="ghost" id="bk-cekStatus">Periksa ulang</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2><span class="dot"></span>Pengaturan backup</h2>
+        <div class="field">
+          <label for="bk-folder">Folder backup di L:\</label>
+          <input type="text" id="bk-folder" placeholder="L:\BACKUP_PEMAKAIAN_LISTRIK" autocomplete="off">
+          <div class="hint">Setiap backup dibuat subfolder bertanggal di dalam folder ini.</div>
+        </div>
+        <div class="field">
+          <label for="bk-repo">URL repo GitHub</label>
+          <input type="text" id="bk-repo" placeholder="https://github.com/username/pemakaian-listrik.git" autocomplete="off">
+          <div class="hint">Buat repo <b>kosong</b> dulu di
+            <a href="https://github.com/new" target="_blank" rel="noopener" class="tautan">github.com/new</a>
+            (tanpa README/.gitignore), lalu tempel URL-nya. Format: <code>https://github.com/&lt;username&gt;/&lt;nama-repo&gt;.git</code>.
+            Login sekali lewat <code>login-github.cmd</code>.</div>
+          <div class="cek-repo-baris">
+            <button type="button" class="ghost kecil" id="bk-cekRepo">Cek repo GitHub</button>
+            <span class="hint" id="bk-infoCekRepo">Cek dulu apakah akun &amp; repo-nya sudah benar.</span>
+          </div>
+          <div id="bk-hasilCekRepo" class="cek-hasil hidden"></div>
+        </div>
+        <div class="row-dua">
+          <div class="field">
+            <label for="bk-cabang">Cabang git</label>
+            <input type="text" id="bk-cabang" value="main" autocomplete="off">
+          </div>
+          <div class="field">
+            <label>&nbsp;</label>
+            <button type="button" class="primary" id="bk-simpanPengaturan">Simpan pengaturan</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="grid grid-dua">
+      <div class="card">
+        <h2><span class="dot"></span>Backup</h2>
+        <div class="field">
+          <label for="bk-sumber">Tujuan backup</label>
+          <select id="bk-sumber">
+            <option value="lokal">Drive L:\ (offline)</option>
+            <option value="github">GitHub (git push)</option>
+            <option value="keduanya" selected>Keduanya (L:\ + GitHub)</option>
+          </select>
+        </div>
+        <label class="periksa"><input type="checkbox" id="bk-project" checked> Sertakan file project (kode aplikasi, laporan, README)</label>
+        <div class="field">
+          <label for="bk-pesan">Keterangan (opsional)</label>
+          <input type="text" id="bk-pesan" maxlength="100" placeholder="mis. sebelum ubah tarif" autocomplete="off">
+        </div>
+        <div class="form-aksi">
+          <button type="button" class="primary" id="bk-mulaiBackup">Mulai backup</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2><span class="dot"></span>Restore</h2>
+        <div class="row-dua">
+          <div class="field">
+            <label for="bk-restoreSumber">Sumber</label>
+            <select id="bk-restoreSumber">
+              <option value="lokal">Drive L:\</option>
+              <option value="github">GitHub</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="bk-bagian">Yang dipulihkan</label>
+            <select id="bk-bagian">
+              <option value="data" selected>Data catatan saja</option>
+              <option value="project">File project saja</option>
+              <option value="keduanya">Data + file project</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label for="bk-snapshot">Pilih snapshot / versi</label>
+          <select id="bk-snapshot"><option value="">— tekan Muat daftar —</option></select>
+          <div class="hint" id="bk-hintSnapshot">Snapshot L:\ = subfolder bertanggal. GitHub = commit yang berisi data.</div>
+        </div>
+        <div class="form-aksi">
+          <button type="button" class="ghost" id="bk-muatDaftar">Muat daftar</button>
+          <button type="button" class="primary" id="bk-mulaiRestore">Restore</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2><span class="dot"></span>Proses &amp; log</h2>
+      <div id="bk-proses" class="proses hidden">
+        <div class="proses-kepala">
+          <span id="bk-labelProses">Backup</span>
+          <b id="bk-persen">0%</b>
+        </div>
+        <div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="bk-barWrap">
+          <i id="bk-bar"></i>
+        </div>
+        <div class="proses-tahap muted" id="bk-tahap">menunggu…</div>
+        <div class="form-aksi">
+          <button type="button" class="ghost hidden" id="bk-reload">Muat ulang halaman</button>
+        </div>
+      </div>
+      <div id="bk-saranGalat" class="banner hidden" role="alert"></div>
+      <ol class="log" id="bk-log"></ol>
+      <p class="hint">
+        Backup menyimpan salinan data catatan dari browser ini + file project. Data asli tetap tersimpan di browser;
+        restore data akan <b>mengganti</b> data di browser. Restore file project membuat cadangan keamanan otomatis lebih dulu.
+      </p>
+    </section>
+  </div><!-- /halaman-backup -->
+
+</div>
+
+<!-- ================= MODAL PENGATURAN ================= -->
+<div class="backdrop hidden" id="modalPengaturan" role="dialog" aria-modal="true" aria-labelledby="judulPengaturan">
+  <div class="modal">
+    <div class="modal-kepala">
+      <div>
+        <h2 id="judulPengaturan">Pengaturan</h2>
+        <p>Nama rumah, harga listrik, dan data.</p>
+      </div>
+      <button type="button" class="ikon ghost" data-tutup="modalPengaturan" aria-label="Tutup">×</button>
+    </div>
+
+    <div class="field">
+      <label for="setNama">Nama rumah / lokasi</label>
+      <input type="text" id="setNama" maxlength="60" placeholder="mis. Rumah Jl. Melati 12">
+    </div>
+
+    <div class="field">
+      <label for="setHarga">Harga listrik yang dibayar (Rp/kWh)</label>
+      <input type="text" id="setHarga" inputmode="decimal" placeholder="1.835">
+      <div class="hint">Dipakai untuk semua perhitungan biaya.</div>
+    </div>
+
+    <div class="row-dua">
+      <div class="field">
+        <label for="setTarif">Tarif dasar PLN (Rp/kWh)</label>
+        <input type="text" id="setTarif" inputmode="decimal" placeholder="1.699,53">
+        <div class="hint">R-1 1300 VA: 1.444,70 • R-2/R-3: 1.699,53</div>
+      </div>
+      <div class="field">
+        <label for="setPpj">PPJ / pajak (%)</label>
+        <input type="text" id="setPpj" inputmode="decimal" placeholder="8">
+        <div class="hint">Umumnya 0–10% tergantung daerah.</div>
+      </div>
+    </div>
+    <div class="harga-efektif">
+      <span>Tarif dasar + PPJ = <b id="hargaEfektif">—</b></span>
+      <button type="button" class="ghost kecil" id="btnPakaiHarga">Pakai harga ini</button>
+    </div>
+
+    <div class="field">
+      <label for="setJam">Jam catat harian</label>
+      <input type="time" id="setJam" value="09:00">
+      <div class="hint">Catat di jam yang sama agar selisih kWh mendekati 24 jam.</div>
+    </div>
+
+    <div class="modal-aksi">
+      <button type="button" class="primary" id="btnSimpanPengaturan">Simpan pengaturan</button>
+      <button type="button" class="ghost" data-tutup="modalPengaturan">Batal</button>
+    </div>
+    <hr class="garis">
+    <div class="modal-aksi">
+      <button type="button" class="ghost" id="btnMuatBawaan" title="Muat ulang data Oktober 2026">Muat data Oktober 2026</button>
+      <button type="button" class="bahaya" id="btnHapusSemua">Hapus semua data</button>
+    </div>
+  </div>
+</div>
+
+<!-- ================= MODAL IMPOR ================= -->
+<div class="backdrop hidden" id="modalImpor" role="dialog" aria-modal="true" aria-labelledby="judulImpor">
+  <div class="modal">
+    <div class="modal-kepala">
+      <div>
+        <h2 id="judulImpor">Impor data</h2>
+        <p>CSV: <code>tanggal,sisa,masuk,catatan</code> — atau backup JSON.</p>
+      </div>
+      <button type="button" class="ikon ghost" data-tutup="modalImpor" aria-label="Tutup">×</button>
+    </div>
+    <div class="field">
+      <label for="fileImpor">Pilih berkas CSV / JSON</label>
+      <input type="file" id="fileImpor" accept=".csv,.json,.txt">
+      <div class="hint">
+        Contoh CSV:<br>
+        <code>2026-11-01,1215,0,pagi</code><br>
+        <code>2026-11-02,1209,0,</code>
+      </div>
+    </div>
+    <div id="pratinjauImpor" class="pratinjau">Belum ada berkas dipilih.</div>
+    <label class="periksa"><input type="checkbox" id="imporTimpa"> Timpa catatan yang tanggalnya sudah ada</label>
+    <div class="modal-aksi">
+      <button type="button" class="primary" id="btnImporJalankan" disabled>Impor sekarang</button>
+      <button type="button" class="ghost" data-tutup="modalImpor">Batal</button>
+    </div>
+  </div>
+</div>
+
+<!-- ================= MODAL EKSPOR ================= -->
+<div class="backdrop hidden" id="modalEkspor" role="dialog" aria-modal="true" aria-labelledby="judulEkspor">
+  <div class="modal">
+    <div class="modal-kepala">
+      <div>
+        <h2 id="judulEkspor">Ekspor &amp; laporan</h2>
+        <p>Simpan cadangan atau cetak laporan bulan berjalan.</p>
+      </div>
+      <button type="button" class="ikon ghost" data-tutup="modalEkspor" aria-label="Tutup">×</button>
+    </div>
+    <div class="modal-aksi kolom">
+      <button type="button" class="primary" id="btnCsv">Unduh CSV catatan</button>
+      <button type="button" class="ghost" id="btnJson">Unduh backup JSON (semua data + pengaturan)</button>
+      <button type="button" class="ghost" id="btnCetak">Cetak / simpan PDF laporan bulan berjalan</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+<div id="laporanCetak" class="laporan-cetak"></div>
+
+<script src="core.js"></script>
+<script src="data-oktober-2026.js"></script>
+<script src="app.js"></script>
+<script src="backup.js"></script>
+</body>
+</html>

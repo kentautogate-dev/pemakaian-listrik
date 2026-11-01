@@ -1,0 +1,14 @@
+# Konfigurasi khusus komputer ini (folder L:\ & URL repo) — biar tidak ikut ter-commit/ter-restore ke mesin lain
+backup-config.json
+
+# Log & artefak pengujian
+uji/*.log
+uji/*.err
+uji/layar-*.png
+uji/crop-*.png
+uji/tes-cors/
+
+# Berkas sementara
+*.tmp
+Thumbs.db
+desktop.ini

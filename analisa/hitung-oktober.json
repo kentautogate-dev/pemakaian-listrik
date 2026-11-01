@@ -1,0 +1,384 @@
+{
+  "rows": [
+    {
+      "tanggal": "2026-10-01",
+      "sisa": 1286,
+      "masuk": 0,
+      "catatan": "MENDUNG",
+      "pemakaian": 7,
+      "biaya": 12845
+    },
+    {
+      "tanggal": "2026-10-02",
+      "sisa": 1279,
+      "masuk": 0,
+      "catatan": "MEDUNG",
+      "pemakaian": 13,
+      "biaya": 23855
+    },
+    {
+      "tanggal": "2026-10-03",
+      "sisa": 1266,
+      "masuk": 0,
+      "catatan": "",
+      "pemakaian": 10,
+      "biaya": 18350
+    },
+    {
+      "tanggal": "2026-10-04",
+      "sisa": 1256,
+      "masuk": 0,
+      "catatan": "",
+      "pemakaian": 9,
+      "biaya": 16515
+    },
+    {
+      "tanggal": "2026-10-05",
+      "sisa": 1247,
+      "masuk": 0,
+      "catatan": "",
+      "pemakaian": 3,
+      "biaya": 5505
+    },
+    {
+      "tanggal": "2026-10-06",
+      "sisa": 1244,
+      "masuk": 0,
+      "catatan": "MEDUNG",
+      "pemakaian": 13,
+      "biaya": 23855
+    },
+    {
+      "tanggal": "2026-10-07",
+      "sisa": 1231,
+      "masuk": 0,
+      "catatan": "",
+      "pemakaian": 4,
+      "biaya": 7340
+    },
+    {
+      "tanggal": "2026-10-08",
+      "sisa": 1227,
+      "masuk": 0,
+      "catatan": "",
+      "pemakaian": 9,
+      "biaya": 16515
+    },
+    {
+      "tanggal": "2026-10-09",
+      "sisa": 1218,
+      "masuk": 0,
+      "catatan": "",
+      "pemakaian": 4,
+      "biaya": 7340
+    },
+    {
+      "tanggal": "2026-10-10",
+      "sisa": 1214,
+      "masuk": 0,
+      "catatan": "",
+      "pemakaian": 9,
+      "biaya": 16515
+    },
+    {
+      "tanggal": "2026-10-11",
+      "sisa": 1205,
+      "masuk": 0,
+      "catatan": "",
+      "pemakaian": 5,
+      "biaya": 9175
+    },
+    {
+      "tanggal": "2026-10-12",
+      "sisa": 1309,
+      "masuk": 109,
+      "catatan": "MANTAP / tambah token 109 kWh",
+      "pemakaian": 0,
+      "biaya": 0
+    },
+    {
+      "tanggal": "2026-10-13",
+      "sisa": 1309,
+      "masuk": 0,
+      "catatan": "ASAP",
+      "pemakaian": 3,
+      "biaya": 5505
+    },
+    {
+      "tanggal": "2026-10-14",
+      "sisa": 1306,
+      "masuk": 0,
+      "catatan": "ASAP",
+      "pemakaian": 7,
+      "biaya": 12845
+    },
+    {
+      "tanggal": "2026-10-15",
+      "sisa": 1299,
+      "masuk": 0,
+      "catatan": "HUJAN",
+      "pemakaian": 6,
+      "biaya": 11010
+    },
+    {
+      "tanggal": "2026-10-16",
+      "sisa": 1293,
+      "masuk": 0,
+      "catatan": "ASAP",
+      "pemakaian": 3,
+      "biaya": 5505
+    },
+    {
+      "tanggal": "2026-10-17",
+      "sisa": 1290,
+      "masuk": 0,
+      "catatan": "ASAP",
+      "pemakaian": 9,
+      "biaya": 16515
+    },
+    {
+      "tanggal": "2026-10-18",
+      "sisa": 1281,
+      "masuk": 0,
+      "catatan": "CERAH",
+      "pemakaian": 3,
+      "biaya": 5505
+    },
+    {
+      "tanggal": "2026-10-19",
+      "sisa": 1278,
+      "masuk": 0,
+      "catatan": "",
+      "pemakaian": 6,
+      "biaya": 11010
+    },
+    {
+      "tanggal": "2026-10-20",
+      "sisa": 1272,
+      "masuk": 0,
+      "catatan": "",
+      "pemakaian": 11,
+      "biaya": 20185
+    },
+    {
+      "tanggal": "2026-10-21",
+      "sisa": 1261,
+      "masuk": 0,
+      "catatan": "",
+      "pemakaian": 6,
+      "biaya": 11010
+    },
+    {
+      "tanggal": "2026-10-22",
+      "sisa": 1255,
+      "masuk": 0,
+      "catatan": "",
+      "pemakaian": 6,
+      "biaya": 11010
+    },
+    {
+      "tanggal": "2026-10-23",
+      "sisa": 1249,
+      "masuk": 0,
+      "catatan": "",
+      "pemakaian": 11,
+      "biaya": 20185
+    },
+    {
+      "tanggal": "2026-10-24",
+      "sisa": 1238,
+      "masuk": 0,
+      "catatan": "MANTAP",
+      "pemakaian": 0,
+      "biaya": 0
+    },
+    {
+      "tanggal": "2026-10-25",
+      "sisa": 1238,
+      "masuk": 0,
+      "catatan": "",
+      "pemakaian": 6,
+      "biaya": 11010
+    },
+    {
+      "tanggal": "2026-10-26",
+      "sisa": 1232,
+      "masuk": 0,
+      "catatan": "",
+      "pemakaian": 3,
+      "biaya": 5505
+    },
+    {
+      "tanggal": "2026-10-27",
+      "sisa": 1229,
+      "masuk": 0,
+      "catatan": "",
+      "pemakaian": 3,
+      "biaya": 5505
+    },
+    {
+      "tanggal": "2026-10-28",
+      "sisa": 1226,
+      "masuk": 0,
+      "catatan": "",
+      "pemakaian": 5,
+      "biaya": 9175
+    },
+    {
+      "tanggal": "2026-10-29",
+      "sisa": 1221,
+      "masuk": 0,
+      "catatan": "",
+      "pemakaian": 5,
+      "biaya": 9175
+    },
+    {
+      "tanggal": "2026-10-30",
+      "sisa": 1216,
+      "masuk": 0,
+      "catatan": "",
+      "pemakaian": 1,
+      "biaya": 1835
+    },
+    {
+      "tanggal": "2026-10-31",
+      "sisa": 1215,
+      "masuk": 0,
+      "catatan": "MANTAP",
+      "pemakaian": 0,
+      "biaya": 0
+    },
+    {
+      "tanggal": "2026-11-01",
+      "sisa": 1215,
+      "masuk": 0,
+      "catatan": "",
+      "pemakaian": null,
+      "biaya": null
+    }
+  ],
+  "ringkasan": {
+    "harga_per_kwh": 1835,
+    "jumlah_catatan": 31,
+    "total_kwh": 180,
+    "total_rp": 330300,
+    "beli_kwh": 109,
+    "beli_rp": 200015,
+    "sisa_awal": 1286,
+    "sisa_akhir": 1215,
+    "saldo_cek": 180,
+    "rata_harian": 5.806451612903226,
+    "median_harian": 6,
+    "stdev_harian": 3.5868879029464873,
+    "rata_bulanan_30": 174.19354838709677,
+    "perkiraan_bulanan_rp": 319645.16129032255,
+    "perkiraan_tahunan_kwh": 2119.3548387096776,
+    "perkiraan_tahunan_rp": 3889016.1290322584,
+    "mingguan": [
+      {
+        "mulai": "2026-09-28",
+        "kwh": 39,
+        "rp": 71565,
+        "hari": 4
+      },
+      {
+        "mulai": "2026-10-05",
+        "kwh": 47,
+        "rp": 86245,
+        "hari": 7
+      },
+      {
+        "mulai": "2026-10-12",
+        "kwh": 31,
+        "rp": 56885,
+        "hari": 7
+      },
+      {
+        "mulai": "2026-10-19",
+        "kwh": 46,
+        "rp": 84410,
+        "hari": 7
+      },
+      {
+        "mulai": "2026-10-26",
+        "kwh": 17,
+        "rp": 31195,
+        "hari": 6
+      }
+    ],
+    "per_hari": {
+      "Senin": {
+        "jumlah": 12,
+        "hari": 4,
+        "rata": 3.0
+      },
+      "Selasa": {
+        "jumlah": 30,
+        "hari": 4,
+        "rata": 7.5
+      },
+      "Rabu": {
+        "jumlah": 22,
+        "hari": 4,
+        "rata": 5.5
+      },
+      "Kamis": {
+        "jumlah": 33,
+        "hari": 5,
+        "rata": 6.6
+      },
+      "Jumat": {
+        "jumlah": 32,
+        "hari": 5,
+        "rata": 6.4
+      },
+      "Sabtu": {
+        "jumlah": 28,
+        "hari": 5,
+        "rata": 5.6
+      },
+      "Minggu": {
+        "jumlah": 23,
+        "hari": 4,
+        "rata": 5.75
+      }
+    },
+    "spikes": [
+      {
+        "tanggal": "2026-10-02",
+        "kwh": 13,
+        "rp": 23855
+      },
+      {
+        "tanggal": "2026-10-03",
+        "kwh": 10,
+        "rp": 18350
+      },
+      {
+        "tanggal": "2026-10-06",
+        "kwh": 13,
+        "rp": 23855
+      },
+      {
+        "tanggal": "2026-10-20",
+        "kwh": 11,
+        "rp": 20185
+      },
+      {
+        "tanggal": "2026-10-23",
+        "kwh": 11,
+        "rp": 20185
+      }
+    ],
+    "hari_nol": [
+      "2026-10-12",
+      "2026-10-24",
+      "2026-10-31"
+    ],
+    "maks": {
+      "tanggal": "2026-10-02",
+      "kwh": 13,
+      "rp": 23855
+    }
+  }
+}
