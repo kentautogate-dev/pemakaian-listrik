@@ -212,11 +212,13 @@
   }
 
   /* ---------------- inti perhitungan ---------------- */
-  function hitung(state) {
+  function hitung(state, opsi) {
     var st = normalise(state);
     var set = st.settings;
     var daftar = st.catatan;
     var harga = set.hargaKwh;
+    var sekarang = (opsi && opsi.sekarang) || tanggalSekarang();
+    var kunciSekarang = bulanKey(sekarang);
 
     var catatan = [];          // tiap catatan + hasil hitung
     var totalKwh = 0, totalRp = 0, totalMasuk = 0;
@@ -350,7 +352,7 @@
 
     // perbandingan memakai bulan yang sedang dilihat (bukan bulan kalender terakhir,
     // supaya bulan berjalan yang belum lengkap tidak mengacaukan angka)
-    var kunciAktif = pilihBulanAktif(bulanan);
+    var kunciAktif = pilihBulanAktif(bulanan, kunciSekarang);
     var idxAktif = -1;
     bulanan.forEach(function (b, i) { if (b.key === kunciAktif) idxAktif = i; });
     var bulanAktifObj = idxAktif >= 0 ? bulanan[idxAktif] : null;
@@ -394,11 +396,12 @@
       bulanTerakhir: bulanAktifObj || bulanTerakhir,
       bulanSebelumnya: bulanPembanding,
       deltaBulan: deltaAktif,
+      bulanBerjalan: !!(bulanAktifObj && bulanAktifObj.key === kunciSekarang),
       pembelian: pembelian,
       terakhir: terakhir
     };
 
-    var bulanAktif = pilihBulanAktif(bulanan);
+    var bulanAktif = pilihBulanAktif(bulanan, kunciSekarang);
     var hasil = {
       versi: VERSI,
       settings: set,
@@ -413,7 +416,15 @@
     return hasil;
   }
 
-  function pilihBulanAktif(bulanan) {
+  /**
+   * Bulan yang ditampilkan secara default: bulan kalender saat ini.
+   * Bila bulan ini belum punya catatan, tetap dipilih (aplikasi menampilkan bulan kosong
+   * supaya pengguna bisa langsung mencatat). Bila `sekarangKey` tidak diberikan,
+   * jatuh ke perilaku lama: bulan terakhir yang sudah ada pemakaian.
+   */
+  function pilihBulanAktif(bulanan, sekarangKey) {
+    // Default: bulan kalender saat ini (walau belum ada catatan di bulan itu).
+    if (sekarangKey) return sekarangKey;
     if (!bulanan.length) return null;
     for (var i = bulanan.length - 1; i >= 0; i--) {
       if (bulanan[i].hari >= 2) return bulanan[i].key;
@@ -484,13 +495,19 @@
             rp(r.hargaKwh) + "/kWh."
     });
 
-    if (r.deltaBulan !== null) {
+    if (r.deltaBulan !== null && !r.bulanBerjalan) {
       var arah = r.deltaBulan >= 0 ? "naik" : "turun";
       out.push({
         tipe: r.deltaBulan > 10 ? "waspada" : "info",
         teks: "Pemakaian " + h.ringkasan.bulanTerakhir.label + " " + arah + " " + angka(Math.abs(r.deltaBulan), 1) +
               "% dibanding bulan sebelumnya (" + angka(h.ringkasan.bulanTerakhir.kwh, 1) + " kWh vs " +
               angka(h.ringkasan.bulanSebelumnya ? h.ringkasan.bulanSebelumnya.kwh : 0, 1) + " kWh)."
+      });
+    } else if (r.bulanBerjalan && r.bulanTerakhir && r.bulanTerakhir.kwh > 0) {
+      out.push({
+        tipe: "info",
+        teks: "Bulan ini masih berjalan (" + angka(r.bulanTerakhir.kwh, 1) + " kWh sejauh ini). " +
+              "Perbandingan dengan bulan lalu ditampilkan setelah bulan selesai."
       });
     }
 

@@ -26,7 +26,8 @@ vm.runInContext(fs.readFileSync(path.join(akar, "data-oktober-2026.js"), "utf8")
 
 const Core = ctx.module.exports;
 const data = ctx.window.DATA_OKTOBER_2026;
-const hasil = Core.hitung({ settings: data.settings, catatan: data.catatan });
+// Tanggal "sekarang" dibuat tetap agar uji tidak berubah-ubah mengikuti jam komputer.
+const hasil = Core.hitung({ settings: data.settings, catatan: data.catatan }, { sekarang: "2026-11-02" });
 const r = hasil.ringkasan;
 
 let gagal = 0;
@@ -54,7 +55,14 @@ cek("median harian", r.medianHarian, 6);
 cek("stdev", r.stdev, 3.59, 0.02);
 cek("sisa akhir", r.sisaAkhir, 1215);
 cek("saldo rupiah", r.saldoRp, 1215 * 1835);
-cek("bulan aktif", hasil.bulanAktif, "2026-10");
+cek("bulan aktif", hasil.bulanAktif, "2026-11");
+
+// --- default bulan mengikuti bulan kalender saat ini ---
+const ujiBulan = (tanggal) => Core.hitung({ settings: data.settings, catatan: data.catatan }, { sekarang: tanggal }).bulanAktif;
+cek("bulan aktif 2 Nov 2026", ujiBulan("2026-11-02"), "2026-11");
+cek("bulan aktif 31 Okt 2026", ujiBulan("2026-10-31"), "2026-10");
+cek("bulan aktif 15 Sep 2026 (tak ada data)", ujiBulan("2026-09-15"), "2026-09");
+cek("bulan aktif 5 Des 2026 (tak ada data)", ujiBulan("2026-12-05"), "2026-12");
 
 // --- mingguan (Senin-Minggu) sesuai subtotal di sheet: 39, 47, 31, 46, 17 kWh ---
 const kwhMinggu = hasil.mingguan.filter(m => m.key >= "2026-09-28" && m.key <= "2026-10-26").map(m => m.kwh);

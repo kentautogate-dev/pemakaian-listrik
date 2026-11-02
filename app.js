@@ -162,20 +162,32 @@
     var bulan = bulanDariCatatan(h, h.bulanAktif);
     var kartu = [];
 
-    if (bulan) {
+    if (bulan && bulan.hari > 0) {
       var pembanding = r.bulanSebelumnya;
-      var delta = (r.deltaBulan !== null && pembanding)
-        ? (r.deltaBulan > 0
-            ? '<span class="chip naik">▲ ' + angka(Math.abs(r.deltaBulan), 1) + "% vs " + Core.labelBulanPendek(pembanding.key) + "</span>"
-            : '<span class="chip turun">▼ ' + angka(Math.abs(r.deltaBulan), 1) + "% vs " + Core.labelBulanPendek(pembanding.key) + "</span>")
-        : "";
+      var delta = r.bulanBerjalan
+        ? '<span class="chip">bulan berjalan</span>'
+        : ((r.deltaBulan !== null && pembanding)
+            ? (r.deltaBulan > 0
+                ? '<span class="chip naik">▲ ' + angka(Math.abs(r.deltaBulan), 1) + "% vs " + Core.labelBulanPendek(pembanding.key) + "</span>"
+                : '<span class="chip turun">▼ ' + angka(Math.abs(r.deltaBulan), 1) + "% vs " + Core.labelBulanPendek(pembanding.key) + "</span>")
+            : "");
       kartu.push({
         label: "Pemakaian " + bulan.label,
         nilai: angka(bulan.kwh, 1) + " <small>kWh</small>",
         kaki: fmtRp(bulan.biaya) + " " + delta
       });
+    } else if (bulan) {
+      kartu.push({
+        label: "Pemakaian " + bulan.label,
+        nilai: "—",
+        kaki: "Menunggu catatan berikutnya untuk menghitung pemakaian"
+      });
     } else {
-      kartu.push({ label: "Pemakaian bulan ini", nilai: "—", kaki: "Belum ada catatan" });
+      kartu.push({
+        label: "Pemakaian " + (h.bulanAktif ? Core.labelBulan(h.bulanAktif) : "bulan ini"),
+        nilai: "—",
+        kaki: "Belum ada catatan bulan ini"
+      });
     }
 
     kartu.push({
@@ -401,13 +413,19 @@
   /* ================= render: tabel ================= */
   function isiPilihanBulan(h) {
     var sel = $("pilihBulan");
-    var daftar = h.bulanan.slice().reverse();
-    sel.innerHTML = daftar.map(function (b) {
+    var daftar = h.bulanan.slice().reverse(); // terbaru dulu
+    var kunciAktif = h.bulanAktif;
+    var opsi = daftar.map(function (b) {
       return '<option value="' + b.key + '">' + b.label + (b.hari > 0 ? " (" + angka(b.kwh, 1) + " kWh)" : " (belum terhitung)") + "</option>";
-    }).join("");
-    if (!daftar.length) sel.innerHTML = '<option value="">—</option>';
+    });
+    // Bulan kalender saat ini selalu bisa dipilih, walau belum ada catatan di bulan itu
+    if (kunciAktif && !daftar.some(function (b) { return b.key === kunciAktif; })) {
+      opsi.unshift('<option value="' + kunciAktif + '">' + Core.labelBulan(kunciAktif) + " (belum ada catatan)</option>");
+      daftar = [{ key: kunciAktif }].concat(daftar);
+    }
+    sel.innerHTML = opsi.length ? opsi.join("") : '<option value="">—</option>';
     if (bulanPilih && daftar.some(function (b) { return b.key === bulanPilih; })) sel.value = bulanPilih;
-    else sel.value = h.bulanAktif || "";
+    else sel.value = kunciAktif || (daftar[0] ? daftar[0].key : "");
     bulanPilih = sel.value || null;
   }
 
@@ -415,13 +433,17 @@
     var key = bulanPilih || h.bulanAktif;
     var daftar = key ? catatanBulan(h, key) : h.catatan.slice();
     var tbody = $("tbodyHarian");
+    var infoBulan = key ? bulanDariCatatan(h, key) : null;
     $("infoHarian").textContent = key
-      ? daftar.length + " catatan • " + (bulanDariCatatan(h, key) ? fmtKwh(bulanDariCatatan(h, key).kwh) +
-        " • " + fmtRp(bulanDariCatatan(h, key).biaya) : "")
+      ? daftar.length + " catatan" + (infoBulan && infoBulan.hari > 0
+          ? " • " + fmtKwh(infoBulan.kwh) + " • " + fmtRp(infoBulan.biaya)
+          : " • belum ada pemakaian terhitung")
       : "";
 
     if (!daftar.length) {
       tbody.innerHTML = "";
+      $("kosongHarian").innerHTML = "Belum ada catatan pada <b>" + (key ? Core.labelBulan(key) : "bulan ini") + "</b>. " +
+        "Catat sisa kWh pagi ini, lalu besok catat lagi — pemakaian hari ini akan terhitung otomatis.";
       $("kosongHarian").classList.remove("hidden");
       return;
     }
@@ -498,16 +520,29 @@
 
   function renderTabelBulanan(h) {
     var tbody = $("tbodyBulanan");
-    if (!h.bulanan.length) {
+    var barisSemua = h.bulanan.slice().reverse(); // terbaru dulu
+    // bulan kalender saat ini selalu ditampilkan (walau belum ada catatan)
+    if (h.bulanAktif && !h.bulanan.some(function (b) { return b.key === h.bulanAktif; })) {
+      barisSemua.unshift({
+        key: h.bulanAktif,
+        label: Core.labelBulan(h.bulanAktif),
+        kwh: 0, biaya: 0, hari: 0, rataHarian: 0, masukKwh: 0,
+        sisaAwal: null, sisaAkhir: null
+      });
+    }
+    if (!barisSemua.length) {
       tbody.innerHTML = "";
       $("kosongBulanan").classList.remove("hidden");
       return;
     }
     $("kosongBulanan").classList.add("hidden");
-    var totalKwh = 0, totalRp = 0, totalMasuk = 0, totalHari = 0;
-    var baris = h.bulanan.slice().reverse().map(function (b) {
-      totalKwh += b.kwh; totalRp += b.biaya; totalMasuk += b.masukKwh; totalHari += b.hari;
+    var totalKwh = 0, totalRp = 0, totalHari = 0;
+    var baris = barisSemua.map(function (b) {
+      totalKwh += b.kwh; totalRp += b.biaya; totalHari += b.hari;
       var kosong = b.hari === 0;
+      var sisa = (b.sisaAwal === null || b.sisaAwal === undefined)
+        ? '<span class="muted">—</span>'
+        : angka(b.sisaAwal, 0) + " → " + angka(b.sisaAkhir, 0);
       return "<tr>" +
         "<td><b>" + b.label + "</b></td>" +
         '<td class="num">' + (kosong ? '<span class="muted">—</span>' : fmtKwh(b.kwh)) + "</td>" +
@@ -515,7 +550,7 @@
         '<td class="num">' + (kosong ? '<span class="muted">—</span>' : b.hari + " hari") + "</td>" +
         '<td class="num">' + (kosong ? '<span class="muted">—</span>' : angka(b.rataHarian, 2)) + "</td>" +
         '<td class="num">' + (b.masukKwh ? angka(b.masukKwh, 0) + " kWh" : '<span class="muted">—</span>') + "</td>" +
-        '<td class="num">' + angka(b.sisaAwal, 0) + " → " + angka(b.sisaAkhir, 0) + "</td>" +
+        '<td class="num">' + sisa + "</td>" +
         "</tr>";
     });
     tbody.innerHTML = baris.join("") +
@@ -526,7 +561,8 @@
   /* ================= render utama ================= */
   function render() {
     var h = Core.hitung(state);
-    if (!bulanPilih || !h.bulanan.some(function (b) { return b.key === bulanPilih; })) bulanPilih = h.bulanAktif;
+    var bulanAda = h.bulanan.some(function (b) { return b.key === bulanPilih; });
+    if (!bulanPilih || (!bulanAda && bulanPilih !== h.bulanAktif)) bulanPilih = h.bulanAktif;
     renderHeader(h);
     kartuStatistik(h);
     isiPilihanBulan(h);
@@ -640,6 +676,7 @@
       state = Core.normalise(state);
       simpan();
       resetForm();
+      bulanPilih = tanggal.slice(0, 7);
       render();
       tampilToast("Catatan diperbarui.", "ok");
       return;
@@ -655,6 +692,7 @@
       state = Core.normalise(state);
       simpan();
       resetForm();
+      bulanPilih = tanggal.slice(0, 7);
       render();
       tampilToast("Catatan tanggal itu diganti.", "ok");
       return;
@@ -667,6 +705,7 @@
     state = Core.normalise(state);
     simpan();
     resetForm();
+    bulanPilih = tanggal.slice(0, 7);
     render();
     tampilToast("Catatan tersimpan: " + Core.labelTanggal(tanggal, false) + " • " + angka(sisa, 0) + " kWh.", "ok");
   }
@@ -881,6 +920,10 @@
     var bulan = bulanDariCatatan(h, key);
     var daftar = catatanBulan(h, key);
     var r = h.ringkasan;
+    if (!daftar.length || !bulan) {
+      tampilToast("Belum ada catatan pada " + Core.labelBulan(key) + " untuk dilaporkan.", "info");
+      return false;
+    }
 
     var mingguLaporan = [];
     daftar.forEach(function (rec) {
