@@ -995,6 +995,36 @@
   }
 
   /* ================= kalkulator token ================= */
+  /** Format angka ribuan gaya Indonesia: 200000 -> "200.000". */
+  function formatRibuan(nilai) {
+    var angka = String(nilai === null || nilai === undefined ? "" : nilai).replace(/\D/g, "");
+    if (!angka) return "";
+    angka = angka.replace(/^0+(?=\d)/, ""); // buang nol di depan berlebih
+    return angka.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  }
+
+  /** Tulis ulang isi kolom kalkulator dengan titik ribuan, sambil menjaga posisi kursor. */
+  function formatKalkulatorToken() {
+    var el = $("kalkToken");
+    var sebelum = el.value;
+    var posisiLama = typeof el.selectionStart === "number" ? el.selectionStart : sebelum.length;
+    var digitSebelum = sebelum.slice(0, posisiLama).replace(/\D/g, "").length;
+    var baru = formatRibuan(sebelum);
+    if (baru !== sebelum) {
+      el.value = baru;
+      var digit = 0;
+      var posBaru = 0;
+      for (var i = 0; i < baru.length; i++) {
+        if (/\d/.test(baru[i])) digit++;
+        posBaru = i + 1;
+        if (digit === digitSebelum) break;
+      }
+      if (digitSebelum === 0) posBaru = 0;
+      try { el.setSelectionRange(posBaru, posBaru); } catch (e) { /* abaikan */ }
+    }
+    hitungKalkulatorToken();
+  }
+
   function hitungKalkulatorToken() {
     var rp = Core.parseAngka($("kalkToken").value);
     var harga = state.settings.hargaKwh || 1;
@@ -1072,7 +1102,7 @@
     $("btnJson").addEventListener("click", eksporJson);
     $("btnCetak").addEventListener("click", cetakLaporan);
 
-    $("kalkToken").addEventListener("input", hitungKalkulatorToken);
+    $("kalkToken").addEventListener("input", formatKalkulatorToken);
 
     document.querySelectorAll("[data-tutup]").forEach(function (b) {
       b.addEventListener("click", function () { tutupModal(b.dataset.tutup); });
