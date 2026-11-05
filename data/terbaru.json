@@ -20,7 +20,7 @@
       "tanggal": "2026-10-02",
       "sisa": 1279,
       "masuk": 0,
-      "catatan": "MEDUNG"
+      "catatan": "MENDUNG"
     },
     {
       "id": "bawaan-2026-10-03",
@@ -230,7 +230,35 @@
       "tanggal": "2026-11-01",
       "sisa": 1215,
       "masuk": 0,
-      "catatan": "pembanding"
+      "catatan": "Mendung"
+    },
+    {
+      "id": "cmvyl60fnzm5c",
+      "tanggal": "2026-11-02",
+      "sisa": 1209,
+      "masuk": 0,
+      "catatan": ""
+    },
+    {
+      "id": "cmw01hbc9n155",
+      "tanggal": "2026-11-03",
+      "sisa": 1205,
+      "masuk": 0,
+      "catatan": ""
+    },
+    {
+      "id": "cmw1lhps1apke",
+      "tanggal": "2026-11-04",
+      "sisa": 1202,
+      "masuk": 0,
+      "catatan": ""
+    },
+    {
+      "id": "cmw2xjqnw06hm",
+      "tanggal": "2026-11-05",
+      "sisa": 1201,
+      "masuk": 0,
+      "catatan": ""
     }
   ]
 }
