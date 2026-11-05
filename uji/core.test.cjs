@@ -90,6 +90,16 @@ cek("bulan Oktober hari", okt.hari, 31);
 // --- konsistensi saldo: sisa awal + masuk - sisa akhir = total kWh ---
 cek("konsistensi saldo", Core.bulat(okt.sisaAwal + okt.masukKwh - okt.sisaAkhir, 2), 180);
 
+// --- analisa per bulan (untuk tampilan "terbaru + arsip") ---
+cek("jumlah analisa bulanan", hasil.insightBulanan.length, hasil.bulanan.length);
+const insOkt = hasil.insightBulanan.find(b => b.key === "2026-10");
+const insNov = hasil.insightBulanan.find(b => b.key === "2026-11");
+cek("analisa bulan Oktober ada", !!insOkt, true);
+cek("analisa Oktober menyebut 180 kWh", /180/.test(insOkt.items.map(i => i.teks).join(" ")), true);
+cek("analisa Oktober punya poin", insOkt.items.length >= 3, true);
+cek("analisa bulan November ada", !!insNov, true);
+cek("analisa November: belum ada pemakaian", /Belum ada pemakaian terhitung/.test(insNov.items[0].teks), true);
+
 // --- proyeksi ---
 cek("proyeksi 30 hari", r.proyeksi30Kwh, 174.2, 0.02);
 cek("proyeksi 30 hari rupiah", r.proyeksi30Rp, 319645, 1);

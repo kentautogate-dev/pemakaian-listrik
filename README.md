@@ -45,7 +45,9 @@ Angka kunci Oktober 2026: **180 kWh / Rp 330.300**, rata-rata **5,81 kWh/hari**,
 - **Tampilan default mengikuti bulan berjalan**: saat dibuka, halaman catat, tabel harian, grafik, dan rekap
   langsung menampilkan bulan kalender saat ini (mis. November 2026), walau bulan itu belum punya catatan.
   Bulan lain tetap bisa dipilih di dropdown **Bulan**.
-- **Analisa otomatis**: hari paling boros/hemat, hari yang jauh di atas rata-rata, hari tercatat 0 kWh, pola per hari dalam seminggu, estimasi token habis.
+- **Analisa otomatis hemat layar**: analisa **bulan terbaru/terpilih** tampil terbuka (ringkasan, pola hari,
+  hari di atas rata-rata, hari 0 kWh, perbandingan bulan lalu), sedangkan analisa **bulan-bulan lama disimpan
+  per bulan** di panel **Arsip analisa** yang bisa dilipat & di-scroll.
 - **Saldo token**: sisa kWh, nilai rupiah, perkiraan habis, riwayat pengisian token, kalkulator beli token (Rp → kWh)
   dengan **titik pemisah ribuan otomatis** (ketik `200000` → tampil `200.000`).
 - **Tabel catatan harian** per bulan dengan subtotal mingguan dan total bulanan; bisa **ubah** (✎) dan **hapus** (🗑) dengan tombol **Urungkan** pada notifikasi.

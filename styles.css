@@ -233,6 +233,49 @@ td.aksi button + button { margin-left: 2px; }
 .insight-item.waspada { border-color: color-mix(in srgb, var(--kuning) 50%, transparent); background: color-mix(in srgb, var(--kuning) 9%, var(--panel)); }
 .insight-item.proyeksi { border-color: color-mix(in srgb, var(--aksen) 40%, transparent); }
 
+/* analisa terbaru + arsip per bulan (hemat layar) */
+.insight-wrap { display: grid; gap: 10px; min-width: 0; }
+.analisa-terbaru { display: grid; gap: 8px; min-width: 0; }
+.analisa-judul { font-size: 0.8rem; font-weight: 750; color: var(--teks-lembut); }
+.analisa-judul b { color: var(--teks); }
+.analisa-umum {
+  display: grid; gap: 4px;
+  padding: 8px 10px;
+  border: 1px dashed var(--garis); border-radius: 10px;
+  background: var(--panel-2);
+  font-size: 0.8rem; color: var(--teks-lembut);
+}
+.analisa-umum b { color: var(--teks); }
+.analisa-arsip { border-top: 1px solid var(--garis); padding-top: 10px; min-width: 0; }
+.analisa-arsip > summary {
+  cursor: pointer; list-style: none;
+  font-size: 0.82rem; font-weight: 700; color: var(--teks-lembut);
+  display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+}
+.analisa-arsip > summary::-webkit-details-marker { display: none; }
+.analisa-arsip > summary::before { content: "▸"; color: var(--aksen); }
+.analisa-arsip[open] > summary::before { content: "▾"; }
+.arsip-scroll {
+  margin-top: 8px;
+  max-height: 250px;
+  overflow: auto;
+  display: grid; gap: 6px;
+  padding-right: 4px;
+}
+.arsip-bulan { border: 1px solid var(--garis); border-radius: 10px; background: var(--panel-2); }
+.arsip-bulan > summary {
+  cursor: pointer; list-style: none;
+  padding: 8px 10px;
+  display: flex; justify-content: space-between; align-items: center; gap: 8px;
+  font-size: 0.82rem; font-weight: 700;
+}
+.arsip-bulan > summary::-webkit-details-marker { display: none; }
+.arsip-bulan > summary::before { content: "▸"; color: var(--aksen); margin-right: 4px; }
+.arsip-bulan[open] > summary::before { content: "▾"; }
+.arsip-bulan > summary > span:last-child { font-weight: 600; }
+.arsip-bulan .insight { padding: 0 8px 8px; gap: 6px; }
+.arsip-bulan .insight-item { padding: 7px 9px; font-size: 0.8rem; border-radius: 9px; }
+
 /* ---------- pola hari & token ---------- */
 .pola { margin-bottom: 14px; }
 .pola-judul { font-size: 0.74rem; font-weight: 750; letter-spacing: 0.05em; text-transform: uppercase; color: var(--teks-lembut); margin-bottom: 8px; }

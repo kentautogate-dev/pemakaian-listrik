@@ -413,6 +413,7 @@
       bulanAktif: bulanAktif
     };
     hasil.insight = buatInsight(hasil);
+    hasil.insightBulanan = buatInsightBulanan(hasil);
     return hasil;
   }
 
@@ -514,6 +515,109 @@
     return out;
   }
   function namaHariPanjang(n) { return n; }
+
+  /**
+   * Analisa per bulan (untuk tampilan hemat layar): tiap bulan punya ringkasan sendiri.
+   * Bulan terbaru ditampilkan terbuka; bulan-bulan lama dipakai di panel "arsip" yang bisa dilipat.
+   */
+  function buatInsightBulanan(h) {
+    var hasil = [];
+    h.bulanan.forEach(function (b, idx) {
+      var prev = idx > 0 ? h.bulanan[idx - 1] : null;
+      var harianBulan = h.harian.filter(function (r) { return bulanKey(r.tanggal) === b.key; });
+      var items = [];
+
+      if (!harianBulan.length) {
+        items.push({
+          tipe: "info",
+          teks: "Belum ada pemakaian terhitung pada " + b.label + ". Catat sisa kWh harian agar pemakaian mulai terhitung."
+        });
+        if (b.masukKwh) {
+          items.push({ tipe: "token", teks: "Token masuk " + angka(b.masukKwh, 0) + " kWh (" + rp(b.masukRp) + ")." });
+        }
+        if (b.sisaAwal !== null && b.sisaAwal !== undefined) {
+          items.push({ tipe: "info", teks: "Sisa token tercatat " + angka(b.sisaAwal, 0) + " → " + angka(b.sisaAkhir, 0) + " kWh." });
+        }
+        if (prev) {
+          items.push({
+            tipe: "info",
+            teks: "Data terakhir yang bisa dianalisa: " + prev.label + " (" + angka(prev.kwh, 1) +
+              " kWh). Analisa lengkapnya ada di arsip di bawah."
+          });
+        }
+        hasil.push({ key: b.key, label: b.label, kwh: b.kwh, biaya: b.biaya, hari: b.hari, items: items });
+        return;
+      }
+
+      var rata = b.kwh / b.hari;
+      items.push({
+        tipe: "ringkas",
+        teks: b.label + ": " + angka(b.kwh, 1) + " kWh (" + rp(b.biaya) + ") dari " + b.hari +
+          " hari • rata-rata " + angka(rata, 2) + " kWh/hari." +
+          (b.maksHari ? " Tertinggi " + angka(b.maksHari.pemakaian, 1) + " kWh pada " +
+            labelTanggal(b.maksHari.tanggal, false) + "." : "")
+      });
+
+      // pola hari dalam minggu (khusus bulan ini)
+      var per = {};
+      NAMA_HARI.forEach(function (n) { per[n] = { kwh: 0, hari: 0 }; });
+      harianBulan.forEach(function (r) { per[r.hari].kwh += r.pemakaian; per[r.hari].hari++; });
+      var urut = Object.keys(per).filter(function (n) { return per[n].hari > 0; })
+        .sort(function (a, b2) { return (per[a].kwh / per[a].hari) - (per[b2].kwh / per[b2].hari); });
+      if (urut.length > 1) {
+        var hemat = urut[0], boros = urut[urut.length - 1];
+        items.push({
+          tipe: "pola",
+          teks: "Paling boros " + boros + " (" + angka(per[boros].kwh / per[boros].hari, 1) + " kWh/hari), " +
+            "paling hemat " + hemat + " (" + angka(per[hemat].kwh / per[hemat].hari, 1) + " kWh/hari)."
+        });
+      }
+
+      // hari tanpa pemakaian
+      var nol = harianBulan.filter(function (r) { return r.pemakaian === 0; });
+      if (nol.length) {
+        var tglNol = nol.slice(0, 3).map(function (r) { return labelTanggal(r.tanggal, false); }).join(", ");
+        items.push({
+          tipe: nol.length > 2 ? "waspada" : "info",
+          teks: nol.length + " hari tercatat 0 kWh (" + tglNol + (nol.length > 3 ? ", …" : "") + ")."
+        });
+      }
+
+      // hari di atas rata-rata (lonjakan)
+      var varians = harianBulan.reduce(function (s, r) { return s + Math.pow(r.pemakaian - rata, 2); }, 0) / harianBulan.length;
+      var sd = Math.sqrt(varians);
+      var lonjakan = harianBulan.filter(function (r) { return r.pemakaian > 0 && r.pemakaian >= rata + sd; })
+        .sort(function (a, b2) { return b2.pemakaian - a.pemakaian; }).slice(0, 3);
+      if (lonjakan.length) {
+        items.push({
+          tipe: "waspada",
+          teks: "Hari di atas rata-rata: " + lonjakan.map(function (r) {
+            return labelTanggal(r.tanggal, false) + " (" + angka(r.pemakaian, 1) + " kWh)";
+          }).join(", ") + "."
+        });
+      }
+
+      // perbandingan dengan bulan sebelumnya
+      if (prev && prev.kwh > 0) {
+        var d = (b.kwh - prev.kwh) / prev.kwh * 100;
+        items.push({
+          tipe: Math.abs(d) > 10 ? "waspada" : "info",
+          teks: (d >= 0 ? "Naik " : "Turun ") + angka(Math.abs(d), 1) + "% dibanding " + prev.label +
+            " (" + angka(b.kwh, 1) + " vs " + angka(prev.kwh, 1) + " kWh)."
+        });
+      }
+
+      if (b.masukKwh) {
+        items.push({ tipe: "token", teks: "Token masuk " + angka(b.masukKwh, 0) + " kWh (" + rp(b.masukRp) + ")." });
+      }
+      if (b.sisaAwal !== null && b.sisaAwal !== undefined) {
+        items.push({ tipe: "info", teks: "Sisa token " + angka(b.sisaAwal, 0) + " → " + angka(b.sisaAkhir, 0) + " kWh pada akhir bulan." });
+      }
+
+      hasil.push({ key: b.key, label: b.label, kwh: b.kwh, biaya: b.biaya, hari: b.hari, items: items });
+    });
+    return hasil;
+  }
 
   /* ---------------- CSV ---------------- */
   function pecahBarisCsv(baris) {

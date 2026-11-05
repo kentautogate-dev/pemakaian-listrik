@@ -365,12 +365,53 @@
   }
 
   /* ================= render: analisa & token ================= */
-  function renderInsight(h) {
+  function itemInsight(i) {
     var petaIkon = { ringkas: "grafik", pola: "kompas", waspada: "peringatan", info: "info", token: "tiket", proyeksi: "tren" };
-    $("insight").innerHTML = h.insight.map(function (i) {
-      return '<li class="insight-item ' + esc(i.tipe) + '"><span class="ikon">' + ikon(petaIkon[i.tipe] || "info") +
-        '</span><p>' + esc(i.teks) + "</p></li>";
-    }).join("");
+    return '<li class="insight-item ' + esc(i.tipe) + '"><span class="ikon">' + ikon(petaIkon[i.tipe] || "info") +
+      '</span><p>' + esc(i.teks) + "</p></li>";
+  }
+
+  /**
+   * Kartu analisa dibuat hemat layar:
+   * - bulan terbaru/terpilih tampil terbuka (analisa terbaru),
+   * - analisa bulan-bulan sebelumnya dilipat dalam "Arsip analisa" (bisa dibuka per bulan),
+   * - daftar arsip diberi batas tinggi + scroll.
+   */
+  function renderInsight(h) {
+    var daftar = h.insightBulanan || [];
+    var key = bulanPilih || h.bulanAktif;
+    var terbaru = null;
+    daftar.forEach(function (b) { if (b.key === key) terbaru = b; });
+    if (!terbaru && daftar.length) terbaru = daftar[daftar.length - 1];
+    var lainnya = daftar.filter(function (b) { return !terbaru || b.key !== terbaru.key; })
+      .sort(function (a, b) { return b.key.localeCompare(a.key); });
+
+    var r = h.ringkasan;
+    var umum = '<div class="analisa-umum">' +
+      "<span>Saldo token <b>" + angka(r.sisaAkhir, 0) + " kWh</b> (" + fmtRp(r.saldoRp) + ")" +
+        (r.estimasiHari !== null ? " • cukup ±" + r.estimasiHari + " hari" : "") + "</span>" +
+      "<span>Proyeksi 30 hari <b>" + fmtRp(r.proyeksi30Rp) + "</b> (≈ " + angka(r.proyeksi30Kwh, 1) + " kWh)</span>" +
+      "</div>";
+
+    var html = '<div class="analisa-terbaru">' +
+      '<div class="analisa-judul">Analisa terbaru — <b>' + esc(terbaru ? terbaru.label : "bulan ini") + "</b></div>" +
+      (terbaru
+        ? '<ul class="insight">' + terbaru.items.map(itemInsight).join("") + "</ul>"
+        : '<div class="muted">Belum ada data untuk dianalisa.</div>') +
+      umum + "</div>";
+
+    if (lainnya.length) {
+      html += '<details class="analisa-arsip">' +
+        "<summary>Arsip analisa bulan sebelumnya <span class=\"muted\">(" + lainnya.length + " bulan) — klik untuk buka</span></summary>" +
+        '<div class="arsip-scroll">' +
+        lainnya.map(function (b) {
+          var info = b.hari ? fmtKwh(b.kwh) + " • " + fmtRp(b.biaya) : "belum ada data";
+          return '<details class="arsip-bulan"><summary><span>' + esc(b.label) + '</span><span class="muted">' + info + "</span></summary>" +
+            '<ul class="insight">' + b.items.map(itemInsight).join("") + "</ul></details>";
+        }).join("") +
+        "</div></details>";
+    }
+    $("insight").innerHTML = html;
   }
 
   function renderPolaHari(h) {
