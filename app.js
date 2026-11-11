@@ -201,7 +201,10 @@
       nilai: angka(r.sisaAkhir, 0) + " <small>kWh</small>",
       kaki: fmtRp(r.saldoRp) + (r.estimasiHari !== null
         ? " • cukup ±" + r.estimasiHari + " hari (s.d. " + Core.labelTanggal(r.estimasiTanggal, false) + ")"
-        : "")
+        : "") +
+        (r.tokenTertunda > 0
+          ? ' <span class="chip">+ ' + angka(r.tokenTertunda, 0) + " kWh token baru</span>"
+          : "")
     });
 
     kartu.push({
@@ -433,6 +436,10 @@
     var s = h.settings;
     var hargaEfektif = s.tarifDasar > 0 ? s.tarifDasar * (1 + s.ppj / 100) : s.hargaKwh;
     var html = '<div class="token-baris"><span>Sisa token</span><b>' + angka(r.sisaAkhir, 0) + " kWh</b></div>" +
+      (r.tokenTertunda > 0
+        ? '<div class="token-baris"><span class="muted kecil">Termasuk token baru</span><b class="muted kecil">+' +
+          angka(r.tokenTertunda, 0) + " kWh</b></div>"
+        : "") +
       '<div class="token-baris"><span>Nilai saldo</span><b>' + fmtRp(r.saldoRp) + "</b></div>" +
       '<div class="token-baris"><span>Perkiraan habis</span><b>' +
         (r.estimasiHari !== null ? "±" + r.estimasiHari + " hari" : "—") + "</b></div>" +
@@ -444,7 +451,10 @@
     if (r.pembelian.length) {
       html += '<div class="pembelian"><div class="pembelian-judul">Pengisian token tercatat</div>' +
         r.pembelian.slice(-4).map(function (b) {
-          return '<div class="token-baris"><span>' + Core.labelTanggal(b.tanggal, false) + "</span><b>" +
+          var ket = b.posisi === "sebelum" ? "sebelum catat"
+            : b.posisi === "sesudah" ? "setelah catat" : "";
+          return '<div class="token-baris"><span>' + Core.labelTanggal(b.tanggal, false) +
+            (ket ? ' <span class="muted kecil">(' + ket + ")</span>" : "") + "</span><b>" +
             angka(b.kwh, 0) + " kWh (" + fmtRp(b.rp) + ")</b></div>";
         }).join("") + "</div>";
     }
@@ -528,7 +538,12 @@
         tanda = '<span class="badge">tinggi</span>';
       }
       var masukTeks = r.masuk > 0
-        ? '<span class="masuk">+' + angka(r.masuk, 0) + "</span>"
+        ? '<span class="masuk">+' + angka(r.masuk, 0) + "</span>" +
+          (r.masukSebelum === false
+            ? '<div class="muted kecil" title="Token diisi setelah angka sisa ini dibaca; dihitung pada interval sesudahnya.">setelah catat</div>'
+            : r.masukSebelum === true
+              ? '<div class="muted kecil" title="Token sudah masuk sebelum angka sisa ini dibaca.">sebelum catat</div>'
+              : "")
         : '<span class="muted">—</span>';
 
       baris.push("<tr" + (r.anomali === "negatif" ? ' class="baris-anomali"' : "") + ">" +
@@ -583,7 +598,7 @@
       var kosong = b.hari === 0;
       var sisa = (b.sisaAwal === null || b.sisaAwal === undefined)
         ? '<span class="muted">—</span>'
-        : angka(b.sisaAwal, 0) + " → " + angka(b.sisaAkhir, 0);
+        : angka(b.sisaAwal, 0) + " → " + angka(b.sisaEfektif !== undefined ? b.sisaEfektif : b.sisaAkhir, 0);
       return "<tr>" +
         "<td><b>" + b.label + "</b></td>" +
         '<td class="num">' + (kosong ? '<span class="muted">—</span>' : fmtKwh(b.kwh)) + "</td>" +
@@ -625,6 +640,8 @@
     $("tanggal").value = hariIni;
     $("sisa").value = "";
     $("masuk").value = "";
+    $("urutanToken").value = "auto";
+    $("barisUrutanToken").classList.add("hidden");
     $("catatan").value = "";
     $("formTitle").textContent = "Catat Sisa Token";
     $("btnSimpan").textContent = "Simpan catatan";
@@ -654,12 +671,30 @@
       : "Biasanya dicatat pagi di jam yang sama setiap hari.";
   }
 
+  /** Posisi token untuk catatan yang sudah tersimpan (mendukung 'auto'). */
+  function posisiTokenCatatan(rec) {
+    if (!(rec.masuk > 0)) return false;
+    if (rec.urutanToken === "sebelum") return true;
+    if (rec.urutanToken === "sesudah") return false;
+    var prev = null;
+    state.catatan.forEach(function (r) {
+      if (r.id === rec.id) return;
+      if (r.tanggal < rec.tanggal && (!prev || r.tanggal > prev.tanggal)) prev = r;
+    });
+    return prev ? (rec.sisa >= prev.sisa) : false;
+  }
+
   function renderPratinjau() {
     perbaruiHintTanggal();
     var box = $("pratinjau");
     var tanggal = $("tanggal").value;
     var sisa = Core.parseAngka($("sisa").value);
     var masuk = Core.parseAngka($("masuk").value) || 0;
+    var mode = $("urutanToken").value;
+
+    // Pilihan urutan token hanya relevan bila ada token yang diisi.
+    $("barisUrutanToken").classList.toggle("hidden", !(masuk > 0));
+
     if (!tanggal || sisa === null || $("sisa").value === "") {
       box.className = "pratinjau";
       box.innerHTML = "Isi <b>sisa kWh</b> untuk melihat perhitungan sebelum disimpan.";
@@ -670,19 +705,48 @@
     var harga = state.settings.hargaKwh;
     var potongan = [];
 
+    // Tentukan urutan token (sebelum/sesudah pembacaan angka sisa)
+    var posisi;
+    if (mode === "sebelum") posisi = true;
+    else if (mode === "sesudah") posisi = false;
+    else posisi = tb.prev ? (sisa >= tb.prev.sisa) : false;
+
+    if (masuk > 0) {
+      var alasan = mode === "auto"
+        ? (tb.prev
+            ? (posisi
+                ? "saldo naik: " + angka(sisa, 0) + " ≥ " + angka(tb.prev.sisa, 0)
+                : "saldo turun: " + angka(sisa, 0) + " < " + angka(tb.prev.sisa, 0))
+            : "catatan pertama")
+        : "diatur manual";
+      potongan.push("Token <b>+" + angka(masuk, 0) + " kWh</b> → dianggap <b>" +
+        (posisi ? "SUDAH masuk sebelum angka ini dibaca" : "diisi SETELAH angka ini dibaca") +
+        "</b> (" + alasan + ")" +
+        (posisi ? " — ikut dipakai pada interval sebelum tanggal ini."
+                : " — dihitung pada interval sesudah tanggal ini."));
+    }
+
     if (tb.prev) {
-      var p = tb.prev.sisa + masuk - sisa;
+      var tambahanPrev = ((tb.prev.masuk > 0 && !posisiTokenCatatan(tb.prev)) ? tb.prev.masuk : 0) +
+        ((masuk > 0 && posisi) ? masuk : 0);
+      var p = tb.prev.sisa + tambahanPrev - sisa;
       potongan.push("Pemakaian <b>" + Core.labelTanggal(tb.prev.tanggal, false) + "</b> = " +
-        angka(tb.prev.sisa, 0) + (masuk ? " + " + angka(masuk, 0) : "") + " − " + angka(sisa, 0) +
+        angka(tb.prev.sisa, 0) + (tambahanPrev ? " + " + angka(tambahanPrev, 0) : "") + " − " + angka(sisa, 0) +
         " = <b>" + fmtKwh(Math.abs(p)) + "</b> (" + fmtRp(Math.abs(p) * harga) + ")" +
-        (p < 0 ? ' <span class="badge bahaya">negatif — cek angka</span>' : ""));
+        (p < 0 ? ' <span class="badge bahaya">negatif — cek angka/urutan token</span>' : ""));
     }
     if (tb.next) {
-      var q = sisa + (tb.next.masuk || 0) - tb.next.sisa;
+      var posisiNext;
+      if (tb.next.urutanToken === "sebelum") posisiNext = true;
+      else if (tb.next.urutanToken === "sesudah") posisiNext = false;
+      else posisiNext = tb.next.sisa >= sisa;
+      var tambahanCur = ((masuk > 0 && !posisi) ? masuk : 0) +
+        ((tb.next.masuk > 0 && posisiNext) ? tb.next.masuk : 0);
+      var q = sisa + tambahanCur - tb.next.sisa;
       potongan.push("Pemakaian <b>" + Core.labelTanggal(tanggal, false) + "</b> = " + angka(sisa, 0) +
-        (tb.next.masuk ? " + " + angka(tb.next.masuk, 0) : "") + " − " + angka(tb.next.sisa, 0) +
+        (tambahanCur ? " + " + angka(tambahanCur, 0) : "") + " − " + angka(tb.next.sisa, 0) +
         " = <b>" + fmtKwh(Math.abs(q)) + "</b> (" + fmtRp(Math.abs(q) * harga) + ")" +
-        (q < 0 ? ' <span class="badge bahaya">negatif — cek angka</span>' : ""));
+        (q < 0 ? ' <span class="badge bahaya">negatif — cek angka/urutan token</span>' : ""));
     }
     if (!tb.prev && !tb.next) {
       potongan.push("Catatan pertama. Pemakaian mulai terhitung setelah ada catatan berikutnya.");
@@ -697,6 +761,8 @@
     var sisa = Core.parseAngka($("sisa").value);
     var masuk = Core.parseAngka($("masuk").value) || 0;
     var catatan = $("catatan").value.trim().slice(0, 120);
+    var modeToken = $("urutanToken").value;
+    var urutanToken = (masuk > 0 && (modeToken === "sebelum" || modeToken === "sesudah")) ? modeToken : "auto";
 
     if (!tanggal) { tampilToast("Tanggal belum diisi dengan benar.", "error"); $("tanggal").focus(); return; }
     if (sisa === null || sisa < 0) { tampilToast("Sisa kWh harus berupa angka ≥ 0.", "error"); $("sisa").focus(); return; }
@@ -713,6 +779,7 @@
       rec.tanggal = tanggal;
       rec.sisa = sisa;
       rec.masuk = masuk;
+      rec.urutanToken = urutanToken;
       rec.catatan = catatan;
       state = Core.normalise(state);
       simpan();
@@ -729,6 +796,7 @@
       }
       kembar.sisa = sisa;
       kembar.masuk = masuk;
+      kembar.urutanToken = urutanToken;
       kembar.catatan = catatan;
       state = Core.normalise(state);
       simpan();
@@ -741,7 +809,7 @@
 
     state.catatan.push({
       id: "c" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
-      tanggal: tanggal, sisa: sisa, masuk: masuk, catatan: catatan
+      tanggal: tanggal, sisa: sisa, masuk: masuk, urutanToken: urutanToken, catatan: catatan
     });
     state = Core.normalise(state);
     simpan();
@@ -759,6 +827,7 @@
     $("tanggal").value = rec.tanggal;
     $("sisa").value = String(rec.sisa).replace(".", ",");
     $("masuk").value = rec.masuk ? String(rec.masuk).replace(".", ",") : "";
+    $("urutanToken").value = (rec.urutanToken === "sebelum" || rec.urutanToken === "sesudah") ? rec.urutanToken : "auto";
     $("catatan").value = rec.catatan || "";
     $("formTitle").textContent = "Ubah Catatan";
     $("btnSimpan").textContent = "Simpan perubahan";
@@ -922,12 +991,14 @@
         if (!timpa) { lewat++; return; }
         peta[r.tanggal].sisa = r.sisa;
         peta[r.tanggal].masuk = r.masuk;
+        peta[r.tanggal].urutanToken = r.urutanToken || "auto";
         if (r.catatan) peta[r.tanggal].catatan = r.catatan;
         masuk++;
       } else {
         peta[r.tanggal] = {
           id: "impor-" + r.tanggal + "-" + Math.random().toString(36).slice(2, 5),
-          tanggal: r.tanggal, sisa: r.sisa, masuk: r.masuk, catatan: r.catatan || ""
+          tanggal: r.tanggal, sisa: r.sisa, masuk: r.masuk,
+          urutanToken: r.urutanToken || "auto", catatan: r.catatan || ""
         };
         masuk++;
       }
@@ -1082,6 +1153,7 @@
       $(id).addEventListener("input", renderPratinjau);
       $(id).addEventListener("change", renderPratinjau);
     });
+    $("urutanToken").addEventListener("change", renderPratinjau);
     $("btnBatal").addEventListener("click", function () { resetForm(); });
 
     $("tbodyHarian").addEventListener("click", function (e) {

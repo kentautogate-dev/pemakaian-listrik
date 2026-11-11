@@ -60,8 +60,17 @@
           <div class="field">
             <label for="masuk">Token masuk (kWh)</label>
             <input type="text" id="masuk" inputmode="decimal" placeholder="mis. 109" autocomplete="off">
-            <div class="hint">Isi bila mengisi token sebelum angka sisa ini dicatat.</div>
+            <div class="hint">Boleh diisi baik token dibeli sebelum maupun sesudah membaca angka sisa.</div>
           </div>
+        </div>
+        <div class="field hidden" id="barisUrutanToken">
+          <label for="urutanToken">Urutan token</label>
+          <select id="urutanToken">
+            <option value="auto">Otomatis — deteksi dari perubahan saldo (disarankan)</option>
+            <option value="sebelum">Token sudah masuk SEBELUM angka sisa dibaca</option>
+            <option value="sesudah">Token diisi SETELAH angka sisa dibaca</option>
+          </select>
+          <div class="hint" id="hintUrutanToken">Contoh: baca 1.182 dulu lalu beli 109 kWh → pilih “sesudah”.</div>
         </div>
         <div class="field">
           <label for="catatan">Catatan (opsional)</label>

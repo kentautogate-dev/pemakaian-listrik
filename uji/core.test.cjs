@@ -118,6 +118,75 @@ const bolakBalik = Core.parseCsv(Core.toCsv(data.catatan));
 cek("CSV bolak-balik jumlah", bolakBalik.length, data.catatan.length);
 cek("CSV bolak-balik sisa", bolakBalik[0].sisa, 1286);
 
+/* =====================================================================
+ * Uji urutan token (kasus laporan pengguna 9–11 November 2026):
+ *  - 9 Nov  sisa 1.186
+ *  - 10 Nov sisa 1.183  → pemakaian 10 Nov HARUS 1 kWh (bukan 110 kWh)
+ *  - 11 Nov sisa 1.182, DIBACA DULU lalu beli token 109 kWh → meter 1.291
+ *    Token itu milik interval 11 Nov → 12 Nov.
+ * ===================================================================== */
+const kasusTok = Core.hitung({
+  settings: { hargaKwh: 1835 },
+  catatan: [
+    { tanggal: "2026-11-09", sisa: 1186, masuk: 0 },
+    { tanggal: "2026-11-10", sisa: 1183, masuk: 0 },
+    { tanggal: "2026-11-11", sisa: 1182, masuk: 109, catatan: "beli token setelah baca" }
+  ]
+}, { sekarang: "2026-11-11" });
+const u9 = kasusTok.catatan.find(x => x.tanggal === "2026-11-09");
+const u10 = kasusTok.catatan.find(x => x.tanggal === "2026-11-10");
+const u11 = kasusTok.catatan.find(x => x.tanggal === "2026-11-11");
+cek("token sesudah catat: pemakaian 9 Nov", u9.pemakaian, 3);
+cek("token sesudah catat: pemakaian 10 Nov = 1 kWh", u10.pemakaian, 1);
+cek("token sesudah catat: 11 Nov belum bisa dihitung", u11.pemakaian, null);
+cek("token sesudah catat: token dianggap setelah pembacaan", u11.masukSebelum, false);
+cek("token sesudah catat: sisa efektif = 1.182 + 109 = 1.291", kasusTok.ringkasan.sisaAkhir, 1291);
+cek("token sesudah catat: saldo rupiah 1.291 kWh", kasusTok.ringkasan.saldoRp, Math.round(1291 * 1835));
+cek("token sesudah catat: total kWh belum 110", kasusTok.ringkasan.totalKwh, 4);
+
+// Bila besok (12 Nov) tercatat sisa 1.285 → pemakaian 11 Nov = 1.182 + 109 − 1.285 = 6 kWh
+const kasusTok2 = Core.hitung({
+  settings: { hargaKwh: 1835 },
+  catatan: [
+    { tanggal: "2026-11-09", sisa: 1186, masuk: 0 },
+    { tanggal: "2026-11-10", sisa: 1183, masuk: 0 },
+    { tanggal: "2026-11-11", sisa: 1182, masuk: 109 },
+    { tanggal: "2026-11-12", sisa: 1285, masuk: 0 }
+  ]
+}, { sekarang: "2026-11-12" });
+const v11 = kasusTok2.catatan.find(x => x.tanggal === "2026-11-11");
+cek("lanjutan: pemakaian 11 Nov = 6 kWh", v11.pemakaian, 6);
+cek("lanjutan: total kWh 3+1+6 = 10", kasusTok2.ringkasan.totalKwh, 10);
+
+// Bila pengguna memilih "token SEBELUM dibaca" (angka sisa 1.291 setelah isi token):
+const kasusTok3 = Core.hitung({
+  settings: { hargaKwh: 1835 },
+  catatan: [
+    { tanggal: "2026-11-09", sisa: 1186, masuk: 0 },
+    { tanggal: "2026-11-10", sisa: 1183, masuk: 0 },
+    { tanggal: "2026-11-11", sisa: 1291, masuk: 109, urutanToken: "sebelum" },
+    { tanggal: "2026-11-12", sisa: 1285, masuk: 0 }
+  ]
+}, { sekarang: "2026-11-12" });
+cek("token sebelum catat: pemakaian 10 Nov = 1 kWh", kasusTok3.catatan.find(x => x.tanggal === "2026-11-10").pemakaian, 1);
+cek("token sebelum catat: pemakaian 11 Nov = 6 kWh", kasusTok3.catatan.find(x => x.tanggal === "2026-11-11").pemakaian, 6);
+
+// Token yang sudah masuk sebelum pembacaan terdeteksi otomatis dari saldo naik
+const kasusNaik = Core.hitung({
+  settings: { hargaKwh: 1835 },
+  catatan: [
+    { tanggal: "2026-10-11", sisa: 1205, masuk: 0 },
+    { tanggal: "2026-10-12", sisa: 1309, masuk: 109 }
+  ]
+}, { sekarang: "2026-10-12" });
+cek("auto: token sebelum (saldo naik) terdeteksi", kasusNaik.catatan.find(x => x.tanggal === "2026-10-12").masukSebelum, true);
+cek("auto: pemakaian 11 Okt = 1.205+109-1.309 = 5", kasusNaik.catatan.find(x => x.tanggal === "2026-10-11").pemakaian, 5);
+
+// CSV menyimpan urutan token
+const csvToken = Core.toCsv([{ tanggal: "2026-11-11", sisa: 1182, masuk: 109, urutanToken: "sesudah", catatan: "" }]);
+cek("CSV memuat urutan_token", /,sesudah/.test(csvToken), true);
+cek("CSV parse urutan_token", Core.parseCsv(csvToken)[0].urutanToken, "sesudah");
+
 // --- tanggal dobel: yang terakhir menang ---
 const dobel = Core.normalise({ catatan: [
   { tanggal: "2026-10-01", sisa: 100 },

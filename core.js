@@ -182,6 +182,9 @@
         tanggal: tgl,
         sisa: bulat(sisa, 2),
         masuk: Math.max(0, parseAngka(r.masuk) || 0),
+        // Urutan token relatif terhadap angka sisa:
+        // "auto" = dideteksi dari perubahan saldo, "sebelum"/"sesudah" = pilihan pengguna.
+        urutanToken: (r.urutanToken === "sebelum" || r.urutanToken === "sesudah") ? r.urutanToken : "auto",
         catatan: typeof r.catatan === "string" ? r.catatan.slice(0, 160) : ""
       };
       if (!perTanggal[tgl]) urutan.push(tgl);
@@ -224,18 +227,41 @@
     var totalKwh = 0, totalRp = 0, totalMasuk = 0;
     var maks = null, min = null;
 
+    /* Tentukan posisi token relatif terhadap angka sisa pada catatan yang sama.
+     * - 'sebelum' : token sudah masuk saat angka sisa dibaca  → ikut menambah saldo interval SEBELUM catatan ini.
+     * - 'sesudah' : token dibeli setelah angka sisa dibaca    → dihitung pada interval SESUDAH catatan ini.
+     * - 'auto'    : dideteksi dari perubahan saldo. Bila sisa hari ini >= sisa pembacaan sebelumnya,
+     *               saldo naik → token dianggap sudah masuk sebelum dibaca. Bila saldo turun,
+     *               token dianggap diisi setelah dibaca (kasus "baca dulu 1.182, baru isi 109 kWh").
+     */
+    var posisiToken = [];
+    for (var j = 0; j < daftar.length; j++) {
+      var rj = daftar[j];
+      if (!(rj.masuk > 0)) { posisiToken[j] = false; continue; }
+      if (rj.urutanToken === "sebelum") posisiToken[j] = true;
+      else if (rj.urutanToken === "sesudah") posisiToken[j] = false;
+      else posisiToken[j] = j > 0 ? (rj.sisa >= daftar[j - 1].sisa) : false;
+    }
+
     for (var i = 0; i < daftar.length; i++) {
       var r = daftar[i];
       var nxt = daftar[i + 1] || null;
       var rec = {
         id: r.id, tanggal: r.tanggal, sisa: r.sisa, masuk: r.masuk, catatan: r.catatan,
+        urutanToken: r.urutanToken,
+        masukSebelum: (r.masuk > 0 ? posisiToken[i] : null),
         hari: namaHari(r.tanggal),
         pemakaian: null, biaya: null, jeda: null, anomali: null
       };
       if (nxt) {
         rec.jeda = bedaHari(r.tanggal, nxt.tanggal);
-        // token yang diisi sebelum pembacaan berikutnya ikut menambah saldo interval ini
-        var p = r.sisa + (nxt.masuk || 0) - nxt.sisa;
+        // Token ikut menambah persediaan pada interval ini bila:
+        //  - token catatan ini diisi SETELAH angka dibaca (posisiToken[i] false), atau
+        //  - token catatan berikutnya sudah masuk SEBELUM angka berikutnya dibaca.
+        var tambahan = 0;
+        if (!posisiToken[i]) tambahan += r.masuk;
+        if (posisiToken[i + 1]) tambahan += (nxt.masuk || 0);
+        var p = r.sisa + tambahan - nxt.sisa;
         if (p < 0) {
           rec.anomali = "negatif";
           rec.pemakaian = null;
@@ -340,8 +366,20 @@
 
     // saldo & proyeksi
     var terakhir = catatan.length ? catatan[catatan.length - 1] : null;
-    var sisaAkhir = terakhir ? terakhir.sisa : 0;
+    var sisaTercatat = terakhir ? terakhir.sisa : 0;
+    // Token pada catatan terakhir yang diisi SETELAH angka dibaca belum masuk ke saldo catatan,
+    // tetapi sudah ada di meteran → tampilkan sebagai saldo efektif sekarang.
+    var tokenTertunda = (terakhir && terakhir.masuk > 0 && terakhir.masukSebelum === false) ? terakhir.masuk : 0;
+    var sisaAkhir = bulat(sisaTercatat + tokenTertunda, 2);
     var saldoRp = Math.round(sisaAkhir * harga);
+    // sisa efektif untuk setiap akhir bulan (bulan terakhir menambahkan token tertunda)
+    if (bulanan.length) {
+      var kunciTerakhir = bulanKey(terakhir ? terakhir.tanggal : "");
+      bulanan.forEach(function (b) {
+        b.sisaTercatat = b.sisaAkhir;
+        b.sisaEfektif = b.sisaAkhir + (b.key === kunciTerakhir ? tokenTertunda : 0);
+      });
+    }
 
     var ekor = harian.slice(-14);
     var rata14 = ekor.length ? ekor.reduce(function (s, r) { return s + r.pemakaian; }, 0) / ekor.length : rata;
@@ -366,7 +404,14 @@
 
     // pembelian token
     var pembelian = catatan.filter(function (r) { return r.masuk > 0; })
-      .map(function (r) { return { tanggal: r.tanggal, kwh: r.masuk, rp: Math.round(r.masuk * harga) }; });
+      .map(function (r) {
+        return {
+          tanggal: r.tanggal,
+          kwh: r.masuk,
+          rp: Math.round(r.masuk * harga),
+          posisi: r.masukSebelum === true ? "sebelum" : r.masukSebelum === false ? "sesudah" : "auto"
+        };
+      });
 
     var ringkasan = {
       hargaKwh: harga,
@@ -385,6 +430,8 @@
       lonjakan: lonjakan,
       perHari: perHari,
       sisaAkhir: sisaAkhir,
+      sisaTercatat: sisaTercatat,
+      tokenTertunda: tokenTertunda,
       saldoRp: saldoRp,
       rata14: bulat(rata14, 2),
       estimasiHari: estimasiHari,
@@ -484,6 +531,13 @@
               " hari lagi (sekitar " + labelTanggal(r.estimasiTanggal) + ")."
       });
     }
+    if (r.tokenTertunda > 0) {
+      out.push({
+        tipe: "token",
+        teks: "Token " + angka(r.tokenTertunda, 0) + " kWh sudah masuk ke meteran setelah pembacaan terakhir, " +
+              "jadi saldo sekarang " + angka(r.sisaAkhir, 0) + " kWh (tercatat " + angka(r.sisaTercatat, 0) + " kWh + token baru)."
+      });
+    }
 
     if (r.pembelian.length) {
       var beli = r.pembelian.map(function (b) { return labelTanggal(b.tanggal, false) + ": " + angka(b.kwh, 0) + " kWh (" + rp(b.rp) + ")"; }).join("; ");
@@ -536,7 +590,12 @@
           items.push({ tipe: "token", teks: "Token masuk " + angka(b.masukKwh, 0) + " kWh (" + rp(b.masukRp) + ")." });
         }
         if (b.sisaAwal !== null && b.sisaAwal !== undefined) {
-          items.push({ tipe: "info", teks: "Sisa token tercatat " + angka(b.sisaAwal, 0) + " → " + angka(b.sisaAkhir, 0) + " kWh." });
+          var sisaAkhirBulan = (b.sisaEfektif !== undefined ? b.sisaEfektif : b.sisaAkhir);
+          items.push({
+            tipe: "info",
+            teks: "Sisa token tercatat " + angka(b.sisaAwal, 0) + " → " + angka(sisaAkhirBulan, 0) + " kWh" +
+              (b.sisaEfektif !== undefined && b.sisaEfektif !== b.sisaAkhir ? " (termasuk token baru)" : "") + "."
+          });
         }
         if (prev) {
           items.push({
@@ -611,7 +670,12 @@
         items.push({ tipe: "token", teks: "Token masuk " + angka(b.masukKwh, 0) + " kWh (" + rp(b.masukRp) + ")." });
       }
       if (b.sisaAwal !== null && b.sisaAwal !== undefined) {
-        items.push({ tipe: "info", teks: "Sisa token " + angka(b.sisaAwal, 0) + " → " + angka(b.sisaAkhir, 0) + " kWh pada akhir bulan." });
+        var sisaAkhirBulan2 = (b.sisaEfektif !== undefined ? b.sisaEfektif : b.sisaAkhir);
+        items.push({
+          tipe: "info",
+          teks: "Sisa token " + angka(b.sisaAwal, 0) + " → " + angka(sisaAkhirBulan2, 0) + " kWh pada akhir bulan" +
+            (b.sisaEfektif !== undefined && b.sisaEfektif !== b.sisaAkhir ? " (termasuk token baru)" : "") + "."
+        });
       }
 
       hasil.push({ key: b.key, label: b.label, kwh: b.kwh, biaya: b.biaya, hari: b.hari, items: items });
@@ -653,27 +717,31 @@
       if (sisa === null || sisa < 0) continue;
       var masuk = 0;
       var catatan = "";
+      var urutanToken = "auto";
       if (sel.length >= 3) {
         var c3 = String(sel[2]).replace(/^"|"$/g, "").trim();
         var n3 = parseAngka(c3);
         if (n3 !== null && c3 !== "") {
           masuk = Math.max(0, n3);
           catatan = sel.length >= 4 ? String(sel[3]).replace(/^"|"$/g, "").trim() : "";
+          var c5 = sel.length >= 5 ? String(sel[4]).replace(/^"|"$/g, "").trim().toLowerCase() : "";
+          if (c5 === "sebelum" || c5 === "sesudah") urutanToken = c5;
         } else {
           catatan = c3;
         }
       }
-      hasil.push({ tanggal: tgl, sisa: bulat(sisa, 2), masuk: masuk, catatan: catatan });
+      hasil.push({ tanggal: tgl, sisa: bulat(sisa, 2), masuk: masuk, urutanToken: urutanToken, catatan: catatan });
     }
     return hasil;
   }
 
   function toCsv(catatan) {
-    var baris = ["tanggal,sisa,masuk,catatan"];
+    var baris = ["tanggal,sisa,masuk,catatan,urutan_token"];
     (catatan || []).slice().sort(function (a, b) { return a.tanggal < b.tanggal ? -1 : 1; })
       .forEach(function (r) {
         var note = String(r.catatan || "").replace(/"/g, '""');
-        baris.push(r.tanggal + "," + r.sisa + "," + (r.masuk || 0) + ',"' + note + '"');
+        var urutan = (r.urutanToken === "sebelum" || r.urutanToken === "sesudah") ? r.urutanToken : "auto";
+        baris.push(r.tanggal + "," + r.sisa + "," + (r.masuk || 0) + ',"' + note + '",' + urutan);
       });
     return baris.join("\r\n");
   }

@@ -21,17 +21,32 @@ Data Oktober 2026 (hasil pemindahan dari catatan manual) sudah dimuat sebagai da
 
 | Nilai | Rumus |
 |---|---|
-| Pemakaian satu hari | `sisa hari ini + token masuk pada pembacaan berikutnya − sisa pembacaan berikutnya` |
+| Pemakaian satu hari | `sisa hari ini + token yang masuk pada interval ini − sisa pembacaan berikutnya` |
 | Biaya | `pemakaian × harga per kWh` |
 | Rata-rata harian | `total kWh ÷ jumlah hari yang terhitung` |
 | Subtotal mingguan | pekan **Senin–Minggu** (sama seperti catatan manual) |
 | Rekap bulanan | total kWh, biaya, token masuk, sisa token awal → akhir |
-| Estimasi token habis | `sisa token ÷ rata-rata 14 hari terakhir` |
+| Estimasi token habis | `sisa token (efektif) ÷ rata-rata 14 hari terakhir` |
 | Proyeksi | `rata-rata harian × 30 hari` dan setahun |
 
 Contoh dari data asli: 11 Okt sisa **1.205 kWh**, 12 Okt diisi token **109 kWh** dan sisa menjadi **1.309 kWh** → pemakaian 11 Okt = `1.205 + 109 − 1.309 = 5 kWh` = **Rp 9.175** pada harga Rp 1.835/kWh.
 
 Angka kunci Oktober 2026: **180 kWh / Rp 330.300**, rata-rata **5,81 kWh/hari**, sisa token akhir **1.215 kWh** (Rp 2.229.525). Cocok dengan rekonsiliasi saldo: `1.286 + 109 − 1.215 = 180 kWh`.
+
+## Urutan token (penting)
+
+Token bisa dibeli **sebelum** atau **sesudah** angka sisa dibaca. Aplikasi mendeteksinya otomatis
+dari perubahan saldo, dan Anda juga bisa memilih manual di kolom **Urutan token** saat mengisi token:
+
+- **Sebelum dibaca** — angka sisa yang dicatat **sudah termasuk** token (saldo naik).
+  Contoh: 12 Okt sisa `1.309` berasal dari `1.200 + 109`. Pemakaian 11 Okt = `1.205 + 109 − 1.309 = 5 kWh`.
+- **Sesudah dibaca** — Anda membaca sisa dulu, **baru** membeli token (saldo turun/normal).
+  Contoh: 9 Nov `1.186` → 10 Nov `1.183` → 11 Nov dibaca `1.182` lalu beli token `109` kWh (meter jadi `1.291`).
+  Pemakaian **10 Nov = 1 kWh** (bukan 110 kWh), dan token 109 kWh dihitung pada interval **11–12 Nov**.
+
+Kolom **Token masuk** di tabel harian kini menandai **“sebelum catat”** atau **“setelah catat”**,
+dan kartu **Sisa token sekarang** menampilkan saldo efektif (termasuk token baru yang belum tercatat di pembacaan terakhir).
+Jadi tidak perlu lagi menebak urutan; cukup isi tanggal, sisa kWh, dan (bila ada) token — pilihan **Otomatis** sudah aman.
 
 ## Harga & tarif
 
@@ -60,13 +75,15 @@ Angka kunci Oktober 2026: **180 kWh / Rp 330.300**, rata-rata **5,81 kWh/hari**,
 Klik **Impor**, pilih berkas CSV (contoh `contoh-catatan.csv`) atau backup JSON.
 
 ```csv
-tanggal,sisa,masuk,catatan
-2026-11-01,1215,0,pagi
-2026-11-02,1209,0,
+tanggal,sisa,masuk,catatan,urutan_token
+2026-11-01,1215,0,pagi,auto
+2026-11-02,1209,0,,
+2026-11-11,1182,109,baca dulu lalu beli token,sesudah
 ```
 
 - Tanggal: `YYYY-MM-DD` (juga menerima `DD/MM/YYYY`).
 - Angka boleh format Indonesia (`1.209,5`) maupun biasa (`1209.5`).
+- Kolom ke-5 (`urutan_token`) opsional: `auto` (default), `sebelum`, atau `sesudah`.
 - Baris dengan tanggal yang sudah ada akan dilewati, kecuali centang **Timpa catatan yang tanggalnya sudah ada**.
 
 ## Backup & Restore (drive L:\ dan GitHub)
