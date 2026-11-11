@@ -80,8 +80,9 @@
       "<p>Isi <b>TokenId</b> dan <b>WiFi SN</b> di panel Konfigurasi, lalu tekan <b>Simpan &amp; uji</b>. " +
       "Setelah tersambung, halaman ini menampilkan SOC baterai, daya PV, daya baterai, dan status off-grid.</p>" +
       '<ul class="plts-tips">' +
-      "<li>TokenId: SolaxCloud → menu <b>Service</b> → <b>API</b>.</li>" +
+      "<li>TokenId: SolaxCloud → menu <b>Service</b> → <b>API</b> (umumnya hanya untuk akun installer/distributor).</li>" +
       "<li>WiFi SN: nomor seri dongle Wi-Fi / Registration Number inverter.</li>" +
+      "<li>Kalau akun Anda akun end-user (menu Service tidak ada), minta TokenId ke installer, atau pakai penanda manual “PLTS off-grid” di catatan harian.</li>" +
       "<li>Data diperbarui tiap ±60 detik (bisa dimatikan).</li>" +
       "</ul></div>";
     $("pltsStatus").innerHTML = html;

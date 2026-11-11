@@ -94,6 +94,14 @@ Halaman PLTS menampilkan: SOC baterai, produksi PV, daya baterai, grid (ekspor/i
 AC output, status inverter, waktu data inverter, serta status seperti **“Mode EPS / OFF-GRID”**,
 **“Baterai lemah & PLTS tidak produksi”**, atau **“PLTS normal”**. Data diperbarui otomatis tiap 60 detik.
 
+> **Menu “Service → API” tidak muncul?** TokenId SolaxCloud umumnya hanya tersedia untuk akun
+> **installer/distributor**, bukan akun end-user. Yang muncul di akun end-user biasanya **SolaX Developer
+> Portal** (`developer.solaxcloud.com`) untuk membuat aplikasi OAuth (clientId/clientSecret) — mekanisme
+> berbeda dari TokenId. Pilihannya: (1) minta TokenId ke installer, (2) pakai Developer Portal lalu minta
+> bantuan menambahkan mode OAuth, atau (3) tanpa cloud: baca inverter langsung lewat Modbus di jaringan lokal.
+> Tanpa salah satu itu, halaman PLTS tetap menampilkan status “belum tersambung”, dan pengamatan PLTS masih
+> bisa dilakukan lewat **penanda manual “Hari ini PLTS off-grid”** di catatan harian.
+
 Token disimpan **hanya di komputer ini** (`solax-config.json`, tidak ikut backup GitHub dan tidak ikut restore).
 Helper meneruskan permintaan ke SolaxCloud, jadi TokenId tidak pernah ditulis di browser.
 
