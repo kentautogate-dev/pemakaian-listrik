@@ -72,9 +72,9 @@ const ID_SNAPSHOT = /^\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}$/;
 const HASH_COMMIT = /^[0-9a-fA-F]{4,40}$/;
 
 // Nama berkas/folder yang tidak ikut disalin saat backup project.
-const NAMA_DIABAIKAN = new Set([".git", "backup-config.json", "node_modules", "__pycache__"]);
+const NAMA_DIABAIKAN = new Set([".git", "backup-config.json", "solax-config.json", "node_modules", "__pycache__"]);
 // Berkas yang tidak boleh ditimpa saat restore project.
-const TIDAK_DITIMPA_RESTORE = new Set(["backup-config.json"]);
+const TIDAK_DITIMPA_RESTORE = new Set(["backup-config.json", "solax-config.json"]);
 
 const KONFIG_BAWAAN = Object.freeze({
   folderBackup: "L:\\BACKUP_PEMAKAIAN_LISTRIK",
@@ -418,6 +418,190 @@ function simpanKonfigurasi(konf) {
   };
   fs.mkdirSync(path.dirname(BERKAS_KONFIG), { recursive: true });
   fs.writeFileSync(BERKAS_KONFIG, `${JSON.stringify(isi, null, 2)}\n`, "utf8");
+}
+
+/* ========================================================================== *
+ * SolaxCloud (PLTS) — konfigurasi & proxy data realtime
+ * ========================================================================== */
+
+const BERKAS_SOLAX = process.env.SOLAX_CONFIG
+  ? path.resolve(process.env.SOLAX_CONFIG)
+  : path.join(PROJECT, "solax-config.json");
+
+const SOLAX_BAWAAN = Object.freeze({
+  tokenId: "",
+  wifiSn: "",
+  url: "https://www.solaxcloud.com",
+  ambangSoc: 20
+});
+
+function muatSolax() {
+  const isi = bacaJsonAman(BERKAS_SOLAX);
+  return { ...SOLAX_BAWAAN, ...(isi || {}) };
+}
+
+function simpanSolax(konf) {
+  const isi = {
+    tokenId: konf.tokenId,
+    wifiSn: konf.wifiSn,
+    url: konf.url,
+    ambangSoc: konf.ambangSoc
+  };
+  fs.mkdirSync(path.dirname(BERKAS_SOLAX), { recursive: true });
+  fs.writeFileSync(BERKAS_SOLAX, `${JSON.stringify(isi, null, 2)}\n`, "utf8");
+}
+
+function periksaSolax(body) {
+  const tokenId = String(body.tokenId == null ? "" : body.tokenId).trim();
+  const wifiSn = String(body.wifiSn == null ? "" : body.wifiSn).trim();
+  const url = String(body.url == null ? "" : body.url).trim() || SOLAX_BAWAAN.url;
+  const ambangSoc = Number(body.ambangSoc);
+  if (!tokenId) return "TokenId SolaxCloud wajib diisi (menu Service → API di SolaxCloud).";
+  if (tokenId.length > 300 || /\s/.test(tokenId)) return "TokenId tidak valid (tidak boleh mengandung spasi).";
+  if (!wifiSn) return "WiFi SN / Registration Number inverter wajib diisi.";
+  if (wifiSn.length > 100 || /\s/.test(wifiSn)) return "WiFi SN tidak valid (tanpa spasi).";
+  if (!/^https?:\/\/[^\s/]+\/?$/i.test(url)) return "URL API harus diawali http:// atau https://";
+  if (!isFinite(ambangSoc) || ambangSoc < 0 || ambangSoc > 100) return "Ambang SOC harus 0–100%.";
+  return "";
+}
+
+function statusInverterTeks(kode) {
+  const peta = {
+    100: "Menunggu operasi", 101: "Self-test", 102: "Normal", 103: "Gangguan (recoverable)",
+    104: "Gangguan permanen", 105: "Update firmware", 106: "Pemeriksaan EPS",
+    107: "Mode EPS / OFF-GRID", 108: "Self-test (regulasi Italia)", 109: "Mode tidur",
+    110: "Standby", 111: "Bangun dari baterai (PV wake-up)", 112: "Pemeriksaan genset",
+    113: "Genset berjalan", 114: "RSD standby", 130: "Mode VPP", 131: "TOU — self use",
+    132: "TOU — charging", 133: "TOU — discharging", 134: "TOU — baterai off",
+    135: "TOU — peak shaving", 150: "Self use", 151: "Force time use", 152: "Back up mode",
+    153: "Feed-in priority", 154: "Demand mode", 155: "Const power mode",
+    160: "OpenADR mode", 170: "STOP mode", 171: "DEBUG mode"
+  };
+  return peta[kode] || ("Status kode " + kode);
+}
+
+function pesanGalatSolax(data) {
+  const kode = Number(data && data.code);
+  if (kode === 103) return "TokenId SolaxCloud tidak valid/kedaluwarsa. Salin ulang token dari menu Service → API.";
+  if (kode === 10406) return "Batas frekuensi API SolaxCloud tercapai. Tunggu beberapa menit lalu coba lagi.";
+  if (kode === 10500) return "Akun SolaxCloud tidak punya akses ke perangkat ini (periksa WiFi SN).";
+  if (kode === 10001) return "SolaxCloud gagal memproses permintaan. Periksa WiFi SN dan coba lagi.";
+  return "SolaxCloud menolak permintaan: " + ((data && (data.exception || data.message)) || ("kode " + kode));
+}
+
+function angkaAtauNull(nilai) {
+  if (nilai === null || nilai === undefined || nilai === "") return null;
+  const n = Number(nilai);
+  return isFinite(n) ? n : null;
+}
+
+function petaSolaxRealtime(r, konf) {
+  const pv = ["powerdc1", "powerdc2", "powerdc3", "powerdc4"]
+    .reduce((s, k) => s + (angkaAtauNull(r[k]) || 0), 0);
+  const soc = angkaAtauNull(r.soc);
+  const batPower = angkaAtauNull(r.batPower);
+  const feedin = angkaAtauNull(r.feedinpower);
+  const statusKode = r.inverterStatus !== undefined && r.inverterStatus !== null ? Number(r.inverterStatus) : null;
+  const ambang = Number(konf.ambangSoc) || 20;
+  const offGrid = statusKode === 107;
+  const socRendah = soc !== null && soc <= ambang;
+  const pltsProduksi = pv > 50;
+
+  let statusTeks = "PLTS normal";
+  let peringatan = "";
+  if (offGrid) {
+    statusTeks = "Mode EPS / OFF-GRID (grid PLN mati)";
+    peringatan = "Inverter sedang mode EPS (off-grid). Beban dilayani dari baterai/PV.";
+  } else if (socRendah && !pltsProduksi) {
+    statusTeks = "Baterai lemah & PLTS tidak produksi";
+    peringatan = "SOC baterai " + soc + "% dan PV " + Math.round(pv) + " W. Kemungkinan besar beban rumah dari PLN.";
+  } else if (!pltsProduksi) {
+    statusTeks = "PLTS tidak produksi (malam/hujan)";
+    peringatan = "PV ≈ 0 W. Beban bisa dari baterai atau PLN.";
+  } else if (socRendah) {
+    statusTeks = "Produksi PLTS rendah, baterai lemah";
+    peringatan = "SOC " + soc + "% (di bawah ambang " + ambang + "%).";
+  }
+
+  return {
+    ambilWaktu: isoWaktu(),
+    wifiSn: konf.wifiSn,
+    inverterSN: r.inverterSN || "",
+    acpowerW: angkaAtauNull(r.acpower),
+    pvW: Math.round(pv),
+    batPowerW: batPower,
+    socPct: soc,
+    feedinpowerW: feedin,
+    feedinEnergyKwh: angkaAtauNull(r.feedinenergy),
+    consumeEnergyKwh: angkaAtauNull(r.consumeenergy),
+    yieldTodayKwh: angkaAtauNull(r.yieldtoday),
+    yieldTotalKwh: angkaAtauNull(r.yieldtotal),
+    inverterStatusKode: statusKode,
+    inverterStatusTeks: statusKode !== null ? statusInverterTeks(statusKode) : "",
+    batStatus: r.batStatus !== null && r.batStatus !== undefined ? String(r.batStatus) : "",
+    uploadTime: r.uploadTime || "",
+    pltsProduksi: pltsProduksi,
+    offGrid: offGrid,
+    socRendah: socRendah,
+    ambangSoc: ambang,
+    statusTeks: statusTeks,
+    peringatan: peringatan
+  };
+}
+
+async function ambilSolaxRealtime() {
+  const konf = muatSolax();
+  const tokenId = String(konf.tokenId || "").trim();
+  const wifiSn = String(konf.wifiSn || "").trim();
+  if (!tokenId || !wifiSn) return { terkonfigurasi: false, konfigurasi: { wifiSn, url: konf.url, ambangSoc: konf.ambangSoc, tokenTerisi: false } };
+
+  const alamat = String(konf.url || SOLAX_BAWAAN.url).replace(/\/+$/, "") + "/api/v2/dataAccess/realtimeInfo/get";
+  let resp;
+  try {
+    resp = await fetch(alamat, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", tokenId },
+      body: JSON.stringify({ wifiSn }),
+      signal: AbortSignal.timeout(20000)
+    });
+  } catch (e) {
+    throw new GalatHttp(502, "Tidak bisa menghubungi SolaxCloud: " + (e && e.message ? e.message : "jaringan bermasalah"));
+  }
+  const teks = await resp.text();
+  let data = null;
+  try { data = JSON.parse(teks); } catch (e) { data = null; }
+  if (!data) throw new GalatHttp(502, "Jawaban SolaxCloud tidak valid (bukan JSON).");
+  if (!data.success) throw new GalatHttp(502, pesanGalatSolax(data));
+
+  const hasil = petaSolaxRealtime(data.result || {}, konf);
+  return { terkonfigurasi: true, data: hasil, konfigurasi: { wifiSn, url: konf.url, ambangSoc: konf.ambangSoc, tokenTerisi: true } };
+}
+
+async function apiSolaxStatus() {
+  const hasil = await ambilSolaxRealtime();
+  return { ok: true, ...hasil };
+}
+
+async function postSolaxKonfigurasi(req) {
+  const body = await bacaBody(req);
+  if (!body || typeof body !== "object" || Array.isArray(body)) {
+    throw new GalatHttp(400, "Body harus berupa objek JSON.");
+  }
+  const lama = muatSolax();
+  const tokenId = String(body.tokenId == null ? "" : body.tokenId).trim() || String(lama.tokenId || "").trim();
+  const wifiSn = String(body.wifiSn == null ? "" : body.wifiSn).trim() || String(lama.wifiSn || "").trim();
+  const url = (String(body.url == null ? "" : body.url).trim() || lama.url || SOLAX_BAWAAN.url).replace(/\/+$/, "");
+  const ambangSoc = Number(body.ambangSoc);
+
+  const salah = periksaSolax({ tokenId, wifiSn, url, ambangSoc });
+  if (salah) throw new GalatHttp(400, salah);
+
+  simpanSolax({ tokenId, wifiSn, url, ambangSoc });
+  return {
+    ok: true,
+    terkonfigurasi: true,
+    konfigurasi: { wifiSn, url, ambangSoc, tokenTerisi: true }
+  };
 }
 
 /* ========================================================================== *
@@ -1907,6 +2091,8 @@ async function tangani(req, res) {
           "GET /api/snapshots",
           "GET /api/github/log",
           "POST /api/cek-github",
+          "GET /api/solax/status",
+          "POST /api/solax/konfigurasi",
           "POST /api/backup",
           "POST /api/restore",
           "GET /api/job/:id"
@@ -1942,6 +2128,16 @@ async function tangani(req, res) {
 
     if (metode === "POST" && jalur === "/api/cek-github") {
       kirim(res, 200, await apiCekGithub(req));
+      return;
+    }
+
+    if (metode === "GET" && jalur === "/api/solax/status") {
+      kirim(res, 200, await apiSolaxStatus());
+      return;
+    }
+
+    if (metode === "POST" && jalur === "/api/solax/konfigurasi") {
+      kirim(res, 200, await postSolaxKonfigurasi(req));
       return;
     }
 

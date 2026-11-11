@@ -66,19 +66,52 @@ Jadi tidak perlu lagi menebak urutan; cukup isi tanggal, sisa kWh, dan (bila ada
 - **Saldo token**: sisa kWh, nilai rupiah, perkiraan habis, riwayat pengisian token, kalkulator beli token (Rp → kWh)
   dengan **titik pemisah ribuan otomatis** (ketik `200000` → tampil `200.000`).
 - **Tabel catatan harian** per bulan dengan subtotal mingguan dan total bulanan; bisa **ubah** (✎) dan **hapus** (🗑) dengan tombol **Urungkan** pada notifikasi.
+- **Penanda PLTS off-grid**: centang “Hari ini PLTS off-grid (baterai habis)” saat mencatat, lalu analisa
+  membandingkan rata-rata kWh hari off-grid vs hari normal.
+- **Halaman PLTS (Solar)**: status realtime SolaxCloud — SOC baterai, produksi PV, daya baterai, grid, status
+  inverter (termasuk **mode EPS/off-grid kode 107**) — plus korelasi dengan pemakaian PLN.
 - **Rekap bulanan** seluruh periode (bulan berjalan selalu ikut ditampilkan, walau masih kosong).
 - **Impor** CSV / backup JSON, **ekspor** CSV / JSON, dan **cetak laporan** A4 untuk bulan yang sedang dipilih.
 - **Tema gelap**, tampilan responsif untuk HP, pintasan `Ctrl+Enter` untuk menyimpan, `Esc` menutup dialog.
+
+## PLTS (Solar) — monitor SolaxCloud
+
+Link SolaxCloud yang dibagikan (`global.solaxcloud.com/green/#/overview?...&onlyView=1`) **tidak bisa ditempel
+langsung** ke aplikasi karena halaman itu tetap meminta login dan tidak mengizinkan diambil dari browser lain
+(CORS). Karena itu aplikasi memakai **API resmi SolaxCloud** lewat helper lokal — data yang sama, tanpa perlu
+membuka situs Solax.
+
+Cara menyiapkan (sekali saja):
+
+1. Login ke [SolaxCloud](https://www.solaxcloud.com/user-center/).
+2. Buka menu **Service → API**, salin **TokenId**.
+3. Cari **WiFi SN / Registration Number** inverter (nomor seri dongle Wi-Fi; ada di aplikasi SolaxCloud
+   atau label perangkat).
+4. Jalankan helper (`mulai-backup.cmd`) → buka halaman **PLTS (Solar)** → isi TokenId, WiFi SN, dan ambang SOC
+   (bawaan 20%) → **Simpan & uji**.
+
+Halaman PLTS menampilkan: SOC baterai, produksi PV, daya baterai, grid (ekspor/impor), hasil hari ini,
+AC output, status inverter, waktu data inverter, serta status seperti **“Mode EPS / OFF-GRID”**,
+**“Baterai lemah & PLTS tidak produksi”**, atau **“PLTS normal”**. Data diperbarui otomatis tiap 60 detik.
+
+Token disimpan **hanya di komputer ini** (`solax-config.json`, tidak ikut backup GitHub dan tidak ikut restore).
+Helper meneruskan permintaan ke SolaxCloud, jadi TokenId tidak pernah ditulis di browser.
+
+### Korelasi PLTS ↔ PLN
+
+- Centang **“Hari ini PLTS off-grid”** di form catatan (atau tombol di halaman PLTS) pada hari baterai habis.
+- Analisa bulanan menampilkan **jumlah hari off-grid, rata-rata kWh/hari saat off-grid vs hari normal, dan selisih %**.
+- Halaman PLTS juga menampilkan ringkasan yang sama + daftar tanggal off-grid bulan ini.
 
 ## Impor data
 
 Klik **Impor**, pilih berkas CSV (contoh `contoh-catatan.csv`) atau backup JSON.
 
 ```csv
-tanggal,sisa,masuk,catatan,urutan_token
-2026-11-01,1215,0,pagi,auto
-2026-11-02,1209,0,,
-2026-11-11,1182,109,baca dulu lalu beli token,sesudah
+tanggal,sisa,masuk,catatan,urutan_token,plts_off
+2026-11-01,1215,0,pagi,auto,0
+2026-11-02,1209,0,,,0
+2026-11-11,1182,109,baca dulu lalu beli token,sesudah,1
 ```
 
 - Tanggal: `YYYY-MM-DD` (juga menerima `DD/MM/YYYY`).
@@ -88,7 +121,7 @@ tanggal,sisa,masuk,catatan,urutan_token
 
 ## Backup & Restore (drive L:\ dan GitHub)
 
-Ada halaman khusus **Backup & Restore** di aplikasi (menu di atas: *Catatan Listrik* / *Backup & Restore*).
+Ada halaman khusus **Backup & Restore** di aplikasi (menu di atas: *Catatan Listrik* / *PLTS (Solar)* / *Backup & Restore*).
 Karena browser tidak boleh menulis ke `L:\` atau menjalankan `git push` sendiri, halaman ini memakai
 **helper lokal** kecil (`server-backup.js`, Node.js) yang hanya mendengarkan di `127.0.0.1:8787`.
 

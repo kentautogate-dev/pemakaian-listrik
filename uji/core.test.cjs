@@ -187,6 +187,30 @@ const csvToken = Core.toCsv([{ tanggal: "2026-11-11", sisa: 1182, masuk: 109, ur
 cek("CSV memuat urutan_token", /,sesudah/.test(csvToken), true);
 cek("CSV parse urutan_token", Core.parseCsv(csvToken)[0].urutanToken, "sesudah");
 
+// --- hari PLTS off-grid (baterai habis) ---
+const dataPlts = Core.hitung({
+  settings: { hargaKwh: 1835 },
+  catatan: [
+    { tanggal: "2026-11-01", sisa: 1200, masuk: 0 },
+    { tanggal: "2026-11-02", sisa: 1195, masuk: 0, pltsOff: true },   // pemakaian 1 Nov = 5
+    { tanggal: "2026-11-03", sisa: 1180, masuk: 0, pltsOff: true },   // pemakaian 2 Nov = 15
+    { tanggal: "2026-11-04", sisa: 1177, masuk: 0 },                  // pemakaian 3 Nov = 3
+    { tanggal: "2026-11-05", sisa: 1175, masuk: 0 }                   // pemakaian 4 Nov = 2
+  ]
+}, { sekarang: "2026-11-05" });
+const bulanPlts = dataPlts.bulanan.find(b => b.key === "2026-11");
+cek("PLTS off: jumlah hari ditandai", bulanPlts.pltsOffHari, 2);
+cek("PLTS off: kWh saat off-grid (15+3)", bulanPlts.pltsOffKwh, 18);
+cek("PLTS off: rata-rata off-grid", bulanPlts.pltsOffRata, 9);
+cek("PLTS off: hari normal", bulanPlts.normalHari, 2);
+cek("PLTS off: rata-rata normal", bulanPlts.normalRata, 3.5);
+const insPlts = dataPlts.insightBulanan.find(b => b.key === "2026-11");
+cek("PLTS off: analisa menyebut off-grid", /PLTS off-grid/.test(insPlts.items.map(i => i.teks).join(" ")), true);
+cek("PLTS off: catatan menyimpan tanda", dataPlts.catatan.find(r => r.tanggal === "2026-11-02").pltsOff, true);
+const csvPlts = Core.toCsv([{ tanggal: "2026-11-02", sisa: 1195, masuk: 0, pltsOff: true, catatan: "" }]);
+cek("PLTS off: CSV memuat plts_off", /,1$/.test(csvPlts), true);
+cek("PLTS off: CSV parse plts_off", Core.parseCsv(csvPlts)[0].pltsOff, true);
+
 // --- tanggal dobel: yang terakhir menang ---
 const dobel = Core.normalise({ catatan: [
   { tanggal: "2026-10-01", sisa: 100 },

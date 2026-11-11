@@ -31,6 +31,7 @@
 
   <nav class="nav-laman" id="navLaman" aria-label="Pilih halaman">
     <button type="button" data-laman="pencatatan" class="on">Catatan Listrik</button>
+    <button type="button" data-laman="plts">PLTS (Solar)</button>
     <button type="button" data-laman="backup">Backup &amp; Restore</button>
   </nav>
 
@@ -76,6 +77,7 @@
           <label for="catatan">Catatan (opsional)</label>
           <input type="text" id="catatan" maxlength="120" placeholder="mis. tambah token 109 kWh, hujan, rumah kosong">
         </div>
+        <label class="periksa"><input type="checkbox" id="pltsOffCatat"> Hari ini PLTS off-grid (baterai habis)</label>
         <div id="pratinjau" class="pratinjau">Isi <b>sisa kWh</b> untuk melihat perhitungan sebelum disimpan.</div>
         <div class="form-aksi">
           <button type="submit" class="primary" id="btnSimpan">Simpan catatan</button>
@@ -190,6 +192,74 @@
   </p>
 
   </div><!-- /halaman-pencatatan -->
+
+  <!-- ================= HALAMAN: PLTS (SOLAR) ================= -->
+  <div id="halaman-plts" class="hidden">
+
+    <div id="pltsOffline" class="banner hidden" role="alert">
+      <b>Helper backup belum aktif.</b> Halaman PLTS memakai helper lokal untuk menghubungi SolaxCloud.
+      Jalankan <code>mulai-backup.cmd</code> atau tombol di halaman Backup, lalu tekan <b>Coba lagi</b>.
+      <div class="banner-aksi">
+        <a class="tombol-tautan primary" href="backup-listrik://mulai">Nyalakan helper otomatis</a>
+        <button type="button" class="primary" id="pltsCobaLagi">Coba lagi</button>
+      </div>
+    </div>
+
+    <section class="grid grid-dua">
+      <div class="card">
+        <h2><span class="dot"></span>Status PLTS (realtime)</h2>
+        <div id="pltsStatus"><div class="muted">Memuat status…</div></div>
+        <div class="plts-aksi">
+          <button type="button" class="ghost" id="pltsPerbarui">Perbarui</button>
+          <label class="periksa"><input type="checkbox" id="pltsAuto" checked> Perbarui otomatis tiap 60 detik</label>
+          <span class="muted kecil" id="pltsWaktu"></span>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2><span class="dot"></span>Konfigurasi SolaxCloud</h2>
+        <div class="field">
+          <label for="pltsToken">TokenId SolaxCloud</label>
+          <input type="password" id="pltsToken" autocomplete="off" placeholder="tempel TokenId dari menu Service → API">
+          <div class="hint">Diambil dari akun SolaxCloud: <b>Service</b> → <b>API</b>. Disimpan lokal di komputer ini.</div>
+        </div>
+        <div class="row-dua">
+          <div class="field">
+            <label for="pltsSn">WiFi SN / Registration Number</label>
+            <input type="text" id="pltsSn" autocomplete="off" placeholder="mis. SUT******VB1">
+          </div>
+          <div class="field">
+            <label for="pltsAmbang">Ambang SOC rendah (%)</label>
+            <input type="number" id="pltsAmbang" min="0" max="100" step="1" value="20">
+          </div>
+        </div>
+        <div class="field">
+          <label for="pltsUrl">URL API SolaxCloud</label>
+          <input type="text" id="pltsUrl" autocomplete="off" value="https://www.solaxcloud.com">
+          <div class="hint">Umumnya <code>https://www.solaxcloud.com</code>. Bisa diganti sesuai region akun.</div>
+        </div>
+        <div class="form-aksi">
+          <button type="button" class="primary" id="pltsSimpan">Simpan &amp; uji</button>
+          <button type="button" class="ghost" id="pltsUji">Uji koneksi</button>
+        </div>
+        <div id="pltsPesan" class="hint"></div>
+        <details class="banner-rincian">
+          <summary>Belum punya TokenId / WiFi SN?</summary>
+          <ol class="langkah">
+            <li>Buka <a class="tautan" href="https://www.solaxcloud.com/user-center/" target="_blank" rel="noopener">SolaxCloud</a> lalu login.</li>
+            <li>Masuk menu <b>Service</b> → <b>API</b>, salin <b>TokenId</b>.</li>
+            <li><b>WiFi SN</b> = Registration Number / nomor seri dongle Wi-Fi pada inverter (bisa dilihat di aplikasi SolaxCloud / label perangkat).</li>
+            <li>Simpan. Halaman ini akan menampilkan SOC baterai, daya PV, baterai, dan status off-grid.</li>
+          </ol>
+        </details>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2><span class="dot"></span>Korelasi PLTS ↔ pemakaian PLN</h2>
+      <div id="pltsKorelasi"><div class="muted">Memuat…</div></div>
+    </section>
+  </div>
 
   <!-- ================= HALAMAN: BACKUP & RESTORE ================= -->
   <div id="halaman-backup" class="hidden">
@@ -453,5 +523,6 @@
 <script src="data-oktober-2026.js"></script>
 <script src="app.js"></script>
 <script src="backup.js"></script>
+<script src="plts.js"></script>
 </body>
 </html>

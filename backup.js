@@ -73,25 +73,26 @@
 
   /* ---------------- tampilkan halaman ---------------- */
   function tampilkanLaman(nama) {
+    var laman = ["pencatatan", "plts", "backup"];
+    if (laman.indexOf(nama) === -1) nama = "pencatatan";
     var tombolNav = document.querySelectorAll("#navLaman button");
     Array.prototype.forEach.call(tombolNav, function (b) {
       b.classList.toggle("on", b.dataset.laman === nama);
     });
-    var pencatatan = $("halaman-pencatatan");
-    var backup = $("halaman-backup");
+    laman.forEach(function (k) {
+      var el = $("halaman-" + k);
+      if (el) el.classList.toggle("hidden", k !== nama);
+    });
     var keBackup = nama === "backup";
-    pencatatan.classList.toggle("hidden", keBackup);
-    backup.classList.toggle("hidden", !keBackup);
     keadaaan.halamanBackup = keBackup;
+    if (window.PltsListrik) window.PltsListrik.setAktif(nama === "plts");
     if (keBackup) {
       muatStatus();
       isiFormKonfigurasi();
-      if (typeof window.scrollTo === "function") window.scrollTo({ top: 0, behavior: "smooth" });
-    } else if (typeof window.scrollTo === "function") {
-      window.scrollTo({ top: 0, behavior: "smooth" });
     }
+    if (typeof window.scrollTo === "function") window.scrollTo({ top: 0, behavior: "smooth" });
     try {
-      history.replaceState(null, "", keBackup ? "#backup" : "#catatan");
+      history.replaceState(null, "", nama === "backup" ? "#backup" : nama === "plts" ? "#plts" : "#catatan");
     } catch (e) { /* file:// kadang membatasi history */ }
   }
 
@@ -707,7 +708,7 @@
     pasangEvent();
     setSibuk(true); // sampai helper terdeteksi
     var hashAwal = (window.location.hash || "").replace("#", "");
-    if (hashAwal === "backup") tampilkanLaman("backup");
+    if (hashAwal === "backup" || hashAwal === "plts") tampilkanLaman(hashAwal);
     else tampilkanLaman("pencatatan");
     // cek ringan di latar supaya tombol langsung siap saat pindah halaman
     muatStatus().then(function () {

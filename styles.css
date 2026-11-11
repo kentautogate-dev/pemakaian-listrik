@@ -579,3 +579,49 @@ code {
   .lap-insight li { margin-bottom: 3px; page-break-inside: avoid; }
   .lap-kaki { margin-top: 14px; border-top: 1px solid #cbd5e1; padding-top: 6px; font-size: 7.5pt; color: #475569; }
 }
+
+/* ---------- halaman PLTS (Solar) ---------- */
+.plts-aksi { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 10px; }
+.plts-aksi .periksa { margin: 0; }
+.plts-status { border: 1px solid var(--garis); border-radius: 12px; padding: 12px; background: var(--panel-2); display: grid; gap: 10px; }
+.plts-status.normal { border-color: color-mix(in srgb, var(--aksen) 45%, transparent); }
+.plts-status.waspada { border-color: color-mix(in srgb, var(--kuning) 55%, transparent); background: color-mix(in srgb, var(--kuning) 7%, var(--panel)); }
+.plts-status.bahaya { border-color: color-mix(in srgb, #ef4444 55%, transparent); background: color-mix(in srgb, #ef4444 8%, var(--panel)); }
+.plts-status-kepala { display: flex; align-items: center; gap: 8px; font-size: 0.95rem; }
+.plts-titik { width: 10px; height: 10px; border-radius: 99px; background: var(--aksen); box-shadow: 0 0 0 4px color-mix(in srgb, var(--aksen) 18%, transparent); }
+.plts-status.waspada .plts-titik { background: var(--kuning); box-shadow: 0 0 0 4px color-mix(in srgb, var(--kuning) 20%, transparent); }
+.plts-status.bahaya .plts-titik { background: #ef4444; box-shadow: 0 0 0 4px color-mix(in srgb, #ef4444 20%, transparent); }
+.plts-peringatan { font-size: 0.82rem; line-height: 1.45; color: var(--teks-lembut); }
+.plts-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.plts-stat { background: var(--panel); border: 1px solid var(--garis); border-radius: 10px; padding: 8px 10px; display: grid; gap: 3px; }
+.plts-label { font-size: 0.68rem; font-weight: 750; letter-spacing: 0.04em; text-transform: uppercase; color: var(--teks-lembut); }
+.plts-nilai { font-size: 0.98rem; font-variant-numeric: tabular-nums; }
+.plts-bar { height: 6px; border-radius: 99px; background: var(--garis); overflow: hidden; margin-top: 2px; }
+.plts-bar i { display: block; height: 100%; background: var(--aksen); }
+.plts-status.waspada .plts-bar i { background: var(--kuning); }
+.plts-status.bahaya .plts-bar i { background: #ef4444; }
+.plts-meta { font-size: 0.72rem; color: var(--teks-lembut); line-height: 1.5; }
+.plts-tag { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.plts-onboarding { display: grid; gap: 8px; font-size: 0.85rem; line-height: 1.55; }
+.plts-onboarding p { margin: 0; color: var(--teks-lembut); }
+.plts-tips { margin: 0; padding-left: 18px; color: var(--teks-lembut); font-size: 0.82rem; display: grid; gap: 3px; }
+.plts-galat { font-size: 0.85rem; }
+.plts-galat p { margin: 6px 0 0; color: #b91c1c; }
+.hint.ok { color: #047857; }
+.hint.bahaya { color: #b91c1c; }
+.plts-korelasi-kepala { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; flex-wrap: wrap; margin-bottom: 8px; }
+.plts-korelasi-angka { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin-bottom: 10px; }
+.plts-korelasi-angka > div { background: var(--panel-2); border: 1px solid var(--garis); border-radius: 10px; padding: 8px 10px; display: grid; gap: 2px; }
+.plts-korelasi-angka b { font-size: 0.95rem; }
+.plts-daftar { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+.plts-pill { font-size: 0.76rem; border: 1px solid var(--garis); border-radius: 99px; padding: 3px 9px; background: var(--panel-2); color: var(--teks-lembut); }
+.banner-rincian { margin-top: 10px; }
+.banner-rincian summary { cursor: pointer; font-size: 0.82rem; font-weight: 700; color: var(--teks-lembut); }
+.langkah { margin: 8px 0 0; padding-left: 18px; font-size: 0.82rem; color: var(--teks-lembut); display: grid; gap: 4px; }
+.tautan { color: var(--aksen); text-decoration: underline; }
+@media (max-width: 640px) {
+  .plts-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 720px) {
+  .plts-korelasi-angka { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}

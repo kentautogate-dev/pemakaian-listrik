@@ -552,7 +552,7 @@
         '<td class="num">' + masukTeks + "</td>" +
         '<td class="num">' + pemakaian + " " + tanda + "</td>" +
         '<td class="num"><b>' + biaya + "</b></td>" +
-        '<td class="catatan">' + esc(r.catatan || "") + "</td>" +
+        '<td class="catatan">' + (r.pltsOff ? '<span class="badge bahaya">PLTS off</span> ' : "") + esc(r.catatan || "") + "</td>" +
         '<td class="aksi">' +
           '<button class="ikon" data-ubah="' + esc(r.id) + '" title="Ubah catatan" aria-label="Ubah catatan">' + ikon("pensil") + "</button>" +
           '<button class="ikon" data-hapus="' + esc(r.id) + '" title="Hapus catatan" aria-label="Hapus catatan">' + ikon("hapus") + "</button>" +
@@ -643,6 +643,7 @@
     $("urutanToken").value = "auto";
     $("barisUrutanToken").classList.add("hidden");
     $("catatan").value = "";
+    $("pltsOffCatat").checked = false;
     $("formTitle").textContent = "Catat Sisa Token";
     $("btnSimpan").textContent = "Simpan catatan";
     $("btnBatal").classList.add("hidden");
@@ -763,6 +764,7 @@
     var catatan = $("catatan").value.trim().slice(0, 120);
     var modeToken = $("urutanToken").value;
     var urutanToken = (masuk > 0 && (modeToken === "sebelum" || modeToken === "sesudah")) ? modeToken : "auto";
+    var pltsOff = $("pltsOffCatat").checked;
 
     if (!tanggal) { tampilToast("Tanggal belum diisi dengan benar.", "error"); $("tanggal").focus(); return; }
     if (sisa === null || sisa < 0) { tampilToast("Sisa kWh harus berupa angka ≥ 0.", "error"); $("sisa").focus(); return; }
@@ -781,6 +783,7 @@
       rec.masuk = masuk;
       rec.urutanToken = urutanToken;
       rec.catatan = catatan;
+      rec.pltsOff = pltsOff;
       state = Core.normalise(state);
       simpan();
       resetForm();
@@ -798,6 +801,7 @@
       kembar.masuk = masuk;
       kembar.urutanToken = urutanToken;
       kembar.catatan = catatan;
+      kembar.pltsOff = pltsOff;
       state = Core.normalise(state);
       simpan();
       resetForm();
@@ -809,7 +813,8 @@
 
     state.catatan.push({
       id: "c" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
-      tanggal: tanggal, sisa: sisa, masuk: masuk, urutanToken: urutanToken, catatan: catatan
+      tanggal: tanggal, sisa: sisa, masuk: masuk, urutanToken: urutanToken,
+      pltsOff: pltsOff, catatan: catatan
     });
     state = Core.normalise(state);
     simpan();
@@ -828,6 +833,7 @@
     $("sisa").value = String(rec.sisa).replace(".", ",");
     $("masuk").value = rec.masuk ? String(rec.masuk).replace(".", ",") : "";
     $("urutanToken").value = (rec.urutanToken === "sebelum" || rec.urutanToken === "sesudah") ? rec.urutanToken : "auto";
+    $("pltsOffCatat").checked = !!rec.pltsOff;
     $("catatan").value = rec.catatan || "";
     $("formTitle").textContent = "Ubah Catatan";
     $("btnSimpan").textContent = "Simpan perubahan";
@@ -992,13 +998,14 @@
         peta[r.tanggal].sisa = r.sisa;
         peta[r.tanggal].masuk = r.masuk;
         peta[r.tanggal].urutanToken = r.urutanToken || "auto";
+        peta[r.tanggal].pltsOff = !!r.pltsOff;
         if (r.catatan) peta[r.tanggal].catatan = r.catatan;
         masuk++;
       } else {
         peta[r.tanggal] = {
           id: "impor-" + r.tanggal + "-" + Math.random().toString(36).slice(2, 5),
           tanggal: r.tanggal, sisa: r.sisa, masuk: r.masuk,
-          urutanToken: r.urutanToken || "auto", catatan: r.catatan || ""
+          urutanToken: r.urutanToken || "auto", pltsOff: !!r.pltsOff, catatan: r.catatan || ""
         };
         masuk++;
       }

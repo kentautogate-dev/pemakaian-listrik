@@ -185,6 +185,8 @@
         // Urutan token relatif terhadap angka sisa:
         // "auto" = dideteksi dari perubahan saldo, "sebelum"/"sesudah" = pilihan pengguna.
         urutanToken: (r.urutanToken === "sebelum" || r.urutanToken === "sesudah") ? r.urutanToken : "auto",
+        // Tanda hari ketika PLTS off-grid (baterai habis) → pemakaian PLN biasanya naik.
+        pltsOff: !!(r.pltsOff === true || r.pltsOff === 1 || r.pltsOff === "1" || r.pltsOff === "true"),
         catatan: typeof r.catatan === "string" ? r.catatan.slice(0, 160) : ""
       };
       if (!perTanggal[tgl]) urutan.push(tgl);
@@ -249,6 +251,7 @@
       var rec = {
         id: r.id, tanggal: r.tanggal, sisa: r.sisa, masuk: r.masuk, catatan: r.catatan,
         urutanToken: r.urutanToken,
+        pltsOff: !!r.pltsOff,
         masukSebelum: (r.masuk > 0 ? posisiToken[i] : null),
         hari: namaHari(r.tanggal),
         pemakaian: null, biaya: null, jeda: null, anomali: null
@@ -337,7 +340,8 @@
       if (!petaBulan[key]) {
         petaBulan[key] = {
           key: key, label: labelBulan(key), kwh: 0, biaya: 0, hari: 0, sisaAwal: r.sisa,
-          sisaAkhir: r.sisa, masukKwh: 0, masukRp: 0, hariNol: 0, catatan: 0, maksHari: null
+          sisaAkhir: r.sisa, masukKwh: 0, masukRp: 0, hariNol: 0, catatan: 0, maksHari: null,
+          pltsOffHari: 0, pltsOffKwh: 0, normalHari: 0, normalKwh: 0
         };
         urutanBulan.push(key);
       }
@@ -349,6 +353,8 @@
         m.kwh += r.pemakaian;
         m.biaya += r.biaya;
         m.hari += 1;
+        if (r.pltsOff) { m.pltsOffHari += 1; m.pltsOffKwh += r.pemakaian; }
+        else { m.normalHari += 1; m.normalKwh += r.pemakaian; }
         if (r.pemakaian === 0) m.hariNol += 1;
         if (!m.maksHari || r.pemakaian > m.maksHari.pemakaian) m.maksHari = r;
       }
@@ -360,6 +366,10 @@
       m.masukKwh = bulat(m.masukKwh, 2);
       m.masukRp = Math.round(m.masukRp);
       m.rataHarian = m.hari ? bulat(m.kwh / m.hari, 2) : 0;
+      m.pltsOffKwh = bulat(m.pltsOffKwh, 2);
+      m.normalKwh = bulat(m.normalKwh, 2);
+      m.pltsOffRata = m.pltsOffHari ? bulat(m.pltsOffKwh / m.pltsOffHari, 2) : 0;
+      m.normalRata = m.normalHari ? bulat(m.normalKwh / m.normalHari, 2) : 0;
       m.jumlahHari = jumlahHariBulan(k);
       return m;
     });
@@ -642,6 +652,19 @@
         });
       }
 
+      // hari PLTS off-grid (baterai habis) vs hari normal
+      if (b.pltsOffHari) {
+        items.push({
+          tipe: "waspada",
+          teks: b.pltsOffHari + " hari ditandai PLTS off-grid: " + angka(b.pltsOffKwh, 1) + " kWh (" +
+            angka(b.pltsOffRata, 1) + " kWh/hari)" +
+            (b.normalHari ? ", dibanding hari normal " + angka(b.normalRata, 1) + " kWh/hari" +
+              (b.normalRata > 0 && b.pltsOffRata > b.normalRata
+                ? " → +" + angka((b.pltsOffRata / b.normalRata - 1) * 100, 0) + "%"
+                : "") : "") + "."
+        });
+      }
+
       // hari di atas rata-rata (lonjakan)
       var varians = harianBulan.reduce(function (s, r) { return s + Math.pow(r.pemakaian - rata, 2); }, 0) / harianBulan.length;
       var sd = Math.sqrt(varians);
@@ -718,6 +741,7 @@
       var masuk = 0;
       var catatan = "";
       var urutanToken = "auto";
+      var pltsOff = false;
       if (sel.length >= 3) {
         var c3 = String(sel[2]).replace(/^"|"$/g, "").trim();
         var n3 = parseAngka(c3);
@@ -726,22 +750,28 @@
           catatan = sel.length >= 4 ? String(sel[3]).replace(/^"|"$/g, "").trim() : "";
           var c5 = sel.length >= 5 ? String(sel[4]).replace(/^"|"$/g, "").trim().toLowerCase() : "";
           if (c5 === "sebelum" || c5 === "sesudah") urutanToken = c5;
+          var c6 = sel.length >= 6 ? String(sel[5]).replace(/^"|"$/g, "").trim().toLowerCase() : "";
+          pltsOff = (c6 === "1" || c6 === "true" || c6 === "ya");
         } else {
           catatan = c3;
         }
       }
-      hasil.push({ tanggal: tgl, sisa: bulat(sisa, 2), masuk: masuk, urutanToken: urutanToken, catatan: catatan });
+      hasil.push({
+        tanggal: tgl, sisa: bulat(sisa, 2), masuk: masuk, urutanToken: urutanToken,
+        pltsOff: pltsOff, catatan: catatan
+      });
     }
     return hasil;
   }
 
   function toCsv(catatan) {
-    var baris = ["tanggal,sisa,masuk,catatan,urutan_token"];
+    var baris = ["tanggal,sisa,masuk,catatan,urutan_token,plts_off"];
     (catatan || []).slice().sort(function (a, b) { return a.tanggal < b.tanggal ? -1 : 1; })
       .forEach(function (r) {
         var note = String(r.catatan || "").replace(/"/g, '""');
         var urutan = (r.urutanToken === "sebelum" || r.urutanToken === "sesudah") ? r.urutanToken : "auto";
-        baris.push(r.tanggal + "," + r.sisa + "," + (r.masuk || 0) + ',"' + note + '",' + urutan);
+        baris.push(r.tanggal + "," + r.sisa + "," + (r.masuk || 0) + ',"' + note + '",' + urutan +
+          "," + (r.pltsOff ? 1 : 0));
       });
     return baris.join("\r\n");
   }
