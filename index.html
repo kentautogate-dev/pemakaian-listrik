@@ -77,7 +77,8 @@
           <label for="catatan">Catatan (opsional)</label>
           <input type="text" id="catatan" maxlength="120" placeholder="mis. tambah token 109 kWh, hujan, rumah kosong">
         </div>
-        <label class="periksa"><input type="checkbox" id="pltsOffCatat"> Hari ini PLTS off-grid (baterai habis)</label>
+        <label class="periksa"><input type="checkbox" id="pltsOffCatat"> PLTS off-grid (baterai habis) hari ini</label>
+        <div class="hint kecil">Centang bila baterai habis / listrik memakai PLN. Kalau baru sadar besok paginya, buka catatan kemarin (✎) lalu centang.</div>
         <div id="pratinjau" class="pratinjau">Isi <b>sisa kWh</b> untuk melihat perhitungan sebelum disimpan.</div>
         <div class="form-aksi">
           <button type="submit" class="primary" id="btnSimpan">Simpan catatan</button>
@@ -257,7 +258,20 @@
 
     <section class="card">
       <h2><span class="dot"></span>Korelasi PLTS ↔ pemakaian PLN</h2>
+      <div id="pltsTagBox" class="plts-tag"></div>
       <div id="pltsKorelasi"><div class="muted">Memuat…</div></div>
+      <details class="banner-rincian">
+        <summary>Cara menandai hari PLTS off-grid (tanpa API)</summary>
+        <ol class="langkah">
+          <li>Saat mencatat sisa kWh pagi, centang <b>“PLTS off-grid (baterai habis) hari ini”</b> bila sejak
+            catatan sebelumnya baterai habis dan listrik memakai PLN.</li>
+          <li>Kalau baru sadar besok paginya (baterai habis semalam): buka tab <b>Catatan Listrik</b> →
+            tombol <b>✎</b> pada catatan kemarin → centang → <b>Simpan perubahan</b>.</li>
+          <li>Bisa juga dari halaman ini: tombol <b>“Tandai kemarin (tanggal) PLTS off-grid”</b>.</li>
+          <li>Untuk menghapus tanda: tombol <b>Hapus tanda</b>, atau buka catatan lalu hilangkan centangnya.</li>
+          <li>Halaman ini dan analisa bulanan akan membandingkan rata-rata kWh/hari saat off-grid vs hari normal.</li>
+        </ol>
+      </details>
     </section>
   </div>
 

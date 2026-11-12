@@ -136,49 +136,60 @@
 
     $("pltsStatus").innerHTML = html;
     $("pltsWaktu").textContent = "Diperbarui: " + new Date().toLocaleTimeString("id-ID");
-    renderTombolTag(d);
   }
 
-  function renderTombolTag(d) {
+  /**
+   * Tombol penanda manual (tanpa API): hari ini dan kemarin.
+   * "Kemarin" penting karena biasanya baru sadar baterai habis keesokan paginya.
+   */
+  function renderTombolTag() {
     var app = window.AplikasiListrik;
-    if (!app || !window.KwhCore) return;
-    var hariIni = window.KwhCore.tanggalSekarang();
-    var s = app.ambilState();
-    var rec = s.catatan.filter(function (r) { return r.tanggal === hariIni; })[0];
+    var Core = window.KwhCore;
     var box = $("pltsTagBox");
-    if (!box) {
-      var div = document.createElement("div");
-      div.id = "pltsTagBox";
-      div.className = "plts-tag";
-      $("pltsStatus").appendChild(div);
-      box = div;
-    }
-    if (!rec) {
-      box.innerHTML = '<span class="muted kecil">Catat sisa kWh hari ini dulu agar hari PLTS off-grid bisa ditandai.</span>';
-      return;
-    }
-    if (rec.pltsOff) {
-      box.innerHTML = '<span class="chip naik">Hari ini ditandai PLTS off-grid</span> ' +
-        '<button type="button" class="ghost kecil" id="pltsHapusTag">Hapus tanda</button>';
-    } else {
-      box.innerHTML = '<button type="button" class="ghost kecil" id="pltsTagHariIni">Tandai hari ini PLTS off-grid</button>';
-    }
-    var tag = $("pltsTagHariIni");
-    var hapus = $("pltsHapusTag");
-    if (tag) tag.addEventListener("click", function () { setTagHariIni(true); });
-    if (hapus) hapus.addEventListener("click", function () { setTagHariIni(false); });
+    if (!box || !app || !Core) return;
+
+    var hariIni = Core.tanggalSekarang();
+    var kemarin = Core.tambahHari(hariIni, -1);
+    var s = app.ambilState();
+    var peta = {};
+    s.catatan.forEach(function (r) { peta[r.tanggal] = r; });
+
+    var bagian = [];
+    [hariIni, kemarin].forEach(function (tgl) {
+      var rec = peta[tgl];
+      var label = Core.labelTanggal(tgl, false);
+      if (!rec) {
+        bagian.push('<span class="muted kecil">' +
+          (tgl === hariIni ? "Catat sisa kWh hari ini dulu untuk menandai hari ini."
+            : "Catatan kemarin tidak ada.") + "</span>");
+      } else if (rec.pltsOff) {
+        bagian.push('<span class="chip naik">' + esc(label) + " ditandai PLTS off-grid</span>" +
+          '<button type="button" class="ghost kecil" data-tag-tanggal="' + esc(tgl) + '" data-tag-nilai="0">Hapus tanda</button>');
+      } else {
+        bagian.push('<button type="button" class="ghost kecil" data-tag-tanggal="' + esc(tgl) + '" data-tag-nilai="1">' +
+          (tgl === hariIni ? "Tandai hari ini (" + esc(label) + ") PLTS off-grid"
+            : "Tandai kemarin (" + esc(label) + ") PLTS off-grid") + "</button>");
+      }
+    });
+
+    box.innerHTML = bagian.join("");
+    Array.prototype.forEach.call(box.querySelectorAll("button[data-tag-tanggal]"), function (b) {
+      b.addEventListener("click", function () {
+        setTagTanggal(b.getAttribute("data-tag-tanggal"), b.getAttribute("data-tag-nilai") === "1");
+      });
+    });
   }
 
-  function setTagHariIni(nilai) {
+  function setTagTanggal(tanggal, nilai) {
     var app = window.AplikasiListrik;
-    var hariIni = window.KwhCore.tanggalSekarang();
+    var Core = window.KwhCore;
     var s = app.ambilState();
-    var rec = s.catatan.filter(function (r) { return r.tanggal === hariIni; })[0];
-    if (!rec) { app.toast("Catat sisa kWh hari ini dulu.", "error"); return; }
+    var rec = s.catatan.filter(function (r) { return r.tanggal === tanggal; })[0];
+    if (!rec) { app.toast("Catatan untuk tanggal itu tidak ada.", "error"); return; }
     rec.pltsOff = !!nilai;
     app.terapkanState(s);
-    app.toast(nilai ? "Hari ini ditandai PLTS off-grid." : "Tanda PLTS off-grid dihapus.", "ok");
-    if (keadaan.data) renderStatus(keadaan.data);
+    app.toast(Core.labelTanggal(tanggal, false) + (nilai ? " ditandai PLTS off-grid." : " — tanda PLTS off-grid dihapus."), "ok");
+    renderTombolTag();
     renderKorelasi();
   }
 
@@ -222,6 +233,7 @@
   function renderKorelasi() {
     var app = window.AplikasiListrik;
     var Core = window.KwhCore;
+    renderTombolTag();
     if (!app || !Core) { $("pltsKorelasi").innerHTML = '<div class="muted">Belum ada data.</div>'; return; }
 
     var s = app.ambilState();
@@ -243,8 +255,8 @@
       '<span class="muted kecil">Pemakaian ' + angka(bulan.kwh, 1) + " kWh • " + rp(bulan.biaya) + "</span></div>";
 
     if (!bulan.pltsOffHari) {
-      html += '<p class="muted">Belum ada hari yang ditandai <b>PLTS off-grid</b>. Tandai di form catatan harian ' +
-        '(centang “Hari ini PLTS off-grid”) atau lewat tombol di status PLTS, supaya bisa dibandingkan dengan hari normal.</p>';
+      html += '<p class="muted">Belum ada hari yang ditandai <b>PLTS off-grid</b>. Tandai lewat tombol di atas, ' +
+        'atau centang “PLTS off-grid (baterai habis) hari ini” saat mencatat, supaya bisa dibandingkan dengan hari normal.</p>';
     } else {
       html += '<div class="plts-korelasi-angka">' +
         '<div><span class="plts-label">Hari PLTS off-grid</span><b>' + bulan.pltsOffHari + " hari</b></div>" +

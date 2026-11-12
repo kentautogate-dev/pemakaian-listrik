@@ -107,9 +107,19 @@ Helper meneruskan permintaan ke SolaxCloud, jadi TokenId tidak pernah ditulis di
 
 ### Korelasi PLTS ↔ PLN
 
-- Centang **“Hari ini PLTS off-grid”** di form catatan (atau tombol di halaman PLTS) pada hari baterai habis.
-- Analisa bulanan menampilkan **jumlah hari off-grid, rata-rata kWh/hari saat off-grid vs hari normal, dan selisih %**.
-- Halaman PLTS juga menampilkan ringkasan yang sama + daftar tanggal off-grid bulan ini.
+Cara menandai hari PLTS off-grid (tanpa perlu API/TokenId):
+
+1. Saat mencatat sisa kWh pagi, centang **“PLTS off-grid (baterai habis) hari ini”** bila sejak catatan
+   sebelumnya baterai habis dan listrik memakai PLN.
+2. Kalau baru sadar besok paginya (baterai habis semalam): buka tab **Catatan Listrik** → tombol **✎** pada
+   catatan kemarin → centang → **Simpan perubahan**.
+3. Cara cepat: halaman **PLTS (Solar)** punya tombol **“Tandai kemarin (tanggal) PLTS off-grid”**
+   (atau “Tandai hari ini”).
+4. Untuk menghapus tanda: tombol **Hapus tanda** / buka catatan dan hilangkan centangnya.
+
+Analisa bulanan dan halaman PLTS menampilkan **jumlah hari off-grid, rata-rata kWh/hari saat off-grid vs hari
+normal, dan selisih %**, plus daftar tanggal off-grid bulan ini. Tanda juga tersimpan di ekspor CSV/JSON
+(kolom `plts_off`), jadi ikut backup.
 
 ## Impor data
 
