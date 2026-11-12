@@ -24,7 +24,7 @@
       "masuk": 0,
       "urutanToken": "auto",
       "pltsOff": false,
-      "catatan": "MEDUNG"
+      "catatan": "MENDUNG"
     },
     {
       "id": "bawaan-2026-10-03",
@@ -294,7 +294,97 @@
       "masuk": 0,
       "urutanToken": "auto",
       "pltsOff": false,
-      "catatan": "pembanding"
+      "catatan": "Mendung"
+    },
+    {
+      "id": "cmvyl60fnzm5c",
+      "tanggal": "2026-11-02",
+      "sisa": 1209,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "cmw01hbc9n155",
+      "tanggal": "2026-11-03",
+      "sisa": 1205,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "cmw1lhps1apke",
+      "tanggal": "2026-11-04",
+      "sisa": 1202,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "cmw2xjqnw06hm",
+      "tanggal": "2026-11-05",
+      "sisa": 1201,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "cmw4cm6iafusj",
+      "tanggal": "2026-11-07",
+      "sisa": 1196,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "cmw74xrmbsd62",
+      "tanggal": "2026-11-08",
+      "sisa": 1190,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "cmw8li46n7rfi",
+      "tanggal": "2026-11-09",
+      "sisa": 1186,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "cmwa2yahco8ir",
+      "tanggal": "2026-11-10",
+      "sisa": 1183,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "cmwbjicvmc5a2",
+      "tanggal": "2026-11-11",
+      "sisa": 1182,
+      "masuk": 109,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": "Tambah Token"
+    },
+    {
+      "id": "cmwcut6jvsd7b",
+      "tanggal": "2026-11-12",
+      "sisa": 1291,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
     }
   ]
 }
