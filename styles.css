@@ -936,3 +936,37 @@ code {
   text-transform: uppercase; color: var(--teks-lembut);
 }
 .plts-hasil-card b { font-size: 1.08rem; color: var(--teks); font-variant-numeric: tabular-nums; }
+
+/* ---------- PLTS: rapikan node atas & label mode off-grid ---------- */
+.flow2-pv, .flow2-grid {
+  display: grid;
+  grid-template-columns: 82px minmax(0, 1fr);
+  grid-template-rows: auto auto;
+  column-gap: 9px; row-gap: 1px;
+  align-items: center;
+  width: 232px;
+}
+.flow2-pv .flow2-orb, .flow2-grid .flow2-orb {
+  grid-row: 1 / span 2; width: 78px; height: 78px;
+}
+.flow2-pv .flow2-orb svg, .flow2-grid .flow2-orb svg { width: 40px; height: 40px; }
+.flow2-pv .flow2-label, .flow2-pv .flow2-value { grid-column: 2; text-align: left; }
+.flow2-grid { grid-template-columns: minmax(0, 1fr) 82px; }
+.flow2-grid .flow2-orb { grid-column: 2; }
+.flow2-grid .flow2-label, .flow2-grid .flow2-value { grid-column: 1; text-align: right; }
+.flow2-pv .flow2-label, .flow2-grid .flow2-label { grid-row: 1; }
+.flow2-pv .flow2-value, .flow2-grid .flow2-value { grid-row: 2; }
+.flow2-mode {
+  position: absolute; z-index: 4; left: 50%; bottom: 5%; transform: translateX(-50%);
+  font-size: .6rem; font-weight: 800; letter-spacing: .08em;
+  padding: 3px 10px; border-radius: 999px;
+  background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0;
+}
+.flow2-mode.off { background: #fef2f2; color: #b91c1c; border-color: #fecaca; }
+.flow3-status.off { background: #fef2f2; color: #b91c1c; border-color: #fecaca; }
+@media (max-width: 720px) {
+  .flow2-pv, .flow2-grid { width: 176px; grid-template-columns: 60px minmax(0, 1fr); column-gap: 6px; }
+  .flow2-grid { grid-template-columns: minmax(0, 1fr) 60px; }
+  .flow2-pv .flow2-orb, .flow2-grid .flow2-orb { width: 58px; height: 58px; }
+  .flow2-pv .flow2-orb svg, .flow2-grid .flow2-orb svg { width: 30px; height: 30px; }
+}
