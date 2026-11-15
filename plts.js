@@ -126,7 +126,7 @@
       : d.feedinpowerW > 0 ? "Ekspor ke PLN" : d.feedinpowerW < 0 ? "Impor dari PLN" : "idle";
     var bateraiNilai = d.batPowerW === null || d.batPowerW === undefined ? "—" : wattTeks(Math.abs(d.batPowerW));
     var bateraiSub = d.batPowerW === null || d.batPowerW === undefined ? "tidak tersedia"
-      : d.batPowerW > 0 ? "mengosongkan" : d.batPowerW < 0 ? "mengisi" : "idle";
+      : d.batPowerW > 0 ? "mengisi" : d.batPowerW < 0 ? "mengosongkan" : "idle";
     var bebanNilai = d.bebanW === null || d.bebanW === undefined ? "—" : wattTeks(d.bebanW);
     var pvNilai = d.pvW === null || d.pvW === undefined ? "—" : wattTeks(d.pvW);
     var gridVoltTeks = d.gridVoltageV !== null && d.gridVoltageV !== undefined ? angka(d.gridVoltageV, 1) + " V" : gridNilai;
@@ -220,7 +220,7 @@
       (d.plantName ? " • " + esc(d.plantName) : "") +
       (d.wifiSn ? " • SN " + esc(d.wifiSn) : "") + "</div>" +
       (d.batPowerW !== null && d.batPowerW !== undefined
-        ? '<div class="plts-meta">Daya baterai (batPower) ditampilkan apa adanya dari inverter: tanda positif/negatif menunjukkan arah pengisian/pengosongan.</div>'
+        ? '<div class="plts-meta">Daya baterai (batPower): positif = mengisi baterai, negatif = mengosongkan. Beban rumah dihitung dari PV + impor grid − daya baterai.</div>'
         : "") +
       "</div>";
 

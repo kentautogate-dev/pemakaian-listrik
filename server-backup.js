@@ -775,8 +775,10 @@ function petaSolaxOAuth(konf, inv, bat) {
   const batPower = angkaAtauNull(bat && bat.chargeDischargePower);
   const gridPower = angkaAtauNull(inv && inv.gridPower);
   const feedin = gridPower === null ? null : -gridPower; // gridPower positif = impor, negatif = ekspor
-  // Beban rumah = PV + baterai (positif = discharge) + impor grid − ekspor grid.
-  const beban = pv + (batPower || 0) + (gridPower || 0);
+  // Beban rumah: PV + impor grid − daya baterai.
+  // Konvensi API: chargeDischargePower POSITIF = baterai mengisi (charge),
+  // negatif = baterai mengosongkan (discharge). Jadi daya baterai dikurangkan.
+  const beban = pv + (gridPower || 0) - (batPower || 0);
   const statusKode = inv && inv.deviceStatus !== undefined && inv.deviceStatus !== null ? Number(inv.deviceStatus) : null;
   const ambang = Number(konf.ambangSoc) || 20;
   const offGrid = statusKode === 107;
