@@ -625,16 +625,24 @@ async function oauthToken(konf) {
   if (solaxOauthCache.token && solaxOauthCache.key === kunci && Date.now() < solaxOauthCache.exp) {
     return solaxOauthCache.token;
   }
+  const formulir = new URLSearchParams({
+    client_id: konf.clientId,
+    client_secret: konf.clientSecret,
+    grant_type: "client_credentials"
+  });
   let resp;
   try {
-    resp = await fetch(oauthBase(konf) + "/openapi/auth/get_token", {
+    // Endpoint OAuth yang benar (Developer Portal): form-urlencoded, client_credentials.
+    resp = await fetch(oauthBase(konf) + "/openapi/auth/oauth/token", {
       method: "POST",
-      headers: { "Content-Type": "application/json", Accept: "application/json" },
-      body: JSON.stringify({ client_id: konf.clientId, client_secret: konf.clientSecret, grant_type: "CICS" }),
+      headers: { "Content-Type": "application/x-www-form-urlencoded", Accept: "application/json" },
+      body: formulir.toString(),
       signal: AbortSignal.timeout(20000)
     });
   } catch (e) {
-    throw new GalatHttp(502, "Tidak bisa menghubungi API OAuth SolaxCloud: " + (e && e.message ? e.message : "jaringan bermasalah"));
+    const sebab = e && e.cause ? (e.cause.code || e.cause.message) : "";
+    throw new GalatHttp(502, "Tidak bisa menghubungi API OAuth SolaxCloud (" + oauthBase(konf) + "): " +
+      (sebab || (e && e.message) || "jaringan bermasalah") + ". Pilih Region EU atau periksa koneksi internet.");
   }
   const teks = await resp.text();
   let data = null;
@@ -653,7 +661,7 @@ async function oauthToken(konf) {
   return token;
 }
 
-async function oauthGet(konf, jalur, params) {
+async function oauthGet(konf, jalur, params, percobaan) {
   const token = await oauthToken(konf);
   const url = new URL(oauthBase(konf) + jalur);
   Object.keys(params || {}).forEach(function (k) {
@@ -676,6 +684,13 @@ async function oauthGet(konf, jalur, params) {
   try { data = JSON.parse(teks); } catch (e) { data = null; }
   if (!data) throw new GalatHttp(502, "Jawaban API SolaxCloud tidak valid (bukan JSON).");
   const kode = Number(data.code);
+  if ((resp.status === 401 || kode === 10402) && !percobaan) {
+    // Token bisa saja sudah tidak berlaku (mis. diambil ulang oleh klien lain);
+    // buang cache lalu minta token baru sekali.
+    solaxOauthCache.token = "";
+    solaxOauthCache.exp = 0;
+    return oauthGet(konf, jalur, params, true);
+  }
   if (kode !== 0 && kode !== 10000) throw new GalatHttp(502, pesanGalatSolax(data));
   return data.result;
 }
@@ -693,15 +708,31 @@ async function oauthPlants(konf) {
 async function oauthDevices(konf, plantId) {
   const kunci = String(konf.clientId) + "|" + String(konf.region) + "|" + String(plantId);
   if (solaxOauthCache.devices[kunci] && Date.now() < solaxOauthCache.devicesExp) return solaxOauthCache.devices[kunci];
-  const hasil = await oauthGet(konf, "/openapi/v2/device/page_device_info", { businessType: 1, plantId, size: 100, pageNo: 1 });
-  const records = Array.isArray(hasil) ? hasil : ((hasil && hasil.records) || []);
-  solaxOauthCache.devices[kunci] = records;
+  // page_device_info mewajibkan deviceType; ambil inverter (1) dan baterai (2) terpisah.
+  const semua = [];
+  const galat = [];
+  for (const tipe of [1, 2]) {
+    try {
+      const hasil = await oauthGet(konf, "/openapi/v2/device/page_device_info", { businessType: 1, plantId, deviceType: tipe, size: 100, pageNo: 1 });
+      const records = Array.isArray(hasil) ? hasil : ((hasil && hasil.records) || []);
+      records.forEach(function (r) {
+        if (r.deviceType === undefined || r.deviceType === null) r.deviceType = tipe;
+        semua.push(r);
+      });
+    } catch (e) {
+      galat.push(e);
+    }
+  }
+  if (!semua.length) throw galat[0] || new GalatHttp(502, "Tidak ada perangkat pada plant ini.");
+  solaxOauthCache.devices[kunci] = semua;
   solaxOauthCache.devicesExp = Date.now() + 10 * 60 * 1000;
-  return records;
+  return semua;
 }
 
-async function oauthDeviceRealtime(konf, sn, deviceType) {
-  const hasil = await oauthGet(konf, "/openapi/v2/device/realtime_data", { snList: [sn], deviceType, businessType: 1 });
+async function oauthDeviceRealtime(konf, sn, deviceType, requestSnType) {
+  const params = { snList: [sn], deviceType, businessType: 1 };
+  if (requestSnType) params.requestSnType = requestSnType;
+  const hasil = await oauthGet(konf, "/openapi/v2/device/realtime_data", params);
   if (Array.isArray(hasil)) return hasil.find(function (x) { return String(x.deviceSn) === String(sn); }) || hasil[0] || null;
   if (hasil && Array.isArray(hasil.records)) return hasil.records[0] || null;
   return hasil || null;
@@ -823,12 +854,20 @@ async function ambilSolaxOAuth(konf) {
   function tipe(dev) { return Number(dev.deviceType); }
   const inverters = devices.filter(function (d) { return tipe(d) === 1; });
   const batteries = devices.filter(function (d) { return tipe(d) === 2; });
-  const invDev = inverters[0] || devices[0];
-  const batDev = batteries[0] || null;
+  const invDev = inverters[0] || null;
+  if (!invDev) throw new GalatHttp(502, "Inverter tidak ditemukan pada plant ini.");
   const inv = await oauthDeviceRealtime(konf, invDev.deviceSn || invDev.registerNo, 1);
   let bat = null;
+  const batDev = batteries[0] || null;
   if (batDev) {
-    try { bat = await oauthDeviceRealtime(konf, batDev.deviceSn || batDev.registerNo, 2); } catch (e) { bat = null; }
+    const snBat = batDev.deviceSn || batDev.registerNo;
+    try {
+      // Untuk baterai yang tidak punya deviceSn sendiri, API memakai registerNo inverter
+      // dengan requestSnType=1.
+      bat = await oauthDeviceRealtime(konf, snBat, 2, batDev.deviceSn ? undefined : 1);
+    } catch (e) {
+      bat = null;
+    }
   }
   const data = petaSolaxOAuth(konf, inv || {}, bat);
   data.plantName = plant.plantName || plant.name || "";
