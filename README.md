@@ -100,7 +100,8 @@ Jalur resmi untuk akun biasa adalah **SolaX Developer Portal**:
 1. Buka [developer.solaxcloud.com/login](https://developer.solaxcloud.com/login), login memakai akun SolaxCloud.
 2. Buka **Applications → Create App**, isi nama/aplikasi, pilih akses API yang dibutuhkan (plant/device data),
    lalu simpan.
-3. Salin **Client ID** dan **Client Secret** dari aplikasi yang dibuat.
+3. Salin **Client ID** dan **Client Secret** dari bagian **Authorization Key** pada detail aplikasi.
+   **App Code** (UUID) yang tampil di daftar Applications **bukan** Client ID — itu hanya identitas internal aplikasi.
 4. Di halaman **PLTS (Solar)**, pilih mode **Developer Portal**, isi Client ID + Client Secret,
    pilih **Region** (EU/US/CN; umumnya EU), Plant ID boleh dikosongkan, lalu **Simpan & uji**.
 
