@@ -75,15 +75,16 @@
   }
 
   function renderBelum(konfig) {
+    var oauth = konfig && konfig.mode === "oauth";
     var html = '<div class="plts-onboarding">' +
       "<b>Belum tersambung ke SolaxCloud.</b>" +
-      "<p>Isi <b>TokenId</b> dan <b>WiFi SN</b> di panel Konfigurasi, lalu tekan <b>Simpan &amp; uji</b>. " +
-      "Setelah tersambung, halaman ini menampilkan SOC baterai, daya PV, daya baterai, dan status off-grid.</p>" +
+      "<p>Pilih <b>Cara koneksi</b> di panel Konfigurasi:</p>" +
       '<ul class="plts-tips">' +
-      "<li>TokenId: SolaxCloud → menu <b>Service</b> → <b>API</b> (umumnya hanya untuk akun installer/distributor).</li>" +
-      "<li>WiFi SN: nomor seri dongle Wi-Fi / Registration Number inverter.</li>" +
-      "<li>Kalau akun Anda akun end-user (menu Service tidak ada), minta TokenId ke installer, atau pakai penanda manual “PLTS off-grid” di catatan harian.</li>" +
-      "<li>Data diperbarui tiap ±60 detik (bisa dimatikan).</li>" +
+      "<li><b>TokenId</b> — akun installer/distributor: token dari menu Service → API, plus WiFi SN inverter.</li>" +
+      "<li><b>Developer Portal</b> — akun SolaxCloud biasa: buat aplikasi di developer.solaxcloud.com, lalu isi Client ID + Client Secret." +
+      (oauth ? " Mode Developer Portal sedang dipilih." : "") + "</li>" +
+      "<li>Setelah tersambung, halaman ini menampilkan SOC baterai, daya PV, daya baterai, dan status off-grid.</li>" +
+      "<li>Kalau belum ada akses API: pakai penanda manual “PLTS off-grid” di catatan harian.</li>" +
       "</ul></div>";
     $("pltsStatus").innerHTML = html;
     $("pltsWaktu").textContent = "";
@@ -125,7 +126,9 @@
           "</div>";
       }).join("") +
       "</div>" +
-      '<div class="plts-meta">Status inverter: ' + esc(d.inverterStatusTeks || "—") +
+      '<div class="plts-meta">Sumber: ' + (d.mode === "oauth" ? "Developer Portal (OAuth)" : "API TokenId") +
+      (d.plantName ? " • " + esc(d.plantName) : "") +
+      " • Status inverter: " + esc(d.inverterStatusTeks || "—") +
       (d.inverterStatusKode !== null && d.inverterStatusKode !== undefined ? " (kode " + esc(d.inverterStatusKode) + ")" : "") +
       (d.uploadTime ? " • data inverter: " + esc(d.uploadTime) : "") +
       (d.wifiSn ? " • SN " + esc(d.wifiSn) : "") + "</div>" +
@@ -194,12 +197,25 @@
   }
 
   /* ---------------- konfigurasi ---------------- */
+  function aturModeTampil() {
+    var oauth = $("pltsMode").value === "oauth";
+    $("pltsModeToken").classList.toggle("hidden", oauth);
+    $("pltsModeOauth").classList.toggle("hidden", !oauth);
+  }
+
   function isiKonfigurasi(k) {
     if (!k) return;
+    var mode = k.mode === "oauth" ? "oauth" : "token";
+    $("pltsMode").value = mode;
+    aturModeTampil();
     $("pltsSn").value = k.wifiSn || "";
     $("pltsUrl").value = k.url || "https://www.solaxcloud.com";
     $("pltsAmbang").value = k.ambangSoc === undefined || k.ambangSoc === null ? 20 : k.ambangSoc;
     $("pltsToken").placeholder = k.tokenTerisi ? "•••••• (tersimpan — kosongkan bila tidak diubah)" : "tempel TokenId dari menu Service → API";
+    $("pltsClientId").value = k.clientId || "";
+    $("pltsRegion").value = k.region || "eu";
+    $("pltsPlantId").value = k.plantId || "";
+    $("pltsClientSecret").placeholder = k.clientSecretTerisi ? "•••••• (tersimpan — kosongkan bila tidak diubah)" : "Client Secret dari Developer Portal";
   }
 
   function pesan(teks, jenis) {
@@ -209,14 +225,22 @@
   }
 
   function simpanKonfigurasi() {
-    var body = {
-      tokenId: $("pltsToken").value.trim(),
-      wifiSn: $("pltsSn").value.trim(),
-      url: $("pltsUrl").value.trim(),
-      ambangSoc: Number($("pltsAmbang").value)
-    };
-    if (!body.wifiSn) { pesan("WiFi SN wajib diisi.", "bahaya"); return; }
-    if (!body.tokenId && !keadaan.data) { pesan("TokenId wajib diisi pada penyiapan pertama.", "bahaya"); return; }
+    var mode = $("pltsMode").value === "oauth" ? "oauth" : "token";
+    var body = { mode: mode, ambangSoc: Number($("pltsAmbang").value) };
+    if (mode === "oauth") {
+      body.clientId = $("pltsClientId").value.trim();
+      body.clientSecret = $("pltsClientSecret").value.trim();
+      body.region = $("pltsRegion").value;
+      body.plantId = $("pltsPlantId").value.trim();
+      if (!body.clientId) { pesan("Client ID wajib diisi.", "bahaya"); return; }
+      if (!body.clientSecret && !keadaan.data) { pesan("Client Secret wajib diisi pada penyiapan pertama.", "bahaya"); return; }
+    } else {
+      body.tokenId = $("pltsToken").value.trim();
+      body.wifiSn = $("pltsSn").value.trim();
+      body.url = $("pltsUrl").value.trim();
+      if (!body.wifiSn) { pesan("WiFi SN wajib diisi.", "bahaya"); return; }
+      if (!body.tokenId && !keadaan.data) { pesan("TokenId wajib diisi pada penyiapan pertama.", "bahaya"); return; }
+    }
     $("pltsSimpan").disabled = true;
     pesan("Menyimpan…");
     panggil("/api/solax/konfigurasi", { metode: "POST", body: body, batasDetik: 20 }).then(function (jawab) {
@@ -224,6 +248,7 @@
       if (!jawab || !jawab.ok) { pesan((jawab && jawab.galat) || "Gagal menyimpan konfigurasi.", "bahaya"); return; }
       pesan("Konfigurasi disimpan. Mengambil data…", "ok");
       $("pltsToken").value = "";
+      $("pltsClientSecret").value = "";
       isiKonfigurasi(jawab.konfigurasi);
       muat();
     });
@@ -317,6 +342,10 @@
     $("pltsPerbarui").addEventListener("click", muat);
     $("pltsCobaLagi").addEventListener("click", muat);
     $("pltsSimpan").addEventListener("click", simpanKonfigurasi);
+    $("pltsMode").addEventListener("change", function () {
+      aturModeTampil();
+      pesan("");
+    });
     $("pltsUji").addEventListener("click", function () {
       pesan("Mengambil data dari konfigurasi tersimpan…");
       muat().then(function () { mulaiAuto(); });

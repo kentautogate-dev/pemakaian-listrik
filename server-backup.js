@@ -429,39 +429,95 @@ const BERKAS_SOLAX = process.env.SOLAX_CONFIG
   : path.join(PROJECT, "solax-config.json");
 
 const SOLAX_BAWAAN = Object.freeze({
+  // "token" = API lama (TokenId + WiFi SN, akun installer/distributor)
+  // "oauth" = Developer Portal (clientId + clientSecret, akun SolaxCloud biasa)
+  mode: "token",
   tokenId: "",
   wifiSn: "",
   url: "https://www.solaxcloud.com",
-  ambangSoc: 20
+  ambangSoc: 20,
+  clientId: "",
+  clientSecret: "",
+  region: "eu",
+  plantId: ""
 });
+
+const SOLAX_REGION = Object.freeze({
+  eu: "openapi-eu.solaxcloud.com",
+  us: "openapi-us.solaxcloud.com",
+  cn: "openapi.solaxcloud.com"
+});
+
+// Cache token/daftar perangkat OAuth di memori helper (bukan di browser).
+const solaxOauthCache = { token: "", key: "", exp: 0, plants: null, plantsKey: "", devices: {}, devicesExp: 0 };
 
 function muatSolax() {
   const isi = bacaJsonAman(BERKAS_SOLAX);
   return { ...SOLAX_BAWAAN, ...(isi || {}) };
 }
 
+function ringkasSolax(konf) {
+  return {
+    mode: konf.mode === "oauth" ? "oauth" : "token",
+    wifiSn: konf.wifiSn,
+    url: konf.url,
+    ambangSoc: konf.ambangSoc,
+    clientId: konf.clientId,
+    clientSecretTerisi: !!konf.clientSecret,
+    region: konf.region,
+    plantId: konf.plantId,
+    tokenTerisi: !!konf.tokenId
+  };
+}
+
 function simpanSolax(konf) {
   const isi = {
+    mode: konf.mode === "oauth" ? "oauth" : "token",
     tokenId: konf.tokenId,
     wifiSn: konf.wifiSn,
     url: konf.url,
-    ambangSoc: konf.ambangSoc
+    ambangSoc: konf.ambangSoc,
+    clientId: konf.clientId,
+    clientSecret: konf.clientSecret,
+    region: konf.region,
+    plantId: konf.plantId
   };
   fs.mkdirSync(path.dirname(BERKAS_SOLAX), { recursive: true });
   fs.writeFileSync(BERKAS_SOLAX, `${JSON.stringify(isi, null, 2)}\n`, "utf8");
+  solaxOauthCache.token = "";
+  solaxOauthCache.exp = 0;
+  solaxOauthCache.plants = null;
+  solaxOauthCache.devices = {};
+  solaxOauthCache.devicesExp = 0;
 }
 
 function periksaSolax(body) {
+  const mode = body.mode === "oauth" ? "oauth" : "token";
+  const ambangSoc = Number(body.ambangSoc);
+  if (!isFinite(ambangSoc) || ambangSoc < 0 || ambangSoc > 100) return "Ambang SOC harus 0–100%.";
+
+  if (mode === "oauth") {
+    const clientId = String(body.clientId == null ? "" : body.clientId).trim();
+    const clientSecret = String(body.clientSecret == null ? "" : body.clientSecret).trim();
+    const region = String(body.region || "eu").trim().toLowerCase();
+    const plantId = String(body.plantId == null ? "" : body.plantId).trim();
+    if (!clientId) return "Client ID Developer Portal wajib diisi.";
+    if (clientId.length > 200 || /\s/.test(clientId)) return "Client ID tidak valid (tanpa spasi).";
+    if (!clientSecret) return "Client Secret wajib diisi (hanya sekali; kosongkan bila tidak diubah).";
+    if (clientSecret.length > 300 || /\s/.test(clientSecret)) return "Client Secret tidak valid (tanpa spasi).";
+    if (!["eu", "us", "cn"].includes(region)) return "Region API harus EU, US, atau CN.";
+    if (plantId && !/^[0-9A-Za-z_-]{3,80}$/.test(plantId)) return "Plant ID tidak valid.";
+    return "";
+  }
+
   const tokenId = String(body.tokenId == null ? "" : body.tokenId).trim();
   const wifiSn = String(body.wifiSn == null ? "" : body.wifiSn).trim();
   const url = String(body.url == null ? "" : body.url).trim() || SOLAX_BAWAAN.url;
-  const ambangSoc = Number(body.ambangSoc);
   if (!tokenId) return "TokenId SolaxCloud wajib diisi (menu Service → API di SolaxCloud).";
   if (tokenId.length > 300 || /\s/.test(tokenId)) return "TokenId tidak valid (tidak boleh mengandung spasi).";
   if (!wifiSn) return "WiFi SN / Registration Number inverter wajib diisi.";
   if (wifiSn.length > 100 || /\s/.test(wifiSn)) return "WiFi SN tidak valid (tanpa spasi).";
   if (!/^https?:\/\/[^\s/]+\/?$/i.test(url)) return "URL API harus diawali http:// atau https://";
-  if (!isFinite(ambangSoc) || ambangSoc < 0 || ambangSoc > 100) return "Ambang SOC harus 0–100%.";
   return "";
 }
 
@@ -483,10 +539,17 @@ function statusInverterTeks(kode) {
 function pesanGalatSolax(data) {
   const kode = Number(data && data.code);
   if (kode === 103) return "TokenId SolaxCloud tidak valid/kedaluwarsa. Salin ulang token dari menu Service → API.";
+  if (kode === 10402) return "Client ID / Client Secret salah atau aplikasi Developer Portal belum aktif.";
+  if (kode === 10403) return "Aplikasi belum diberi akses ke API yang dipilih (cek Service Package/otorisasi di Developer Portal).";
+  if (kode === 10405) return "Kuota panggilan API aplikasi habis.";
   if (kode === 10406) return "Batas frekuensi API SolaxCloud tercapai. Tunggu beberapa menit lalu coba lagi.";
-  if (kode === 10500) return "Akun SolaxCloud tidak punya akses ke perangkat ini (periksa WiFi SN).";
-  if (kode === 10001) return "SolaxCloud gagal memproses permintaan. Periksa WiFi SN dan coba lagi.";
-  return "SolaxCloud menolak permintaan: " + ((data && (data.exception || data.message)) || ("kode " + kode));
+  if (kode === 10500) return "Akun SolaxCloud tidak punya akses ke perangkat ini (periksa WiFi SN/Plant ID).";
+  if (kode === 10001) return "SolaxCloud gagal memproses permintaan. Periksa data perangkat dan coba lagi.";
+  const pesan = String((data && (data.exception || data.message)) || "");
+  if (/client\s*id|client\s*secret|credential/i.test(pesan)) {
+    return "Client ID / Client Secret salah atau aplikasi Developer Portal belum aktif.";
+  }
+  return "SolaxCloud menolak permintaan: " + (pesan || ("kode " + kode));
 }
 
 function angkaAtauNull(nilai) {
@@ -495,6 +558,7 @@ function angkaAtauNull(nilai) {
   return isFinite(n) ? n : null;
 }
 
+/** Mapping respons API lama (TokenId): result dari /api/v2/dataAccess/realtimeInfo/get. */
 function petaSolaxRealtime(r, konf) {
   const pv = ["powerdc1", "powerdc2", "powerdc3", "powerdc4"]
     .reduce((s, k) => s + (angkaAtauNull(r[k]) || 0), 0);
@@ -524,6 +588,7 @@ function petaSolaxRealtime(r, konf) {
   }
 
   return {
+    mode: "token",
     ambilWaktu: isoWaktu(),
     wifiSn: konf.wifiSn,
     inverterSN: r.inverterSN || "",
@@ -540,20 +605,188 @@ function petaSolaxRealtime(r, konf) {
     inverterStatusTeks: statusKode !== null ? statusInverterTeks(statusKode) : "",
     batStatus: r.batStatus !== null && r.batStatus !== undefined ? String(r.batStatus) : "",
     uploadTime: r.uploadTime || "",
-    pltsProduksi: pltsProduksi,
-    offGrid: offGrid,
-    socRendah: socRendah,
+    pltsProduksi,
+    offGrid,
+    socRendah,
     ambangSoc: ambang,
-    statusTeks: statusTeks,
-    peringatan: peringatan
+    statusTeks,
+    peringatan
   };
 }
 
-async function ambilSolaxRealtime() {
-  const konf = muatSolax();
+/* ---------------- OAuth 2.0 (SolaX Developer Portal) ---------------- */
+
+function oauthBase(konf) {
+  return "https://" + (SOLAX_REGION[konf.region] || SOLAX_REGION.eu);
+}
+
+async function oauthToken(konf) {
+  const kunci = String(konf.clientId) + "|" + String(konf.region);
+  if (solaxOauthCache.token && solaxOauthCache.key === kunci && Date.now() < solaxOauthCache.exp) {
+    return solaxOauthCache.token;
+  }
+  let resp;
+  try {
+    resp = await fetch(oauthBase(konf) + "/openapi/auth/get_token", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Accept: "application/json" },
+      body: JSON.stringify({ client_id: konf.clientId, client_secret: konf.clientSecret, grant_type: "CICS" }),
+      signal: AbortSignal.timeout(20000)
+    });
+  } catch (e) {
+    throw new GalatHttp(502, "Tidak bisa menghubungi API OAuth SolaxCloud: " + (e && e.message ? e.message : "jaringan bermasalah"));
+  }
+  const teks = await resp.text();
+  let data = null;
+  try { data = JSON.parse(teks); } catch (e) { data = null; }
+  if (!data) {
+    throw new GalatHttp(502, "SolaxCloud tidak mengembalikan token (jawaban kosong/bukan JSON). Periksa Client ID/Secret dan status aplikasi di Developer Portal.");
+  }
+  const kode = Number(data.code);
+  if (kode !== 0 && kode !== 10000) throw new GalatHttp(502, pesanGalatSolax(data));
+  const hasil = data.result || {};
+  const token = hasil.access_token;
+  if (!token) throw new GalatHttp(502, "SolaxCloud tidak memberi access_token. Pastikan aplikasi sudah diotorisasi untuk API yang dipilih.");
+  solaxOauthCache.token = token;
+  solaxOauthCache.key = kunci;
+  solaxOauthCache.exp = Date.now() + Math.max(60, Number(hasil.expires_in || 2591999) - 60) * 1000;
+  return token;
+}
+
+async function oauthGet(konf, jalur, params) {
+  const token = await oauthToken(konf);
+  const url = new URL(oauthBase(konf) + jalur);
+  Object.keys(params || {}).forEach(function (k) {
+    const v = params[k];
+    if (v === undefined || v === null) return;
+    if (Array.isArray(v)) v.forEach(function (x) { url.searchParams.append(k, String(x)); });
+    else url.searchParams.append(k, String(v));
+  });
+  let resp;
+  try {
+    resp = await fetch(url, {
+      headers: { Authorization: "bearer " + token, Accept: "application/json" },
+      signal: AbortSignal.timeout(20000)
+    });
+  } catch (e) {
+    throw new GalatHttp(502, "Gagal menghubungi API data SolaxCloud: " + (e && e.message ? e.message : "jaringan bermasalah"));
+  }
+  const teks = await resp.text();
+  let data = null;
+  try { data = JSON.parse(teks); } catch (e) { data = null; }
+  if (!data) throw new GalatHttp(502, "Jawaban API SolaxCloud tidak valid (bukan JSON).");
+  const kode = Number(data.code);
+  if (kode !== 0 && kode !== 10000) throw new GalatHttp(502, pesanGalatSolax(data));
+  return data.result;
+}
+
+async function oauthPlants(konf) {
+  const kunci = String(konf.clientId) + "|" + String(konf.region);
+  if (solaxOauthCache.plants && solaxOauthCache.plantsKey === kunci) return solaxOauthCache.plants;
+  const hasil = await oauthGet(konf, "/openapi/v2/plant/page_plant_info", { businessType: 1, size: 100, pageNo: 1 });
+  const records = Array.isArray(hasil) ? hasil : ((hasil && hasil.records) || []);
+  solaxOauthCache.plants = records;
+  solaxOauthCache.plantsKey = kunci;
+  return records;
+}
+
+async function oauthDevices(konf, plantId) {
+  const kunci = String(konf.clientId) + "|" + String(konf.region) + "|" + String(plantId);
+  if (solaxOauthCache.devices[kunci] && Date.now() < solaxOauthCache.devicesExp) return solaxOauthCache.devices[kunci];
+  const hasil = await oauthGet(konf, "/openapi/v2/device/page_device_info", { businessType: 1, plantId, size: 100, pageNo: 1 });
+  const records = Array.isArray(hasil) ? hasil : ((hasil && hasil.records) || []);
+  solaxOauthCache.devices[kunci] = records;
+  solaxOauthCache.devicesExp = Date.now() + 10 * 60 * 1000;
+  return records;
+}
+
+async function oauthDeviceRealtime(konf, sn, deviceType) {
+  const hasil = await oauthGet(konf, "/openapi/v2/device/realtime_data", { snList: [sn], deviceType, businessType: 1 });
+  if (Array.isArray(hasil)) return hasil.find(function (x) { return String(x.deviceSn) === String(sn); }) || hasil[0] || null;
+  if (hasil && Array.isArray(hasil.records)) return hasil.records[0] || null;
+  return hasil || null;
+}
+
+function jumlahAngka(objek) {
+  if (!objek || typeof objek !== "object") return 0;
+  return Object.keys(objek).reduce(function (total, k) {
+    const nilai = angkaAtauNull(objek[k]);
+    return total + (nilai === null ? 0 : nilai);
+  }, 0);
+}
+
+/** Mapping respons OAuth (plant/device realtime) ke bentuk yang dipakai halaman PLTS. */
+function petaSolaxOAuth(konf, inv, bat) {
+  const mppt = inv && inv.mpptMap ? inv.mpptMap : {};
+  let pv = 0;
+  Object.keys(mppt).forEach(function (k) {
+    if (/power/i.test(k)) pv += angkaAtauNull(mppt[k]) || 0;
+  });
+  if (!pv) pv = angkaAtauNull(inv && inv.MPPTTotalInputPower) || 0;
+  if (!pv) pv = jumlahNilai(inv && inv.pvMap);
+  const acpower = ["acPower1", "acPower2", "acPower3"].reduce(function (s, k) { return s + (angkaAtauNull(inv && inv[k]) || 0); }, 0);
+  const soc = angkaAtauNull(bat && bat.batterySOC) !== null ? angkaAtauNull(bat.batterySOC) : angkaAtauNull(inv && inv.batterySOC);
+  const batPower = angkaAtauNull(bat && bat.chargeDischargePower);
+  const gridPower = angkaAtauNull(inv && inv.gridPower);
+  const feedin = gridPower === null ? null : -gridPower; // gridPower positif = impor, negatif = ekspor
+  const statusKode = inv && inv.deviceStatus !== undefined && inv.deviceStatus !== null ? Number(inv.deviceStatus) : null;
+  const ambang = Number(konf.ambangSoc) || 20;
+  const offGrid = statusKode === 107;
+  const socRendah = soc !== null && soc <= ambang;
+  const pltsProduksi = pv > 50;
+
+  let statusTeks = "PLTS normal";
+  let peringatan = "";
+  if (offGrid) {
+    statusTeks = "Mode EPS / OFF-GRID (grid PLN mati)";
+    peringatan = "Inverter sedang mode EPS (off-grid). Beban dilayani dari baterai/PV.";
+  } else if (socRendah && !pltsProduksi) {
+    statusTeks = "Baterai lemah & PLTS tidak produksi";
+    peringatan = "SOC baterai " + soc + "% dan PV " + Math.round(pv) + " W. Kemungkinan besar beban rumah dari PLN.";
+  } else if (!pltsProduksi) {
+    statusTeks = "PLTS tidak produksi (malam/hujan)";
+    peringatan = "PV ≈ 0 W. Beban bisa dari baterai atau PLN.";
+  } else if (socRendah) {
+    statusTeks = "Produksi PLTS rendah, baterai lemah";
+    peringatan = "SOC " + soc + "% (di bawah ambang " + ambang + "%).";
+  }
+
+  return {
+    mode: "oauth",
+    ambilWaktu: isoWaktu(),
+    wifiSn: (inv && (inv.registerNo || inv.deviceSn)) || "",
+    inverterSN: (inv && inv.deviceSn) || "",
+    acpowerW: Math.round(acpower * 100) / 100,
+    pvW: Math.round(pv),
+    batPowerW: batPower,
+    socPct: soc,
+    feedinpowerW: feedin,
+    feedinEnergyKwh: angkaAtauNull(inv && inv.todayExportEnergy),
+    consumeEnergyKwh: angkaAtauNull(inv && inv.todayImportEnergy),
+    yieldTodayKwh: angkaAtauNull(inv && inv.dailyYield),
+    yieldTotalKwh: angkaAtauNull(inv && inv.totalYield),
+    inverterStatusKode: statusKode,
+    inverterStatusTeks: statusKode !== null ? statusInverterTeks(statusKode) : "",
+    batStatus: "",
+    uploadTime: (inv && (inv.plantLocalTime || inv.dataTime)) || "",
+    pltsProduksi,
+    offGrid,
+    socRendah,
+    ambangSoc: ambang,
+    statusTeks,
+    peringatan,
+    plantId: (inv && inv.plantId) || konf.plantId || ""
+  };
+}
+
+function jumlahNilai(objek) {
+  return jumlahAngka(objek);
+}
+
+async function ambilSolaxToken(konf) {
   const tokenId = String(konf.tokenId || "").trim();
   const wifiSn = String(konf.wifiSn || "").trim();
-  if (!tokenId || !wifiSn) return { terkonfigurasi: false, konfigurasi: { wifiSn, url: konf.url, ambangSoc: konf.ambangSoc, tokenTerisi: false } };
+  if (!tokenId || !wifiSn) return { terkonfigurasi: false, konfigurasi: ringkasSolax(konf) };
 
   const alamat = String(konf.url || SOLAX_BAWAAN.url).replace(/\/+$/, "") + "/api/v2/dataAccess/realtimeInfo/get";
   let resp;
@@ -573,8 +806,39 @@ async function ambilSolaxRealtime() {
   if (!data) throw new GalatHttp(502, "Jawaban SolaxCloud tidak valid (bukan JSON).");
   if (!data.success) throw new GalatHttp(502, pesanGalatSolax(data));
 
-  const hasil = petaSolaxRealtime(data.result || {}, konf);
-  return { terkonfigurasi: true, data: hasil, konfigurasi: { wifiSn, url: konf.url, ambangSoc: konf.ambangSoc, tokenTerisi: true } };
+  return { terkonfigurasi: true, mode: "token", data: petaSolaxRealtime(data.result || {}, konf), konfigurasi: ringkasSolax(konf) };
+}
+
+async function ambilSolaxOAuth(konf) {
+  if (!konf.clientId || !konf.clientSecret) return { terkonfigurasi: false, konfigurasi: ringkasSolax(konf) };
+  const plants = await oauthPlants(konf);
+  if (!plants.length) throw new GalatHttp(502, "Tidak ada plant di akun SolaxCloud ini. Pastikan aplikasi Developer Portal sudah diberi akses ke plant.");
+  const plant = konf.plantId
+    ? plants.find(function (x) { return String(x.plantId) === String(konf.plantId); })
+    : plants[0];
+  if (!plant) throw new GalatHttp(502, "Plant ID " + konf.plantId + " tidak ditemukan pada akun ini.");
+  const devices = await oauthDevices(konf, plant.plantId);
+  if (!devices.length) throw new GalatHttp(502, "Tidak ada perangkat (inverter/baterai) pada plant ini.");
+
+  function tipe(dev) { return Number(dev.deviceType); }
+  const inverters = devices.filter(function (d) { return tipe(d) === 1; });
+  const batteries = devices.filter(function (d) { return tipe(d) === 2; });
+  const invDev = inverters[0] || devices[0];
+  const batDev = batteries[0] || null;
+  const inv = await oauthDeviceRealtime(konf, invDev.deviceSn || invDev.registerNo, 1);
+  let bat = null;
+  if (batDev) {
+    try { bat = await oauthDeviceRealtime(konf, batDev.deviceSn || batDev.registerNo, 2); } catch (e) { bat = null; }
+  }
+  const data = petaSolaxOAuth(konf, inv || {}, bat);
+  data.plantName = plant.plantName || plant.name || "";
+  return { terkonfigurasi: true, mode: "oauth", data, konfigurasi: ringkasSolax(konf) };
+}
+
+async function ambilSolaxRealtime() {
+  const konf = muatSolax();
+  if ((konf.mode || "token") === "oauth") return ambilSolaxOAuth(konf);
+  return ambilSolaxToken(konf);
 }
 
 async function apiSolaxStatus() {
@@ -588,20 +852,24 @@ async function postSolaxKonfigurasi(req) {
     throw new GalatHttp(400, "Body harus berupa objek JSON.");
   }
   const lama = muatSolax();
-  const tokenId = String(body.tokenId == null ? "" : body.tokenId).trim() || String(lama.tokenId || "").trim();
-  const wifiSn = String(body.wifiSn == null ? "" : body.wifiSn).trim() || String(lama.wifiSn || "").trim();
-  const url = (String(body.url == null ? "" : body.url).trim() || lama.url || SOLAX_BAWAAN.url).replace(/\/+$/, "");
-  const ambangSoc = Number(body.ambangSoc);
+  const mode = body.mode === "oauth" ? "oauth" : body.mode === "token" ? "token" : (lama.mode === "oauth" ? "oauth" : "token");
 
-  const salah = periksaSolax({ tokenId, wifiSn, url, ambangSoc });
-  if (salah) throw new GalatHttp(400, salah);
-
-  simpanSolax({ tokenId, wifiSn, url, ambangSoc });
-  return {
-    ok: true,
-    terkonfigurasi: true,
-    konfigurasi: { wifiSn, url, ambangSoc, tokenTerisi: true }
+  const konf = {
+    mode,
+    tokenId: String(body.tokenId == null ? "" : body.tokenId).trim() || String(lama.tokenId || "").trim(),
+    wifiSn: String(body.wifiSn == null ? "" : body.wifiSn).trim() || String(lama.wifiSn || "").trim(),
+    url: (String(body.url == null ? "" : body.url).trim() || lama.url || SOLAX_BAWAAN.url).replace(/\/+$/, ""),
+    ambangSoc: body.ambangSoc === undefined || body.ambangSoc === null || body.ambangSoc === "" ? Number(lama.ambangSoc || 20) : Number(body.ambangSoc),
+    clientId: String(body.clientId == null ? "" : body.clientId).trim() || String(lama.clientId || "").trim(),
+    clientSecret: String(body.clientSecret == null ? "" : body.clientSecret).trim() || String(lama.clientSecret || "").trim(),
+    region: String(body.region == null ? "" : body.region).trim().toLowerCase() || String(lama.region || "eu"),
+    plantId: String(body.plantId == null ? "" : body.plantId).trim() || String(lama.plantId || "").trim()
   };
+
+  const salah = periksaSolax(konf);
+  if (salah) throw new GalatHttp(400, salah);
+  simpanSolax(konf);
+  return { ok: true, terkonfigurasi: true, konfigurasi: ringkasSolax(konf) };
 }
 
 /* ========================================================================== *

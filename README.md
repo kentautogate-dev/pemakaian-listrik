@@ -81,29 +81,42 @@ langsung** ke aplikasi karena halaman itu tetap meminta login dan tidak mengizin
 (CORS). Karena itu aplikasi memakai **API resmi SolaxCloud** lewat helper lokal — data yang sama, tanpa perlu
 membuka situs Solax.
 
-Cara menyiapkan (sekali saja):
+Ada **dua cara koneksi** (pilih di panel Konfigurasi):
+
+**A. TokenId (API lama) — akun installer/distributor**
 
 1. Login ke [SolaxCloud](https://www.solaxcloud.com/user-center/).
 2. Buka menu **Service → API**, salin **TokenId**.
 3. Cari **WiFi SN / Registration Number** inverter (nomor seri dongle Wi-Fi; ada di aplikasi SolaxCloud
    atau label perangkat).
-4. Jalankan helper (`mulai-backup.cmd`) → buka halaman **PLTS (Solar)** → isi TokenId, WiFi SN, dan ambang SOC
-   (bawaan 20%) → **Simpan & uji**.
+4. Jalankan helper (`mulai-backup.cmd`) → buka halaman **PLTS (Solar)** → pilih mode **TokenId** →
+   isi TokenId, WiFi SN, dan ambang SOC (bawaan 20%) → **Simpan & uji**.
+
+**B. Developer Portal (OAuth) — akun SolaxCloud biasa/end-user**
+
+Akun end-user umumnya **tidak** melihat menu Service → API; TokenId memang hanya untuk installer/distributor.
+Jalur resmi untuk akun biasa adalah **SolaX Developer Portal**:
+
+1. Buka [developer.solaxcloud.com/login](https://developer.solaxcloud.com/login), login memakai akun SolaxCloud.
+2. Buka **Applications → Create App**, isi nama/aplikasi, pilih akses API yang dibutuhkan (plant/device data),
+   lalu simpan.
+3. Salin **Client ID** dan **Client Secret** dari aplikasi yang dibuat.
+4. Di halaman **PLTS (Solar)**, pilih mode **Developer Portal**, isi Client ID + Client Secret,
+   pilih **Region** (EU/US/CN; umumnya EU), Plant ID boleh dikosongkan, lalu **Simpan & uji**.
+
+Jika muncul kode **10403**, aplikasi belum diberi akses ke API yang dipilih — tambahkan/otorisasi
+**Service Package** di Developer Portal. Jika **10402**, Client ID/Secret salah atau aplikasi belum aktif.
 
 Halaman PLTS menampilkan: SOC baterai, produksi PV, daya baterai, grid (ekspor/impor), hasil hari ini,
 AC output, status inverter, waktu data inverter, serta status seperti **“Mode EPS / OFF-GRID”**,
 **“Baterai lemah & PLTS tidak produksi”**, atau **“PLTS normal”**. Data diperbarui otomatis tiap 60 detik.
 
-> **Menu “Service → API” tidak muncul?** TokenId SolaxCloud umumnya hanya tersedia untuk akun
-> **installer/distributor**, bukan akun end-user. Yang muncul di akun end-user biasanya **SolaX Developer
-> Portal** (`developer.solaxcloud.com`) untuk membuat aplikasi OAuth (clientId/clientSecret) — mekanisme
-> berbeda dari TokenId. Pilihannya: (1) minta TokenId ke installer, (2) pakai Developer Portal lalu minta
-> bantuan menambahkan mode OAuth, atau (3) tanpa cloud: baca inverter langsung lewat Modbus di jaringan lokal.
-> Tanpa salah satu itu, halaman PLTS tetap menampilkan status “belum tersambung”, dan pengamatan PLTS masih
-> bisa dilakukan lewat **penanda manual “Hari ini PLTS off-grid”** di catatan harian.
+> **Tanpa akses API?** Pengamatan PLTS tetap bisa dilakukan lewat **penanda manual “Hari ini PLTS off-grid”**
+> di catatan harian, dan analisa bulanan membandingkan pemakaian hari off-grid vs hari normal.
 
-Token disimpan **hanya di komputer ini** (`solax-config.json`, tidak ikut backup GitHub dan tidak ikut restore).
-Helper meneruskan permintaan ke SolaxCloud, jadi TokenId tidak pernah ditulis di browser.
+Kredensial (TokenId/Client Secret) disimpan **hanya di komputer ini** (`solax-config.json`, tidak ikut backup
+GitHub dan tidak ikut restore). Helper meneruskan permintaan ke SolaxCloud; kredensial tidak pernah ditulis
+di browser.
 
 ### Korelasi PLTS ↔ PLN
 

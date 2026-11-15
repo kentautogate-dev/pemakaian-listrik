@@ -220,24 +220,59 @@
       <div class="card">
         <h2><span class="dot"></span>Konfigurasi SolaxCloud</h2>
         <div class="field">
-          <label for="pltsToken">TokenId SolaxCloud</label>
-          <input type="password" id="pltsToken" autocomplete="off" placeholder="tempel TokenId dari menu Service → API">
-          <div class="hint">Diambil dari akun SolaxCloud: <b>Service</b> → <b>API</b>. Disimpan lokal di komputer ini.</div>
+          <label for="pltsMode">Cara koneksi</label>
+          <select id="pltsMode">
+            <option value="token">TokenId — akun installer/distributor</option>
+            <option value="oauth">Developer Portal — Client ID + Client Secret</option>
+          </select>
+          <div class="hint">Akun SolaxCloud biasa (end-user) tidak punya menu <b>Service → API</b>. Pilih <b>Developer Portal</b>: buat aplikasi sekali di <code>developer.solaxcloud.com</code> untuk mendapat Client ID/Secret.</div>
         </div>
-        <div class="row-dua">
+
+        <div id="pltsModeToken">
+          <div class="field">
+            <label for="pltsToken">TokenId SolaxCloud</label>
+            <input type="password" id="pltsToken" autocomplete="off" placeholder="tempel TokenId dari menu Service → API">
+            <div class="hint">Diambil dari akun SolaxCloud: <b>Service</b> → <b>API</b>. Disimpan lokal di komputer ini.</div>
+          </div>
           <div class="field">
             <label for="pltsSn">WiFi SN / Registration Number</label>
             <input type="text" id="pltsSn" autocomplete="off" placeholder="mis. SUT******VB1">
           </div>
           <div class="field">
-            <label for="pltsAmbang">Ambang SOC rendah (%)</label>
-            <input type="number" id="pltsAmbang" min="0" max="100" step="1" value="20">
+            <label for="pltsUrl">URL API SolaxCloud</label>
+            <input type="text" id="pltsUrl" autocomplete="off" value="https://www.solaxcloud.com">
+            <div class="hint">Umumnya <code>https://www.solaxcloud.com</code>. Bisa diganti sesuai region akun.</div>
           </div>
         </div>
+
+        <div id="pltsModeOauth" class="hidden">
+          <div class="field">
+            <label for="pltsClientId">Client ID</label>
+            <input type="text" id="pltsClientId" autocomplete="off" placeholder="Client ID dari Developer Portal">
+          </div>
+          <div class="field">
+            <label for="pltsClientSecret">Client Secret</label>
+            <input type="password" id="pltsClientSecret" autocomplete="off" placeholder="Client Secret (kosongkan bila tidak diubah)">
+          </div>
+          <div class="row-dua">
+            <div class="field">
+              <label for="pltsRegion">Region API</label>
+              <select id="pltsRegion">
+                <option value="eu">EU (openapi-eu)</option>
+                <option value="us">US (openapi-us)</option>
+                <option value="cn">CN (openapi)</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="pltsPlantId">Plant ID (opsional)</label>
+              <input type="text" id="pltsPlantId" autocomplete="off" placeholder="kosongkan = plant pertama">
+            </div>
+          </div>
+        </div>
+
         <div class="field">
-          <label for="pltsUrl">URL API SolaxCloud</label>
-          <input type="text" id="pltsUrl" autocomplete="off" value="https://www.solaxcloud.com">
-          <div class="hint">Umumnya <code>https://www.solaxcloud.com</code>. Bisa diganti sesuai region akun.</div>
+          <label for="pltsAmbang">Ambang SOC rendah (%)</label>
+          <input type="number" id="pltsAmbang" min="0" max="100" step="1" value="20">
         </div>
         <div class="form-aksi">
           <button type="button" class="primary" id="pltsSimpan">Simpan &amp; uji</button>
@@ -245,12 +280,12 @@
         </div>
         <div id="pltsPesan" class="hint"></div>
         <details class="banner-rincian">
-          <summary>Belum punya TokenId / WiFi SN?</summary>
+          <summary>Cara mendapatkan akses (TokenId atau Developer Portal)</summary>
           <ol class="langkah">
-            <li>Buka <a class="tautan" href="https://www.solaxcloud.com/user-center/" target="_blank" rel="noopener">SolaxCloud</a> lalu login.</li>
-            <li>Masuk menu <b>Service</b> → <b>API</b>, salin <b>TokenId</b>.</li>
-            <li><b>WiFi SN</b> = Registration Number / nomor seri dongle Wi-Fi pada inverter (bisa dilihat di aplikasi SolaxCloud / label perangkat).</li>
-            <li>Simpan. Halaman ini akan menampilkan SOC baterai, daya PV, baterai, dan status off-grid.</li>
+            <li><b>TokenId</b> (akun installer/distributor): login <a class="tautan" href="https://www.solaxcloud.com/user-center/" target="_blank" rel="noopener">SolaxCloud</a> → menu <b>Service → API</b> → salin TokenId. WiFi SN = nomor seri dongle/Registration Number inverter.</li>
+            <li><b>Developer Portal</b> (akun SolaxCloud biasa/end-user): buka <a class="tautan" href="https://developer.solaxcloud.com/login" target="_blank" rel="noopener">developer.solaxcloud.com</a> → login dengan akun SolaxCloud → <b>Applications → Create App</b> → isi nama/aplikasi → pilih akses API (plant/device data) → simpan.</li>
+            <li>Setelah aplikasi dibuat, salin <b>Client ID</b> dan <b>Client Secret</b>, lalu masukkan di mode <b>Developer Portal</b> di atas. Bila muncul kode <b>10403</b>, tambahkan/otorisasi <b>Service Package</b> API di Developer Portal.</li>
+            <li>Kalau kedua jalur belum tersedia: gunakan penanda manual “PLTS off-grid” di catatan harian; SOC tetap bisa dipantau dari aplikasi SolaxCloud.</li>
           </ol>
         </details>
       </div>
