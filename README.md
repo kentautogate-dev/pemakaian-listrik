@@ -118,7 +118,8 @@ Data diperbarui otomatis tiap 60 detik.
 
 Kredensial (TokenId/Client Secret) disimpan **hanya di komputer ini** (`solax-config.json`, tidak ikut backup
 GitHub dan tidak ikut restore). Helper meneruskan permintaan ke SolaxCloud; kredensial tidak pernah ditulis
-di browser.
+di browser. Panel **Konfigurasi SolaxCloud** bisa dibuka/tutup dan isinya bisa di-scroll, sehingga tidak
+memakan ruang layar setelah selesai disetel.
 
 ### Korelasi PLTS ↔ PLN
 

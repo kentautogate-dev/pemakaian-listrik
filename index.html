@@ -217,8 +217,10 @@
         </div>
       </div>
 
-      <div class="card">
-        <h2><span class="dot"></span>Konfigurasi SolaxCloud</h2>
+      <div class="card plts-config-card">
+        <details id="pltsConfigDetails" class="plts-config-details" open>
+          <summary><span class="dot"></span>Konfigurasi SolaxCloud <span class="plts-config-toggle">buka/tutup</span></summary>
+          <div class="plts-config-body">
         <div class="field">
           <label for="pltsMode">Cara koneksi</label>
           <select id="pltsMode">
@@ -288,6 +290,8 @@
             <li>Setelah aplikasi dibuat, salin <b>Client ID</b> dan <b>Client Secret</b>, lalu masukkan di mode <b>Developer Portal</b> di atas. Bila muncul kode <b>10403</b>, tambahkan/otorisasi <b>Service Package</b> API di Developer Portal.</li>
             <li>Kalau kedua jalur belum tersedia: gunakan penanda manual “PLTS off-grid” di catatan harian; SOC tetap bisa dipantau dari aplikasi SolaxCloud.</li>
           </ol>
+        </details>
+          </div>
         </details>
       </div>
 

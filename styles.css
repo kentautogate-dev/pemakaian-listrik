@@ -689,3 +689,32 @@ code {
   .flow-load { right: 2%; bottom: 4%; }
   .plts-mini-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
+
+/* ---------- PLTS: kartu konfigurasi buka-tutup + scroll ---------- */
+.plts-config-card { align-self: start; }
+.plts-config-details > summary {
+  display: flex; align-items: center; gap: 8px;
+  cursor: pointer; list-style: none;
+  font-size: 0.95rem; font-weight: 700; color: var(--teks);
+  margin: 0;
+  padding: 1px 0 10px;
+}
+.plts-config-details > summary::-webkit-details-marker { display: none; }
+.plts-config-details > summary .dot { width: 8px; height: 8px; border-radius: 99px; background: var(--aksen); flex: 0 0 auto; }
+.plts-config-details > summary::after {
+  content: "▾"; margin-left: 6px; color: var(--aksen); font-size: 0.95rem;
+}
+.plts-config-details:not([open]) > summary::after { content: "▸"; }
+.plts-config-toggle {
+  margin-left: auto; font-size: 0.64rem; font-weight: 800; letter-spacing: 0.04em;
+  text-transform: uppercase; color: var(--teks-lembut);
+  border: 1px solid var(--garis); border-radius: 999px; padding: 2px 8px;
+}
+.plts-config-body {
+  max-height: 320px; overflow-y: auto; overscroll-behavior: contain;
+  padding: 2px 6px 2px 0;
+}
+.plts-config-body::-webkit-scrollbar { width: 8px; }
+.plts-config-body::-webkit-scrollbar-thumb { background: var(--garis); border-radius: 99px; }
+.plts-config-body::-webkit-scrollbar-track { background: transparent; }
+.plts-config-details:not([open]) .plts-config-body { display: none; }

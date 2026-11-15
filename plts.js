@@ -394,6 +394,16 @@
   }
 
   function pasangEvent() {
+    // Ingat posisi buka/tutup kartu konfigurasi.
+    var detailKonfig = $("pltsConfigDetails");
+    if (detailKonfig) {
+      try {
+        if (localStorage.getItem("plts-config-terbuka") === "0") detailKonfig.open = false;
+      } catch (e) { }
+      detailKonfig.addEventListener("toggle", function () {
+        try { localStorage.setItem("plts-config-terbuka", detailKonfig.open ? "1" : "0"); } catch (e) { }
+      });
+    }
     $("pltsPerbarui").addEventListener("click", muat);
     $("pltsCobaLagi").addEventListener("click", muat);
     $("pltsSimpan").addEventListener("click", simpanKonfigurasi);
