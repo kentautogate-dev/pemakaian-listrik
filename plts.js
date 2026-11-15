@@ -121,25 +121,25 @@
     var soc = d.socPct;
     var socTeks = soc === null || soc === undefined ? "—" : angka(soc, 0) + "%";
     var lebar = soc === null || soc === undefined ? 0 : Math.max(0, Math.min(100, soc));
-    var gridNilai = d.feedinpowerW === null || d.feedinpowerW === undefined ? "—" : kw(Math.abs(d.feedinpowerW));
+    var gridNilai = d.feedinpowerW === null || d.feedinpowerW === undefined ? "—" : wattTeks(Math.abs(d.feedinpowerW));
     var gridSub = d.feedinpowerW === null || d.feedinpowerW === undefined ? "tidak tersedia"
       : d.feedinpowerW > 0 ? "Ekspor ke PLN" : d.feedinpowerW < 0 ? "Impor dari PLN" : "idle";
-    var bateraiNilai = d.batPowerW === null || d.batPowerW === undefined ? "—" : kw(Math.abs(d.batPowerW));
+    var bateraiNilai = d.batPowerW === null || d.batPowerW === undefined ? "—" : wattTeks(Math.abs(d.batPowerW));
     var bateraiSub = d.batPowerW === null || d.batPowerW === undefined ? "tidak tersedia"
       : d.batPowerW > 0 ? "mengosongkan" : d.batPowerW < 0 ? "mengisi" : "idle";
-    var bebanNilai = d.bebanW === null || d.bebanW === undefined ? "—" : kw(d.bebanW);
-    var pvNilai = d.pvW === null || d.pvW === undefined ? "—" : kw(d.pvW);
+    var bebanNilai = d.bebanW === null || d.bebanW === undefined ? "—" : wattTeks(d.bebanW);
+    var pvNilai = d.pvW === null || d.pvW === undefined ? "—" : wattTeks(d.pvW);
     var gridVoltTeks = d.gridVoltageV !== null && d.gridVoltageV !== undefined ? angka(d.gridVoltageV, 1) + " V" : gridNilai;
     var gridTeks = d.gridFrequencyHz !== null && d.gridFrequencyHz !== undefined
       ? angka(d.gridFrequencyHz, 0) + " Hz" : gridVoltTeks;
     var suhuTeks = d.temperatureC !== null && d.temperatureC !== undefined ? angka(d.temperatureC, 0) + "°C" : "—°C";
-    var gridDayaTeks = d.feedinpowerW === null || d.feedinpowerW === undefined ? "—" : watt(Math.abs(d.feedinpowerW));
+    var gridDayaTeks = d.feedinpowerW === null || d.feedinpowerW === undefined ? "—" : wattTeks(Math.abs(d.feedinpowerW));
     var modeOffGrid = !!d.offGrid || (d.gridFrequencyHz === 0 && d.feedinpowerW === 0 && d.pvW > 50);
     var modeLabel = modeOffGrid ? "OFF-GRID" : "ON-GRID";
     var statusUtama = modeOffGrid ? "PLTS OFF-GRID" : d.statusTeks;
     if (modeOffGrid) tone = "waspada";
     var hasil = d.yieldTodayKwh === null || d.yieldTodayKwh === undefined ? "—" : angka(d.yieldTodayKwh, 2) + " kWh";
-    var ac = d.acpowerW === null || d.acpowerW === undefined ? "—" : watt(d.acpowerW);
+    var ac = d.acpowerW === null || d.acpowerW === undefined ? "—" : wattTeks(d.acpowerW);
 
     var html = '<div class="plts-status ' + tone + '">' +
       '<div class="plts-status-kepala"><span class="plts-titik"></span><b>' + esc(statusUtama) + "</b>" +
@@ -234,6 +234,14 @@
     var w = Number(nilai);
     if (!isFinite(w)) return "—";
     return angka(w / 1000, 2) + " kW";
+  }
+
+  /** Daya selalu dalam Watt; ribuan memakai titik (mis. 1.220 W). */
+  function wattTeks(nilai) {
+    if (nilai === null || nilai === undefined) return "—";
+    var w = Number(nilai);
+    if (!isFinite(w)) return "—";
+    return angka(Math.round(w), 0) + " W";
   }
 
   /**
