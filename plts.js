@@ -116,6 +116,21 @@
     return ikon[nama] || "";
   }
 
+  /** Waktu data inverter: dari "2026-11-15 15:12:14" menjadi "15-11-2026 15:12:14". */
+  function formatWaktuUpload(teks) {
+    if (!teks) return "—";
+    var s = String(teks).trim();
+    var m = /^(\d{4})-(\d{2})-(\d{2})([ T](\d{2}:\d{2}(?::\d{2})?))?/.exec(s);
+    if (m) return m[3] + "-" + m[2] + "-" + m[1] + (m[5] ? " " + m[5] : "");
+    var d = new Date(s);
+    if (!isNaN(d.getTime())) {
+      var dua = function (n) { return (n < 10 ? "0" : "") + n; };
+      return dua(d.getDate()) + "-" + dua(d.getMonth() + 1) + "-" + d.getFullYear() +
+        " " + dua(d.getHours()) + ":" + dua(d.getMinutes()) + ":" + dua(d.getSeconds());
+    }
+    return s;
+  }
+
   function renderStatus(d) {
     var tone = d.offGrid ? "bahaya" : d.socRendah ? "waspada" : "normal";
     var soc = d.socPct;
@@ -213,7 +228,7 @@
         '<div><span>AC output</span><b>' + esc(ac) + "</b></div>" +
         '<div><span>SOC baterai</span><b>' + esc(socTeks) + "</b></div>" +
         '<div><span>Status inverter</span><b>' + esc(d.inverterStatusTeks || "—") + "</b></div>" +
-        '<div><span>Data inverter</span><b>' + esc(d.uploadTime || "—") + "</b></div>" +
+        '<div><span>Data inverter</span><b>' + esc(formatWaktuUpload(d.uploadTime)) + "</b></div>" +
       "</div>" +
 
       '<div class="plts-meta">Sumber: ' + (d.mode === "oauth" ? "Developer Portal (OAuth)" : "API TokenId") +
