@@ -747,7 +747,7 @@ function jumlahAngka(objek) {
 }
 
 /** Mapping respons OAuth (plant/device realtime) ke bentuk yang dipakai halaman PLTS. */
-function petaSolaxOAuth(konf, inv, bat) {
+function petaSolaxOAuth(konf, inv, bat, plantRt) {
   const mppt = inv && inv.mpptMap ? inv.mpptMap : {};
   let pv = 0;
   Object.keys(mppt).forEach(function (k) {
@@ -774,6 +774,10 @@ function petaSolaxOAuth(konf, inv, bat) {
   const soc = angkaAtauNull(bat && bat.batterySOC) !== null ? angkaAtauNull(bat.batterySOC) : angkaAtauNull(inv && inv.batterySOC);
   const batPower = angkaAtauNull(bat && bat.chargeDischargePower);
   const gridPower = angkaAtauNull(inv && inv.gridPower);
+  const dailyChargedKwh = angkaAtauNull(plantRt && plantRt.dailyCharged);
+  const dailyDischargedKwh = angkaAtauNull(plantRt && plantRt.dailyDischarged);
+  const batteryRemainingKwh = angkaAtauNull(bat && bat.batteryRemainings);
+  const batterySohPct = angkaAtauNull(bat && bat.batterySOH);
   const feedin = gridPower === null ? null : -gridPower; // gridPower positif = impor, negatif = ekspor
   // Beban rumah: PV + impor grid − daya baterai.
   // Konvensi API: chargeDischargePower POSITIF = baterai mengisi (charge),
@@ -815,6 +819,10 @@ function petaSolaxOAuth(konf, inv, bat) {
     batPowerW: batPower,
     socPct: soc,
     feedinpowerW: feedin,
+    dailyChargedKwh: dailyChargedKwh,
+    dailyDischargedKwh: dailyDischargedKwh,
+    batteryRemainingKwh: batteryRemainingKwh,
+    batterySohPct: batterySohPct,
     feedinEnergyKwh: angkaAtauNull(inv && inv.todayExportEnergy),
     consumeEnergyKwh: angkaAtauNull(inv && inv.todayImportEnergy),
     yieldTodayKwh: angkaAtauNull(inv && inv.dailyYield),
@@ -892,7 +900,13 @@ async function ambilSolaxOAuth(konf) {
       bat = null;
     }
   }
-  const data = petaSolaxOAuth(konf, inv || {}, bat);
+  let plantRt = null;
+  try {
+    plantRt = await oauthGet(konf, "/openapi/v2/plant/realtime_data", { plantId: plant.plantId, businessType: 1 });
+  } catch (e) {
+    plantRt = null;
+  }
+  const data = petaSolaxOAuth(konf, inv || {}, bat, plantRt);
   data.plantName = plant.plantName || plant.name || "";
   return { terkonfigurasi: true, mode: "oauth", data, konfigurasi: ringkasSolax(konf) };
 }

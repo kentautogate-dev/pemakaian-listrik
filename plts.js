@@ -155,6 +155,23 @@
     var hasil = d.yieldTodayKwh === null || d.yieldTodayKwh === undefined ? "—" : angka(d.yieldTodayKwh, 2) + " kWh";
     var ac = d.acpowerW === null || d.acpowerW === undefined ? "—" : wattTeks(d.acpowerW);
     var statusInvTeks = d.inverterStatusTeks || "Normal";
+    var socDetailTeks = soc === null || soc === undefined ? "—" : angka(soc, 1) + "%";
+    var kwhRingkas = function (v) { return v === null || v === undefined ? "—" : angka(v, 2) + " kWh"; };
+    var chargedTeks = kwhRingkas(d.dailyChargedKwh);
+    var dischargedTeks = kwhRingkas(d.dailyDischargedKwh);
+    var remainingTeks = kwhRingkas(d.batteryRemainingKwh);
+    var statusBateraiInggris = d.batPowerW === null || d.batPowerW === undefined ? "—"
+      : d.batPowerW > 0 ? "Charging" : d.batPowerW < 0 ? "Discharging" : "Idle";
+    var estHariTeks = "—";
+    try {
+      if (d.batteryRemainingKwh !== null && d.batteryRemainingKwh !== undefined &&
+          window.AplikasiListrik && window.KwhCore) {
+        var ringkas = window.KwhCore.hitung(window.AplikasiListrik.ambilState());
+        var rataHarian = ringkas && ringkas.ringkasan ? ringkas.ringkasan.rata14 : null;
+        if ((!rataHarian || rataHarian <= 0) && d.dailyDischargedKwh) rataHarian = d.dailyDischargedKwh;
+        if (rataHarian > 0) estHariTeks = angka(d.batteryRemainingKwh / rataHarian, 2) + " hari";
+      }
+    } catch (e) { estHariTeks = "—"; }
 
     var html = '<div class="plts-status ' + tone + '">' +
       '<div class="plts-status-kepala"><span class="plts-titik"></span><b>' + esc(statusUtama) + "</b>" +
@@ -230,6 +247,22 @@
         '<div><span>Status inverter</span><b>' + esc(statusInvTeks) + "</b></div>" +
         '<div><span>Data inverter</span><b>' + esc(formatWaktuUpload(d.uploadTime)) + "</b></div>" +
       "</div>" +
+
+      '<div class="plts-bat-detail">' +
+        '<div class="plts-bat-soc">' +
+          '<div class="plts-bat-ikon">' + ikonFlow("baterai") + '</div>' +
+          '<div class="plts-bat-soc-teks"><span>Battery SOC</span><b>' + esc(socDetailTeks) + '</b>' +
+            '<small class="' + (d.batPowerW > 0 ? "isi" : d.batPowerW < 0 ? "keluar" : "") + '">' +
+              esc(statusBateraiInggris) + (d.batPowerW !== null && d.batPowerW !== undefined ? " • " + esc(wattTeks(Math.abs(d.batPowerW))) : "") +
+            '</small></div>' +
+        '</div>' +
+        '<div class="plts-bat-stats">' +
+          '<div><span>Charged Today</span><b>' + esc(chargedTeks) + '</b></div>' +
+          '<div><span>Discharged Today</span><b>' + esc(dischargedTeks) + '</b></div>' +
+          '<div><span>Remaining energy</span><b>' + esc(remainingTeks) + '</b></div>' +
+          '<div><span>Estimated remaining</span><b>' + esc(estHariTeks) + '</b></div>' +
+        '</div>' +
+      '</div>' +
 
       '<div class="plts-meta">Sumber: ' + (d.mode === "oauth" ? "Developer Portal (OAuth)" : "API TokenId") +
       (d.plantName ? " • " + esc(d.plantName) : "") +

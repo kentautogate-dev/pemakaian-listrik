@@ -980,3 +980,33 @@ code {
 
 .flow2-mode { white-space: nowrap; }
 
+
+/* ---------- PLTS: panel detail baterai (SOC / charged / remaining) ---------- */
+.plts-bat-detail {
+  display: grid; grid-template-columns: minmax(220px, 290px) minmax(0, 1fr);
+  gap: 16px; align-items: center;
+  margin: 12px 0 6px; padding: 13px 16px;
+  background: var(--panel); border: 1px solid var(--garis); border-radius: 14px;
+}
+.plts-bat-soc { display: flex; align-items: center; gap: 12px; padding-right: 16px; border-right: 1px solid var(--garis); }
+.plts-bat-ikon {
+  width: 54px; height: 54px; flex: 0 0 auto; border-radius: 12px;
+  display: grid; place-items: center; color: #16a34a;
+  background: #f0fdf4; border: 2px solid #22c55e;
+}
+.plts-bat-ikon svg { width: 30px; height: 30px; }
+.plts-bat-soc-teks { display: grid; gap: 2px; }
+.plts-bat-soc-teks > span { font-size: .64rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--teks-lembut); }
+.plts-bat-soc-teks > b { font-size: 1.5rem; line-height: 1.05; }
+.plts-bat-soc-teks > small { font-size: .72rem; color: var(--teks-lembut); }
+.plts-bat-soc-teks > small.isi { color: #16a34a; }
+.plts-bat-soc-teks > small.keluar { color: #2563eb; }
+.plts-bat-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+.plts-bat-stats > div { display: grid; gap: 2px; }
+.plts-bat-stats span { font-size: .64rem; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; color: var(--teks-lembut); }
+.plts-bat-stats b { font-size: 1rem; font-variant-numeric: tabular-nums; color: var(--teks); }
+@media (max-width: 900px) {
+  .plts-bat-detail { grid-template-columns: 1fr; }
+  .plts-bat-soc { border-right: 0; border-bottom: 1px solid var(--garis); padding: 0 0 10px; }
+  .plts-bat-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
