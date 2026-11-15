@@ -404,6 +404,15 @@
         try { localStorage.setItem("plts-config-terbuka", detailKonfig.open ? "1" : "0"); } catch (e) { }
       });
     }
+    var detailKorelasi = $("pltsKorelasiDetails");
+    if (detailKorelasi) {
+      try {
+        if (localStorage.getItem("plts-korelasi-terbuka") === "0") detailKorelasi.open = false;
+      } catch (e) { }
+      detailKorelasi.addEventListener("toggle", function () {
+        try { localStorage.setItem("plts-korelasi-terbuka", detailKorelasi.open ? "1" : "0"); } catch (e) { }
+      });
+    }
     $("pltsPerbarui").addEventListener("click", muat);
     $("pltsCobaLagi").addEventListener("click", muat);
     $("pltsSimpan").addEventListener("click", simpanKonfigurasi);

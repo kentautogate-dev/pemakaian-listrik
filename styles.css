@@ -718,3 +718,24 @@ code {
 .plts-config-body::-webkit-scrollbar-thumb { background: var(--garis); border-radius: 99px; }
 .plts-config-body::-webkit-scrollbar-track { background: transparent; }
 .plts-config-details:not([open]) .plts-config-body { display: none; }
+
+/* ---------- PLTS: kartu korelasi buka-tutup + scroll ---------- */
+.plts-korelasi-card { align-self: start; }
+.plts-korelasi-details > summary {
+  display: flex; align-items: center; gap: 8px;
+  cursor: pointer; list-style: none;
+  font-size: 0.95rem; font-weight: 700; color: var(--teks);
+  margin: 0; padding: 1px 0 10px;
+}
+.plts-korelasi-details > summary::-webkit-details-marker { display: none; }
+.plts-korelasi-details > summary .dot { width: 8px; height: 8px; border-radius: 99px; background: var(--aksen); flex: 0 0 auto; }
+.plts-korelasi-details > summary::after { content: "▾"; margin-left: 6px; color: var(--aksen); font-size: 0.95rem; }
+.plts-korelasi-details:not([open]) > summary::after { content: "▸"; }
+.plts-korelasi-body {
+  max-height: 300px; overflow-y: auto; overscroll-behavior: contain;
+  padding: 2px 6px 2px 0;
+}
+.plts-korelasi-body::-webkit-scrollbar { width: 8px; }
+.plts-korelasi-body::-webkit-scrollbar-thumb { background: var(--garis); border-radius: 99px; }
+.plts-korelasi-body::-webkit-scrollbar-track { background: transparent; }
+.plts-korelasi-details:not([open]) .plts-korelasi-body { display: none; }
