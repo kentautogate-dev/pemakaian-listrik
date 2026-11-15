@@ -325,7 +325,14 @@ tbody tr:last-child td { border-bottom: none; }
 tbody tr:hover { background: color-mix(in srgb, var(--aksen) 6%, transparent); }
 .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
 th.num { text-align: right; }
-.catatan { color: var(--teks-lembut); max-width: 190px; min-width: 120px; white-space: normal; }
+.catatan {
+  color: var(--bahaya);
+  font-weight: 800;
+  font-size: 0.92rem;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  max-width: 190px; min-width: 120px; white-space: normal;
+}
 .aksi { white-space: nowrap; text-align: right; }
 .baris-subtotal td {
   background: color-mix(in srgb, var(--aksen) 8%, var(--panel-2));
