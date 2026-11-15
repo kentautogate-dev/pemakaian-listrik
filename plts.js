@@ -149,13 +149,12 @@
       ? angka(d.gridFrequencyHz, 0) + " Hz" : gridVoltTeks;
     var suhuTeks = d.temperatureC !== null && d.temperatureC !== undefined ? angka(d.temperatureC, 0) + "°C" : "—°C";
     var gridDayaTeks = d.feedinpowerW === null || d.feedinpowerW === undefined ? "—" : wattTeks(Math.abs(d.feedinpowerW));
-    var modeOffGrid = !!d.offGrid || (d.gridFrequencyHz === 0 && d.feedinpowerW === 0 && d.pvW > 50);
-    var modeLabel = modeOffGrid ? "OFF-GRID" : "ON-GRID";
-    var statusUtama = modeOffGrid ? "PLTS OFF-GRID" : d.statusTeks;
-    if (modeOffGrid) tone = "waspada";
+    // Sistem ini memang off-grid secara normal; tampilkan status Normal.
+    var modeLabel = "Normal";
+    var statusUtama = d.statusTeks;
     var hasil = d.yieldTodayKwh === null || d.yieldTodayKwh === undefined ? "—" : angka(d.yieldTodayKwh, 2) + " kWh";
     var ac = d.acpowerW === null || d.acpowerW === undefined ? "—" : wattTeks(d.acpowerW);
-    var statusInvTeks = d.inverterStatusTeks || (modeOffGrid ? "OFF-GRID (estimasi)" : "ON-GRID (estimasi)");
+    var statusInvTeks = d.inverterStatusTeks || "Normal";
 
     var html = '<div class="plts-status ' + tone + '">' +
       '<div class="plts-status-kepala"><span class="plts-titik"></span><b>' + esc(statusUtama) + "</b>" +
@@ -179,11 +178,11 @@
         '<div class="flow2-node flow2-bat"><div class="flow2-orb orb-bat">' + ikonFlow("baterai") + '</div><span class="flow2-label">Battery</span><b class="flow2-value">' + esc(socTeks) + '</b><small class="flow2-sub">' + esc(bateraiSub) + '</small></div>' +
         '<div class="flow2-node flow2-load"><div class="flow2-orb orb-load">' + ikonFlow("beban") + '</div><span class="flow2-label">Load</span><b class="flow2-value">' + esc(bebanNilai) + '</b></div>' +
         '<div class="flow2-center"><div class="flow2-orb orb-center">' + ikonFlow("inverter") + '</div><span class="flow2-center-label">INVERTER</span></div>' +
-        '<div class="flow2-mode ' + (modeOffGrid ? 'off' : 'on') + '">' + esc(modeLabel) + '</div>' +
+        '<div class="flow2-mode on">' + esc(modeLabel) + '</div>' +
       '</div>' +
 
         '<div class="plts-flow3">' +
-          '<div class="flow3-top"><span class="flow3-status ' + (modeOffGrid ? "off" : "") + '">✓ ' + esc(modeLabel) + '</span><span class="flow3-temp">' + esc(suhuTeks) + '</span></div>' +
+          '<div class="flow3-top"><span class="flow3-status">✓ ' + esc(modeLabel) + '</span><span class="flow3-temp">' + esc(suhuTeks) + '</span></div>' +
           '<svg class="flow3-svg" viewBox="0 0 760 420" preserveAspectRatio="xMidYMid meet" aria-hidden="true">' +
             '<g transform="translate(300,42)">' +
               '<polygon points="0,42 150,0 268,32 118,74" fill="#dbeafe" stroke="#64748b" stroke-width="2"/>' +
