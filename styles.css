@@ -1010,3 +1010,32 @@ code {
   .plts-bat-soc { border-right: 0; border-bottom: 1px solid var(--garis); padding: 0 0 10px; }
   .plts-bat-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
+
+/* ---------- PLTS: grafik harian Solar & Battery SOC ---------- */
+.plts-grafik-card { grid-column: 1 / -1; }
+.plts-grafik-kepala {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 10px; flex-wrap: wrap; margin: 0 0 8px;
+}
+.plts-grafik-legend { display: flex; align-items: center; gap: 14px; font-size: .76rem; color: var(--teks-lembut); font-weight: 700; }
+.plts-grafik-legend span { display: inline-flex; align-items: center; gap: 5px; }
+.plts-grafik-legend i { width: 10px; height: 10px; border-radius: 3px; display: inline-block; }
+.plts-grafik-legend i.solar { background: #f59e0b; }
+.plts-grafik-legend i.soc { background: #06b6d4; }
+.plts-grafik {
+  width: 100%; min-height: 300px; overflow: hidden;
+  border: 1px solid var(--garis); border-radius: 12px;
+  background: linear-gradient(180deg, var(--panel), var(--panel-2));
+}
+.plts-grafik svg { display: block; width: 100%; height: auto; }
+.plts-grafik-kosong {
+  min-height: 300px; display: grid; place-items: center;
+  padding: 20px; text-align: center; color: var(--teks-lembut); font-size: .84rem;
+}
+@media (max-width: 640px) {
+  .plts-grafik { min-height: 230px; }
+  .plts-grafik-kosong { min-height: 230px; }
+}
+
+.plts-grafik-catatan { margin-top: 8px; }
+

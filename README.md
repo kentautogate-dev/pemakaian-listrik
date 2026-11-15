@@ -1,17 +1,17 @@
-# Pemakaian Listrik Rumah — pencatat kWh & biaya (versi 2)
+﻿# Pemakaian Listrik Rumah â€” pencatat kWh & biaya (versi 2)
 
-Aplikasi web **offline** untuk mencatat pemakaian listrik rumah dari **angka sisa kWh di meteran/token**, lalu menghitung sendiri pemakaian, biaya, rekap mingguan/bulanan, dan perkiraan kapan token habis. Tidak butuh internet, server, atau akun — cukup buka `index.html` di browser.
+Aplikasi web **offline** untuk mencatat pemakaian listrik rumah dari **angka sisa kWh di meteran/token**, lalu menghitung sendiri pemakaian, biaya, rekap mingguan/bulanan, dan perkiraan kapan token habis. Tidak butuh internet, server, atau akun â€” cukup buka `index.html` di browser.
 
-Data Oktober 2026 (hasil pemindahan dari catatan manual) sudah dimuat sebagai data awal, jadi grafik dan analisa langsung terisi. Data historis **Mei–September 2026** dari `DATA KWH TOKEN.xls` juga ikut digabungkan otomatis (lihat bagian [Data historis](#data-historis-meiseptember-2026)).
+Data Oktober 2026 (hasil pemindahan dari catatan manual) sudah dimuat sebagai data awal, jadi grafik dan analisa langsung terisi. Data historis **Meiâ€“September 2026** dari `DATA KWH TOKEN.xls` juga ikut digabungkan otomatis (lihat bagian [Data historis](#data-historis-meiseptember-2026)).
 
 ## Cara pakai harian (30 detik)
 
 1. Buka `index.html` (klik dua kali).
 2. Setiap pagi, baca angka **sisa kWh** di meteran, lalu isi:
-   - **Tanggal catat** — otomatis hari ini.
-   - **Sisa kWh di meteran** — angka yang tampil (boleh pakai titik/koma, mis. `1.286`).
-   - **Token masuk (kWh)** — hanya diisi bila Anda mengisi token sebelum membaca angka tadi (mis. `109`).
-   - **Catatan** — opsional (cuaca, rumah kosong, dsb).
+   - **Tanggal catat** â€” otomatis hari ini.
+   - **Sisa kWh di meteran** â€” angka yang tampil (boleh pakai titik/koma, mis. `1.286`).
+   - **Token masuk (kWh)** â€” hanya diisi bila Anda mengisi token sebelum membaca angka tadi (mis. `109`).
+   - **Catatan** â€” opsional (cuaca, rumah kosong, dsb).
 3. Pratinjau langsung menunjukkan pemakaian & biaya hari sebelumnya, lalu klik **Simpan catatan**.
 4. Pemakaian hari ini baru terhitung setelah catatan besok masuk (butuh dua angka untuk selisih).
 
@@ -21,37 +21,37 @@ Data Oktober 2026 (hasil pemindahan dari catatan manual) sudah dimuat sebagai da
 
 | Nilai | Rumus |
 |---|---|
-| Pemakaian satu hari | `sisa hari ini + token yang masuk pada interval ini − sisa pembacaan berikutnya` |
-| Biaya | `pemakaian × harga per kWh` |
-| Rata-rata harian | `total kWh ÷ jumlah hari yang terhitung` |
-| Subtotal mingguan | pekan **Senin–Minggu** (sama seperti catatan manual) |
-| Rekap bulanan | total kWh, biaya, token masuk, sisa token awal → akhir |
-| Estimasi token habis | `sisa token (efektif) ÷ rata-rata 14 hari terakhir` |
-| Proyeksi | `rata-rata harian × 30 hari` dan setahun |
+| Pemakaian satu hari | `sisa hari ini + token yang masuk pada interval ini âˆ’ sisa pembacaan berikutnya` |
+| Biaya | `pemakaian Ã— harga per kWh` |
+| Rata-rata harian | `total kWh Ã· jumlah hari yang terhitung` |
+| Subtotal mingguan | pekan **Seninâ€“Minggu** (sama seperti catatan manual) |
+| Rekap bulanan | total kWh, biaya, token masuk, sisa token awal â†’ akhir |
+| Estimasi token habis | `sisa token (efektif) Ã· rata-rata 14 hari terakhir` |
+| Proyeksi | `rata-rata harian Ã— 30 hari` dan setahun |
 
-Contoh dari data asli: 11 Okt sisa **1.205 kWh**, 12 Okt diisi token **109 kWh** dan sisa menjadi **1.309 kWh** → pemakaian 11 Okt = `1.205 + 109 − 1.309 = 5 kWh` = **Rp 9.175** pada harga Rp 1.835/kWh.
+Contoh dari data asli: 11 Okt sisa **1.205 kWh**, 12 Okt diisi token **109 kWh** dan sisa menjadi **1.309 kWh** â†’ pemakaian 11 Okt = `1.205 + 109 âˆ’ 1.309 = 5 kWh` = **Rp 9.175** pada harga Rp 1.835/kWh.
 
-Angka kunci Oktober 2026: **180 kWh / Rp 330.300**, rata-rata **5,81 kWh/hari**, sisa token akhir **1.215 kWh** (Rp 2.229.525). Cocok dengan rekonsiliasi saldo: `1.286 + 109 − 1.215 = 180 kWh`.
+Angka kunci Oktober 2026: **180 kWh / Rp 330.300**, rata-rata **5,81 kWh/hari**, sisa token akhir **1.215 kWh** (Rp 2.229.525). Cocok dengan rekonsiliasi saldo: `1.286 + 109 âˆ’ 1.215 = 180 kWh`.
 
 ## Urutan token (penting)
 
 Token bisa dibeli **sebelum** atau **sesudah** angka sisa dibaca. Aplikasi mendeteksinya otomatis
 dari perubahan saldo, dan Anda juga bisa memilih manual di kolom **Urutan token** saat mengisi token:
 
-- **Sebelum dibaca** — angka sisa yang dicatat **sudah termasuk** token (saldo naik).
-  Contoh: 12 Okt sisa `1.309` berasal dari `1.200 + 109`. Pemakaian 11 Okt = `1.205 + 109 − 1.309 = 5 kWh`.
-- **Sesudah dibaca** — Anda membaca sisa dulu, **baru** membeli token (saldo turun/normal).
-  Contoh: 9 Nov `1.186` → 10 Nov `1.183` → 11 Nov dibaca `1.182` lalu beli token `109` kWh (meter jadi `1.291`).
-  Pemakaian **10 Nov = 1 kWh** (bukan 110 kWh), dan token 109 kWh dihitung pada interval **11–12 Nov**.
+- **Sebelum dibaca** â€” angka sisa yang dicatat **sudah termasuk** token (saldo naik).
+  Contoh: 12 Okt sisa `1.309` berasal dari `1.200 + 109`. Pemakaian 11 Okt = `1.205 + 109 âˆ’ 1.309 = 5 kWh`.
+- **Sesudah dibaca** â€” Anda membaca sisa dulu, **baru** membeli token (saldo turun/normal).
+  Contoh: 9 Nov `1.186` â†’ 10 Nov `1.183` â†’ 11 Nov dibaca `1.182` lalu beli token `109` kWh (meter jadi `1.291`).
+  Pemakaian **10 Nov = 1 kWh** (bukan 110 kWh), dan token 109 kWh dihitung pada interval **11â€“12 Nov**.
 
-Kolom **Token masuk** di tabel harian kini menandai **“sebelum catat”** atau **“setelah catat”**,
+Kolom **Token masuk** di tabel harian kini menandai **â€œsebelum catatâ€** atau **â€œsetelah catatâ€**,
 dan kartu **Sisa token sekarang** menampilkan saldo efektif (termasuk token baru yang belum tercatat di pembacaan terakhir).
-Jadi tidak perlu lagi menebak urutan; cukup isi tanggal, sisa kWh, dan (bila ada) token — pilihan **Otomatis** sudah aman.
+Jadi tidak perlu lagi menebak urutan; cukup isi tanggal, sisa kWh, dan (bila ada) token â€” pilihan **Otomatis** sudah aman.
 
 ## Harga & tarif
 
 - Harga bawaan: **Rp 1.835/kWh**, mengikuti catatan manual.
-- Di **Pengaturan** tersedia kolom **tarif dasar PLN** dan **PPJ (%)**; tombol **Pakai harga ini** menjumlahkannya menjadi harga efektif. Contoh: R-2/TR Rp 1.699,53 × (1 + 8%) = **Rp 1.835,49/kWh** — mendekati angka yang Anda pakai.
+- Di **Pengaturan** tersedia kolom **tarif dasar PLN** dan **PPJ (%)**; tombol **Pakai harga ini** menjumlahkannya menjadi harga efektif. Contoh: R-2/TR Rp 1.699,53 Ã— (1 + 8%) = **Rp 1.835,49/kWh** â€” mendekati angka yang Anda pakai.
 - Mengubah harga hanya memengaruhi tampilan biaya; angka kWh tidak berubah.
 
 ## Fitur
@@ -63,74 +63,76 @@ Jadi tidak perlu lagi menebak urutan; cukup isi tanggal, sisa kWh, dan (bila ada
 - **Analisa otomatis hemat layar**: analisa **bulan terbaru/terpilih** tampil terbuka (ringkasan, pola hari,
   hari di atas rata-rata, hari 0 kWh, perbandingan bulan lalu), sedangkan analisa **bulan-bulan lama disimpan
   per bulan** di panel **Arsip analisa** yang bisa dilipat & di-scroll.
-- **Saldo token**: sisa kWh, nilai rupiah, perkiraan habis, riwayat pengisian token, kalkulator beli token (Rp → kWh)
-  dengan **titik pemisah ribuan otomatis** (ketik `200000` → tampil `200.000`).
-- **Tabel catatan harian** per bulan dengan subtotal mingguan dan total bulanan; bisa **ubah** (✎) dan **hapus** (🗑) dengan tombol **Urungkan** pada notifikasi.
-- **Penanda PLTS off-grid**: centang “Hari ini PLTS off-grid (baterai habis)” saat mencatat, lalu analisa
+- **Saldo token**: sisa kWh, nilai rupiah, perkiraan habis, riwayat pengisian token, kalkulator beli token (Rp â†’ kWh)
+  dengan **titik pemisah ribuan otomatis** (ketik `200000` â†’ tampil `200.000`).
+- **Tabel catatan harian** per bulan dengan subtotal mingguan dan total bulanan; bisa **ubah** (âœŽ) dan **hapus** (ðŸ—‘) dengan tombol **Urungkan** pada notifikasi.
+- **Penanda PLTS off-grid**: centang â€œHari ini PLTS off-grid (baterai habis)â€ saat mencatat, lalu analisa
   membandingkan rata-rata kWh hari off-grid vs hari normal.
-- **Halaman PLTS (Solar)**: status realtime SolaxCloud — SOC baterai, produksi PV, daya baterai, grid, status
-  inverter (termasuk **mode EPS/off-grid kode 107**) — plus korelasi dengan pemakaian PLN.
+- **Halaman PLTS (Solar)**: status realtime SolaxCloud â€” SOC baterai, produksi PV, daya baterai, grid, status
+  inverter (termasuk **mode EPS/off-grid kode 107**) â€” plus korelasi dengan pemakaian PLN.
 - **Rekap bulanan** seluruh periode (bulan berjalan selalu ikut ditampilkan, walau masih kosong).
 - **Impor** CSV / backup JSON, **ekspor** CSV / JSON, dan **cetak laporan** A4 untuk bulan yang sedang dipilih.
 - **Tema gelap**, tampilan responsif untuk HP, pintasan `Ctrl+Enter` untuk menyimpan, `Esc` menutup dialog.
 
-## PLTS (Solar) — monitor SolaxCloud
+## PLTS (Solar) â€” monitor SolaxCloud
 
 Link SolaxCloud yang dibagikan (`global.solaxcloud.com/green/#/overview?...&onlyView=1`) **tidak bisa ditempel
 langsung** ke aplikasi karena halaman itu tetap meminta login dan tidak mengizinkan diambil dari browser lain
-(CORS). Karena itu aplikasi memakai **API resmi SolaxCloud** lewat helper lokal — data yang sama, tanpa perlu
+(CORS). Karena itu aplikasi memakai **API resmi SolaxCloud** lewat helper lokal â€” data yang sama, tanpa perlu
 membuka situs Solax.
 
 Ada **dua cara koneksi** (pilih di panel Konfigurasi):
 
-**A. TokenId (API lama) — akun installer/distributor**
+**A. TokenId (API lama) â€” akun installer/distributor**
 
 1. Login ke [SolaxCloud](https://www.solaxcloud.com/user-center/).
-2. Buka menu **Service → API**, salin **TokenId**.
+2. Buka menu **Service â†’ API**, salin **TokenId**.
 3. Cari **WiFi SN / Registration Number** inverter (nomor seri dongle Wi-Fi; ada di aplikasi SolaxCloud
    atau label perangkat).
-4. Jalankan helper (`mulai-backup.cmd`) → buka halaman **PLTS (Solar)** → pilih mode **TokenId** →
-   isi TokenId, WiFi SN, dan ambang SOC (bawaan 20%) → **Simpan & uji**.
+4. Jalankan helper (`mulai-backup.cmd`) â†’ buka halaman **PLTS (Solar)** â†’ pilih mode **TokenId** â†’
+   isi TokenId, WiFi SN, dan ambang SOC (bawaan 20%) â†’ **Simpan & uji**.
 
-**B. Developer Portal (OAuth) — akun SolaxCloud biasa/end-user**
+**B. Developer Portal (OAuth) â€” akun SolaxCloud biasa/end-user**
 
-Akun end-user umumnya **tidak** melihat menu Service → API; TokenId memang hanya untuk installer/distributor.
+Akun end-user umumnya **tidak** melihat menu Service â†’ API; TokenId memang hanya untuk installer/distributor.
 Jalur resmi untuk akun biasa adalah **SolaX Developer Portal**:
 
 1. Buka [developer.solaxcloud.com/login](https://developer.solaxcloud.com/login), login memakai akun SolaxCloud.
-2. Buka **Applications → Create App**, isi nama/aplikasi, pilih akses API yang dibutuhkan (plant/device data),
+2. Buka **Applications â†’ Create App**, isi nama/aplikasi, pilih akses API yang dibutuhkan (plant/device data),
    lalu simpan.
 3. Salin **Client ID** dan **Client Secret** dari bagian **Authorization Key** pada detail aplikasi.
-   **App Code** (UUID) yang tampil di daftar Applications **bukan** Client ID — itu hanya identitas internal aplikasi.
+   **App Code** (UUID) yang tampil di daftar Applications **bukan** Client ID â€” itu hanya identitas internal aplikasi.
 4. Di halaman **PLTS (Solar)**, pilih mode **Developer Portal**, isi Client ID + Client Secret,
    pilih **Region** (EU/US/CN; umumnya EU), Plant ID boleh dikosongkan, lalu **Simpan & uji**.
 
-Jika muncul kode **10403**, aplikasi belum diberi akses ke API yang dipilih — tambahkan/otorisasi
+Jika muncul kode **10403**, aplikasi belum diberi akses ke API yang dipilih â€” tambahkan/otorisasi
 **Service Package** di Developer Portal. Jika **10402**, Client ID/Secret salah atau aplikasi belum aktif.
 
 Halaman PLTS menampilkan: SOC baterai, produksi PV, daya baterai, grid (ekspor/impor), beban rumah, hasil hari ini,
-AC output, status inverter, waktu data inverter, serta **diagram aliran energi besar** (PV → rumah → baterai/grid/beban)
-dan status seperti **“Mode EPS / OFF-GRID”**, **“Baterai lemah & PLTS tidak produksi”**, atau **“PLTS normal”**.
+AC output, status inverter, waktu data inverter, serta **diagram aliran energi besar** (PV â†’ rumah â†’ baterai/grid/beban)
+dan status seperti **â€œMode EPS / OFF-GRIDâ€**, **â€œBaterai lemah & PLTS tidak produksiâ€**, atau **â€œPLTS normalâ€**.
 Data diperbarui otomatis tiap 60 detik.
 
-> **Tanpa akses API?** Pengamatan PLTS tetap bisa dilakukan lewat **penanda manual “Hari ini PLTS off-grid”**
+Grafik **Solar (W) + Battery SOC (%)** diisi otomatis oleh helper setiap 60 detik (data lokal `plts-harian.json`, tidak ikut backup/Git).
+
+> **Tanpa akses API?** Pengamatan PLTS tetap bisa dilakukan lewat **penanda manual â€œHari ini PLTS off-gridâ€**
 > di catatan harian, dan analisa bulanan membandingkan pemakaian hari off-grid vs hari normal.
 
 Kredensial (TokenId/Client Secret) disimpan **hanya di komputer ini** (`solax-config.json`, tidak ikut backup
 GitHub dan tidak ikut restore). Helper meneruskan permintaan ke SolaxCloud; kredensial tidak pernah ditulis
-di browser. Panel **Konfigurasi SolaxCloud** dan **Korelasi PLTS ↔ pemakaian PLN** bisa dibuka/tutup dan
+di browser. Panel **Konfigurasi SolaxCloud** dan **Korelasi PLTS â†” pemakaian PLN** bisa dibuka/tutup dan
 isinya bisa di-scroll, sehingga tidak memakan ruang layar setelah selesai disetel.
 
-### Korelasi PLTS ↔ PLN
+### Korelasi PLTS â†” PLN
 
 Cara menandai hari PLTS off-grid (tanpa perlu API/TokenId):
 
-1. Saat mencatat sisa kWh pagi, centang **“PLTS off-grid (baterai habis) hari ini”** bila sejak catatan
+1. Saat mencatat sisa kWh pagi, centang **â€œPLTS off-grid (baterai habis) hari iniâ€** bila sejak catatan
    sebelumnya baterai habis dan listrik memakai PLN.
-2. Kalau baru sadar besok paginya (baterai habis semalam): buka tab **Catatan Listrik** → tombol **✎** pada
-   catatan kemarin → centang → **Simpan perubahan**.
-3. Cara cepat: halaman **PLTS (Solar)** punya tombol **“Tandai kemarin (tanggal) PLTS off-grid”**
-   (atau “Tandai hari ini”).
+2. Kalau baru sadar besok paginya (baterai habis semalam): buka tab **Catatan Listrik** â†’ tombol **âœŽ** pada
+   catatan kemarin â†’ centang â†’ **Simpan perubahan**.
+3. Cara cepat: halaman **PLTS (Solar)** punya tombol **â€œTandai kemarin (tanggal) PLTS off-gridâ€**
+   (atau â€œTandai hari iniâ€).
 4. Untuk menghapus tanda: tombol **Hapus tanda** / buka catatan dan hilangkan centangnya.
 
 Analisa bulanan dan halaman PLTS menampilkan **jumlah hari off-grid, rata-rata kWh/hari saat off-grid vs hari
@@ -164,20 +166,20 @@ Karena browser tidak boleh menulis ke `L:\` atau menjalankan `git push` sendiri,
 1. Pastikan **Node.js** terpasang (`node -v` di Command Prompt). Git dibutuhkan untuk backup GitHub.
 2. **Pasang otomatisasi sekali** (disarankan): klik dua kali **`pasang-otomatis.cmd`**.
    Setelah itu helper **menyala sendiri setiap Windows login** (di latar belakang, tanpa jendela),
-   dan tombol **“Nyalakan helper otomatis”** di halaman Backup & Restore bisa dipakai kapan saja.
+   dan tombol **â€œNyalakan helper otomatisâ€** di halaman Backup & Restore bisa dipakai kapan saja.
    Baca bagian [Otomatisasi helper](#otomatisasi-helper) di bawah.
-3. Buka halaman **Backup & Restore** → isi:
+3. Buka halaman **Backup & Restore** â†’ isi:
    - **Folder backup di L:\\** (default `L:\BACKUP_PEMAKAIAN_LISTRIK`),
-   - **URL repo GitHub** (opsional) — buat dulu repo **kosong** di GitHub, mis. `https://github.com/kentautogate-dev/pemakaian-listrik.git`,
+   - **URL repo GitHub** (opsional) â€” buat dulu repo **kosong** di GitHub, mis. `https://github.com/kentautogate-dev/pemakaian-listrik.git`,
    - **Cabang** (default `main`).
-   Tekan **Cek repo GitHub** untuk memastikan akun & repo-nya sudah benar — hasil hijau berarti siap backup.
+   Tekan **Cek repo GitHub** untuk memastikan akun & repo-nya sudah benar â€” hasil hijau berarti siap backup.
    (Kalau repo dibuat dengan README, aplikasi otomatis menyelaraskan riwayat saat backup pertama.)
 4. Untuk GitHub, login sekali: tutup dulu, klik dua kali **`login-github.cmd`**, ikuti jendela login GitHub.
    Setelah berhasil, tombol backup GitHub bisa dipakai. (Kalau login sudah tersimpan di komputer, langkah ini bisa dilewati.)
 
-> Status di halaman backup akan berubah hijau otomatis (±3 detik) setelah helper dinyalakan — tidak perlu memuat ulang.
+> Status di halaman backup akan berubah hijau otomatis (Â±3 detik) setelah helper dinyalakan â€” tidak perlu memuat ulang.
 > Jika muncul pesan helper belum aktif padahal jendela helper terbuka, tekan **Coba lagi**; panduan pemecahan masalah ada
-> di bagian “Jika ada masalah” di bawah.
+> di bagian â€œJika ada masalahâ€ di bawah.
 
 ### Otomatisasi helper
 
@@ -186,19 +188,19 @@ Browser tidak diizinkan menjalankan `.cmd` langsung (keamanan), jadi otomatisasi
 | Cara | Hasil |
 |---|---|
 | `pasang-otomatis.cmd` (sekali) | Helper otomatis menyala saat login Windows (tanpa jendela) |
-| Tombol **“Nyalakan helper otomatis”** di halaman Backup | Sekali klik → helper menyala (±3 detik status jadi hijau) |
+| Tombol **â€œNyalakan helper otomatisâ€** di halaman Backup | Sekali klik â†’ helper menyala (Â±3 detik status jadi hijau) |
 
 Cara kerjanya:
-- Auto-start: shortcut `Helper Backup Listrik.lnk` di folder **Startup** Windows → `wscript.exe` menjalankan
-  `jalankan-helper.vbs` → helper start di latar belakang, log di `uji\helper-otomatis.log`.
+- Auto-start: shortcut `Helper Backup Listrik.lnk` di folder **Startup** Windows â†’ `wscript.exe` menjalankan
+  `jalankan-helper.vbs` â†’ helper start di latar belakang, log di `uji\helper-otomatis.log`.
 - Tombol halaman: link `backup-listrik://mulai` memakai **protokol khusus Windows** yang didaftarkan di
   `HKCU\Software\Classes\backup-listrik` (hanya untuk pengguna ini, tanpa admin). Saat diklik, Windows mungkin
-  menampilkan konfirmasi **“Open Backup Listrik?”** — pilih **Buka/Open**.
+  menampilkan konfirmasi **â€œOpen Backup Listrik?â€** â€” pilih **Buka/Open**.
 
 Membatalkan otomatisasi: jalankan **`hapus-otomatis.cmd`** (menghapus shortcut Startup + entri protokol).
 Helper tetap bisa dinyalakan manual lewat `mulai-backup.cmd` atau shortcut Desktop `Backup Listrik`.
 
-> `mulai-backup.cmd` sekarang pintar: kalau helper sudah aktif (port 8787 hidup), ia hanya membuka aplikasi —
+> `mulai-backup.cmd` sekarang pintar: kalau helper sudah aktif (port 8787 hidup), ia hanya membuka aplikasi â€”
 > tidak menyalakan helper kedua.
 
 ### Cara backup
@@ -207,11 +209,11 @@ Helper tetap bisa dinyalakan manual lewat `mulai-backup.cmd` atau shortcut Deskt
 2. Centang **Sertakan file project** bila ingin kode aplikasi + laporan ikut dibackup (disarankan).
 3. Klik **Mulai backup**. Muncul **bar persen**, tahap proses, dan log langkah demi langkah.
 4. Hasil backup ke L:\ berupa folder bertanggal, mis. `L:\BACKUP_PEMAKAIAN_LISTRIK\2026-11-01_18-30-00\`:
-   - `data\terbaru.json` + `data\data-<waktu>.json` — data catatan dari browser,
-   - `project\` — salinan seluruh file project,
-   - `proyek.zip` — versi zip dari folder project,
-   - `repo.bundle` — cadangan repo git (bila project sudah jadi repo),
-   - `info.txt` — ringkasan backup.
+   - `data\terbaru.json` + `data\data-<waktu>.json` â€” data catatan dari browser,
+   - `project\` â€” salinan seluruh file project,
+   - `proyek.zip` â€” versi zip dari folder project,
+   - `repo.bundle` â€” cadangan repo git (bila project sudah jadi repo),
+   - `info.txt` â€” ringkasan backup.
 5. Backup ke GitHub akan `git init` (sekali), commit, lalu push. Data disimpan di
    `data/terbaru.json` dan `data/riwayat/`.
 
@@ -224,7 +226,7 @@ Helper tetap bisa dinyalakan manual lewat `mulai-backup.cmd` atau shortcut Deskt
 2. Pilih **Yang dipulihkan**: `Data catatan saja`, `File project saja`, atau `Data + file project`.
 3. Klik **Muat daftar**, pilih snapshot (L:\) atau commit (GitHub), lalu **Restore**.
 4. Ikuti bar persen sampai selesai.
-   - Restore data mengganti data di browser (data lama hilang — backup dulu bila ragu).
+   - Restore data mengganti data di browser (data lama hilang â€” backup dulu bila ragu).
    - Restore file project membuat **cadangan keamanan otomatis** di L:\ (`<waktu>-sebelum-restore`) sebelum menimpa,
      lalu **muat ulang halaman** agar file baru dipakai.
    - Restore file project menimpa berkas yang ada di backup, tetapi **tidak menghapus** berkas tambahan
@@ -235,16 +237,16 @@ Helper tetap bisa dinyalakan manual lewat `mulai-backup.cmd` atau shortcut Deskt
 | Gejala | Solusi |
 |---|---|
 | Halaman backup bilang helper belum aktif | Klik tombol **Nyalakan helper otomatis** (pasang dulu `pasang-otomatis.cmd`), atau jalankan `mulai-backup.cmd`; pastikan port 8787 tidak dipakai program lain |
-| Tombol “Nyalakan helper otomatis” tidak bereaksi | Jalankan `pasang-otomatis.cmd` sekali; setelah itu coba lagi. Windows mungkin menampilkan konfirmasi “Open Backup Listrik?” — pilih Buka/Open |
+| Tombol â€œNyalakan helper otomatisâ€ tidak bereaksi | Jalankan `pasang-otomatis.cmd` sekali; setelah itu coba lagi. Windows mungkin menampilkan konfirmasi â€œOpen Backup Listrik?â€ â€” pilih Buka/Open |
 | Helper tidak menyala sendiri saat login | Pasang ulang `pasang-otomatis.cmd`; pastikan tidak dihapus dari folder Startup Windows |
 | Drive L:\ tidak terdeteksi | Pastikan drive L: terpasang; helper membuat folder backup otomatis saat backup pertama |
-| **“Repository not found” saat backup GitHub** | Klik tombol **Cek repo GitHub** di Pengaturan backup — hasilnya menunjukkan apakah akun/URL/repo bermasalah. Tiga penyebab umum: (a) repo belum dibuat, (b) **username di URL salah**, (c) repo private & belum login. Buat repo **kosong** di https://github.com/new, cek username Anda di halaman profil GitHub (username ≠ email/nama tampilan), lalu jalankan `login-github.cmd` sekali. |
+| **â€œRepository not foundâ€ saat backup GitHub** | Klik tombol **Cek repo GitHub** di Pengaturan backup â€” hasilnya menunjukkan apakah akun/URL/repo bermasalah. Tiga penyebab umum: (a) repo belum dibuat, (b) **username di URL salah**, (c) repo private & belum login. Buat repo **kosong** di https://github.com/new, cek username Anda di halaman profil GitHub (username â‰  email/nama tampilan), lalu jalankan `login-github.cmd` sekali. |
 | Push GitHub gagal (login) | Jalankan `login-github.cmd` sekali, selesaikan jendela login GitHub, lalu coba backup lagi |
-| Push ditolak (`non-fast-forward`/`rejected`) | Repo GitHub berisi commit yang tidak ada di lokal; pulihkan lewat Restore → GitHub, atau buat repo baru yang kosong |
+| Push ditolak (`non-fast-forward`/`rejected`) | Repo GitHub berisi commit yang tidak ada di lokal; pulihkan lewat Restore â†’ GitHub, atau buat repo baru yang kosong |
 | Cek cepat bantuan | Buka `http://127.0.0.1:8787/api/status` di browser; bila muncul `{"ok":true,...}` helper sehat |
 
-> Backup GitHub sekarang memeriksa akses repo lebih dulu (tahap ±25%). Kalau URL/repo/log–in bermasalah, proses
-> berhenti cepat dengan pesan + daftar **“Saran perbaikan”** di halaman, jadi tidak menunggu sampai akhir.
+> Backup GitHub sekarang memeriksa akses repo lebih dulu (tahap Â±25%). Kalau URL/repo/logâ€“in bermasalah, proses
+> berhenti cepat dengan pesan + daftar **â€œSaran perbaikanâ€** di halaman, jadi tidak menunggu sampai akhir.
 
 > Catatan keamanan: helper hanya bisa diakses dari komputer ini (`127.0.0.1`) dan tidak menyimpan token GitHub.
 > Token hanya dipakai sesaat bila Anda mengisi variabel lingkungan `GITHUB_TOKEN` sebelum menjalankan helper.
@@ -253,16 +255,16 @@ Helper tetap bisa dinyalakan manual lewat `mulai-backup.cmd` atau shortcut Deskt
 
 Data disimpan otomatis di **localStorage** browser. Agar aman:
 
-1. **Ekspor → JSON** secara berkala (mis. tiap akhir bulan).
+1. **Ekspor â†’ JSON** secara berkala (mis. tiap akhir bulan).
 2. Untuk pindah browser/komputer: ekspor JSON di perangkat lama, lalu **Impor** file JSON tersebut di perangkat baru.
 
-> Penyimpanan terikat pada browser + alamat halaman. Membuka aplikasi lewat `file://` dan lewat `http://localhost` dianggap dua penyimpanan berbeda — pilih satu cara dan konsisten.
+> Penyimpanan terikat pada browser + alamat halaman. Membuka aplikasi lewat `file://` dan lewat `http://localhost` dianggap dua penyimpanan berbeda â€” pilih satu cara dan konsisten.
 
-## Data historis (Mei–September 2026)
+## Data historis (Meiâ€“September 2026)
 
-Data dari berkas **`DATA KWH TOKEN.xls`** (lembar catatan manual "BULAN: MAY–SEPTEMBER 2026") sudah dimasukkan ke aplikasi sebagai `data-kwh-token.js`:
+Data dari berkas **`DATA KWH TOKEN.xls`** (lembar catatan manual "BULAN: MAYâ€“SEPTEMBER 2026") sudah dimasukkan ke aplikasi sebagai `data-kwh-token.js`:
 
-- **136 catatan** harian, 18 Mei 2026 – 30 September 2026 (Mei 14 hari, Juni 30, Juli 31, Agustus 31, September 30).
+- **136 catatan** harian, 18 Mei 2026 â€“ 30 September 2026 (Mei 14 hari, Juni 30, Juli 31, Agustus 31, September 30).
 - **7 pengisian token** tercatat: 17 Mei (108,99 kWh), 31 Mei, 13 Juni, 21 Juni, 28 Juli, 29 Agustus, 19 September (masing-masing 109 kWh).
 - `urutanToken` diisi **sebelum** atau **sesudah** pembacaan sesuai posisi token pada lembar asli, sehingga perhitungan tidak bergeser.
 - Catatan cuaca/status (MENDUNG, HUJAN, OFF, DIRUMAH, dll.) disalin ke kolom catatan.
@@ -271,7 +273,7 @@ Cara masuknya:
 
 - Saat aplikasi dibuka, `app.js` **menggabungkan sekali** data historis ini ke data yang ada; **tanggal yang sudah ada tidak ditimpa**.
 - Penanda `kwh-token-v1` di localStorage mencegah data muncul lagi bila Anda sengaja menghapusnya.
-- Tombol **Pengaturan → Muat data bawaan** memuat ulang data Oktober 2026 + histori ini (dengan konfirmasi).
+- Tombol **Pengaturan â†’ Muat data bawaan** memuat ulang data Oktober 2026 + histori ini (dengan konfirmasi).
 - Untuk perangkat/browser lain tersedia berkas **`impor-data-kwh-token.csv`** (bisa diimpor lewat menu **Impor**).
 
 Rekap yang dihitung aplikasi dari data ini:
@@ -284,21 +286,21 @@ Rekap yang dihitung aplikasi dari data ini:
 | Agustus 2026 | 171 kWh | 31 | 109 kWh |
 | September 2026 | 164 kWh | 30 | 109 kWh |
 
-> Beberapa baris pada lembar asli punya angka sisa yang berulang/tertukar (mis. 21–24 Juni dan 7–8 Agustus), sehingga total harian pada lembar (kolom "KWH TERPAKAI") tidak selalu konsisten dengan selisih angka sisa. Aplikasi menghitung ulang dari angka sisa yang tercatat, jadi ada selisih kecil pada total Juni/Agustus dibanding penjumlahan kolom lembar; Mei, Juli, dan September cocok.
+> Beberapa baris pada lembar asli punya angka sisa yang berulang/tertukar (mis. 21â€“24 Juni dan 7â€“8 Agustus), sehingga total harian pada lembar (kolom "KWH TERPAKAI") tidak selalu konsisten dengan selisih angka sisa. Aplikasi menghitung ulang dari angka sisa yang tercatat, jadi ada selisih kecil pada total Juni/Agustus dibanding penjumlahan kolom lembar; Mei, Juli, dan September cocok.
 
 ## Data bawaan (Oktober 2026)
 
-32 catatan: 1–31 Oktober 2026 + 1 November 2026 (pembanding agar pemakaian 31 Oktober bisa dihitung). Sumber: pembacaan ulang lembar catatan manual "BULAN: OKTOBER 2026".
+32 catatan: 1â€“31 Oktober 2026 + 1 November 2026 (pembanding agar pemakaian 31 Oktober bisa dihitung). Sumber: pembacaan ulang lembar catatan manual "BULAN: OKTOBER 2026".
 
-- Tanggal/waktu baca: pagi ±09.00; minggu mengikuti Senin–Minggu.
+- Tanggal/waktu baca: pagi Â±09.00; minggu mengikuti Seninâ€“Minggu.
 - 12 Oktober ada pengisian token **109 kWh**.
 - Catatan pada kolom catatan berasal dari kolom keterangan lembar asli (MENDUNG, ASAP, HUJAN, CERAH, MANTAP).
-- Untuk menghapus/mengganti: **Pengaturan → Hapus semua data**, atau **Muat data Oktober 2026** untuk memuat ulang.
-- Lembar asli punya dua salah hitung (baris 13 Okt dan baris 1 Nov). Aplikasi menghitung ulang dengan benar — rinciannya ada di laporan analisa.
+- Untuk menghapus/mengganti: **Pengaturan â†’ Hapus semua data**, atau **Muat data Oktober 2026** untuk memuat ulang.
+- Lembar asli punya dua salah hitung (baris 13 Okt dan baris 1 Nov). Aplikasi menghitung ulang dengan benar â€” rinciannya ada di laporan analisa.
 
 ## Laporan analisa
 
-Lihat `analisa/laporan-analisa-oktober-2026.html` (siap cetak A4, ada versi `.md`), atau buka laporan langsung dari aplikasi lewat **Ekspor → Cetak laporan**.
+Lihat `analisa/laporan-analisa-oktober-2026.html` (siap cetak A4, ada versi `.md`), atau buka laporan langsung dari aplikasi lewat **Ekspor â†’ Cetak laporan**.
 
 ## Berkas
 
@@ -317,21 +319,22 @@ Lihat `analisa/laporan-analisa-oktober-2026.html` (siap cetak A4, ada versi `.md
 | `jalankan-helper.vbs` | Menjalankan helper tanpa jendela (dipakai auto-start & tombol) |
 | `login-github.cmd` / `login-github.ps1` | Login GitHub sekali untuk backup (Git Credential Manager) |
 | `data-oktober-2026.js` | Data catatan Oktober 2026 |
-| `data-kwh-token.js` | Data historis Mei–September 2026 dari `DATA KWH TOKEN.xls` |
+| `data-kwh-token.js` | Data historis Meiâ€“September 2026 dari `DATA KWH TOKEN.xls` |
 | `impor-data-kwh-token.csv` | CSV data historis (untuk impor di perangkat lain) |
 | `backup-config.json` | Pengaturan folder L:\ & repo GitHub (dibuat otomatis oleh helper) |
 | `contoh-catatan.csv` | Contoh format impor |
 | `uji/core.test.cjs` | Uji logika dengan Node (`node uji/core.test.cjs`) |
-| `uji/uji-data-kwh-token.cjs` | Uji data historis Mei–September 2026 |
+| `uji/uji-data-kwh-token.cjs` | Uji data historis Meiâ€“September 2026 |
 | `uji/uji-backup.mjs` | Uji otomatis helper backup (`node uji/uji-backup.mjs`) |
 | `uji/` | Skrip & tangkapan layar pengujian browser |
 | `analisa/` | Data olahan, laporan analisa, dan skrip hitung |
 
 ## Catatan teknis
 
-- Vanilla HTML/CSS/JS, tanpa CDN dan tanpa dependensi — aman dipakai offline.
+- Vanilla HTML/CSS/JS, tanpa CDN dan tanpa dependensi â€” aman dipakai offline.
 - Logika hitung dipisah di `core.js` sehingga bisa diuji tanpa browser: `node uji/core.test.cjs` (semua pemeriksaan harus `OK`).
 - Fitur backup butuh **Node.js** (untuk helper) dan **git** (untuk GitHub); aplikasi harian tetap jalan tanpa keduanya.
 - Helper backup hanya mendengarkan `127.0.0.1:8787`, data dikirim dari browser lewat `fetch` (CORS lokal), sehingga
   aplikasi tetap bisa dibuka langsung dari `index.html` (`file://`) tanpa mengubah data yang sudah ada.
 - Harga, tarif, nama rumah, dan jam catat bisa diubah kapan saja di **Pengaturan**.
+

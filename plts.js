@@ -456,9 +456,93 @@
     $("pltsKorelasi").innerHTML = html;
   }
 
+  /* ---------------- grafik harian Solar & SOC ---------------- */
+  function renderGrafikKosong(pesan) {
+    var box = $("pltsGrafik");
+    if (box) box.innerHTML = '<div class="plts-grafik-kosong">' + esc(pesan || "Grafik belum tersedia.") + "</div>";
+    var info = $("pltsGrafikInfo");
+    if (info) info.textContent = pesan || "";
+  }
+
+  function muatGrafik() {
+    if (!$("pltsGrafik")) return;
+    return panggil("/api/solax/grafik", { batasDetik: 15 }).then(function (jawab) {
+      if (!jawab || !jawab.ok) {
+        renderGrafikKosong((jawab && jawab.galat) || "Grafik belum tersedia.");
+        return;
+      }
+      renderGrafik(jawab);
+    }).catch(function () {
+      renderGrafikKosong("Grafik belum tersedia.");
+    });
+  }
+
+  function renderGrafik(j) {
+    var sampel = (j && Array.isArray(j.sampel) ? j.sampel : []).filter(function (s) {
+      return s && /^\d{2}:\d{2}$/.test(String(s.waktu));
+    });
+    if (!sampel.length) {
+      renderGrafikKosong("Grafik mulai terisi otomatis tiap 60 detik saat helper berjalan.");
+      return;
+    }
+    var W = 1000, H = 340, L = 64, R = 56, T = 18, B = 50;
+    var pw = W - L - R, ph = H - T - B;
+    var menit = function (w) { var a = w.split(":"); return Number(a[0]) * 60 + Number(a[1]); };
+    var angkaAman = function (v) { var n = Number(v); return isFinite(n) ? n : 0; };
+    var pv = sampel.map(function (s) { return Math.max(0, angkaAman(s.pvW)); });
+    var soc = sampel.map(function (s) { return Math.max(0, Math.min(100, angkaAman(s.socPct))); });
+    var maxPv = Math.max.apply(null, pv);
+    var skala = Math.max(1000, Math.ceil(maxPv / 1000) * 1000);
+    var x = function (m) { return L + (m / 1440) * pw; };
+    var yW = function (v) { return T + ph - (v / skala) * ph; };
+    var yS = function (v) { return T + ph - (v / 100) * ph; };
+    var fmtW = function (v) { return window.KwhCore ? window.KwhCore.angka(v, 0) : String(v); };
+
+    var grid = "";
+    for (var i = 0; i <= 4; i++) {
+      var y = T + (ph * i) / 4;
+      var nilai = skala * (1 - i / 4);
+      grid += '<line x1="' + L + '" y1="' + y + '" x2="' + (W - R) + '" y2="' + y + '" stroke="var(--garis)" stroke-width="1"/>';
+      grid += '<text x="' + (L - 8) + '" y="' + (y + 4) + '" text-anchor="end" font-size="12" fill="var(--teks-lembut)">' + fmtW(nilai) + " W</text>";
+      grid += '<text x="' + (W - R + 8) + '" y="' + (y + 4) + '" font-size="12" fill="var(--teks-lembut)">' + (100 - i * 25) + "%</text>";
+    }
+    for (var h = 0; h <= 24; h += 3) {
+      var xx = x(h * 60);
+      grid += '<line x1="' + xx + '" y1="' + T + '" x2="' + xx + '" y2="' + (T + ph) + '" stroke="var(--garis)" stroke-width="0.7" opacity=".6"/>';
+      grid += '<text x="' + xx + '" y="' + (H - 22) + '" text-anchor="middle" font-size="12" fill="var(--teks-lembut)">' + (h < 10 ? "0" : "") + h + ":00</text>";
+    }
+
+    var titikPv = pv.map(function (v, idx) { return x(menit(sampel[idx].waktu)) + "," + yW(v); });
+    var titikSoc = soc.map(function (v, idx) { return x(menit(sampel[idx].waktu)) + "," + yS(v); });
+    var awalX = x(menit(sampel[0].waktu)), akhirX = x(menit(sampel[sampel.length - 1].waktu));
+    var dasar = T + ph;
+    var areaPv = "M" + titikPv.join(" L") + " L" + akhirX + "," + dasar + " L" + awalX + "," + dasar + " Z";
+    var areaSoc = "M" + titikSoc.join(" L") + " L" + akhirX + "," + dasar + " L" + awalX + "," + dasar + " Z";
+
+    var svg = '<svg viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="Grafik Solar dan Battery SOC hari ini" preserveAspectRatio="xMidYMid meet">' +
+      grid +
+      '<path d="' + areaSoc + '" fill="#06b6d4" fill-opacity=".10"/>' +
+      '<path d="' + areaPv + '" fill="#f59e0b" fill-opacity=".14"/>' +
+      '<polyline points="' + titikSoc.join(" ") + '" fill="none" stroke="#06b6d4" stroke-width="2.5" stroke-linejoin="round"/>' +
+      '<polyline points="' + titikPv.join(" ") + '" fill="none" stroke="#f59e0b" stroke-width="2.5" stroke-linejoin="round"/>' +
+      '<circle cx="' + akhirX + '" cy="' + yW(pv[pv.length - 1]) + '" r="3.5" fill="#f59e0b"/>' +
+      '<circle cx="' + akhirX + '" cy="' + yS(soc[soc.length - 1]) + '" r="3.5" fill="#06b6d4"/>' +
+      '<text x="' + L + '" y="' + (T - 2) + '" font-size="11" fill="var(--teks-lembut)">W</text>' +
+      '</svg>';
+
+    var box = $("pltsGrafik");
+    if (box) box.innerHTML = svg;
+    var info = $("pltsGrafikInfo");
+    if (info) {
+      var tanggal = String(j.tanggal || "").replace(/^(\d{4})-(\d{2})-(\d{2})$/, "$3-$2-$1");
+      info.textContent = "Tanggal " + tanggal + " • " + sampel.length + " sampel • terakhir " + sampel[sampel.length - 1].waktu;
+    }
+  }
+
   /* ---------------- muat data ---------------- */
   function muat() {
     renderKorelasi();
+    muatGrafik();
     return panggil("/api/solax/status", { batasDetik: 40 }).then(function (jawab) {
       if (!jawab || (jawab.ok === false && jawab.offline)) {
         tampilkanOffline(true);

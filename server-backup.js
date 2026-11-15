@@ -68,13 +68,14 @@ const BERKAS_KONFIG = process.env.BACKUP_CONFIG
   ? path.resolve(process.env.BACKUP_CONFIG)
   : path.join(PROJECT, "backup-config.json");
 
+const BERKAS_GRAFIK = path.join(PROJECT, "plts-harian.json");
 const ID_SNAPSHOT = /^\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}$/;
 const HASH_COMMIT = /^[0-9a-fA-F]{4,40}$/;
 
 // Nama berkas/folder yang tidak ikut disalin saat backup project.
-const NAMA_DIABAIKAN = new Set([".git", "backup-config.json", "solax-config.json", "node_modules", "__pycache__"]);
+const NAMA_DIABAIKAN = new Set([".git", "backup-config.json", "solax-config.json", "plts-harian.json", "node_modules", "__pycache__"]);
 // Berkas yang tidak boleh ditimpa saat restore project.
-const TIDAK_DITIMPA_RESTORE = new Set(["backup-config.json", "solax-config.json"]);
+const TIDAK_DITIMPA_RESTORE = new Set(["backup-config.json", "solax-config.json", "plts-harian.json"]);
 
 const KONFIG_BAWAAN = Object.freeze({
   folderBackup: "L:\\BACKUP_PEMAKAIAN_LISTRIK",
@@ -919,7 +920,74 @@ async function ambilSolaxRealtime() {
 
 async function apiSolaxStatus() {
   const hasil = await ambilSolaxRealtime();
+  if (hasil && hasil.terkonfigurasi && hasil.data) catatSampel(hasil.data);
   return { ok: true, ...hasil };
+}
+
+/* ---------------- Grafik harian: sampel solar & SOC ---------------- */
+
+function dua(n) { return String(n).padStart(2, "0"); }
+
+function bacaGrafik() {
+  try {
+    const isi = JSON.parse(fs.readFileSync(BERKAS_GRAFIK, "utf8"));
+    if (!isi || !Array.isArray(isi.sampel)) return { tanggal: "", sampel: [] };
+    return { tanggal: String(isi.tanggal || ""), sampel: isi.sampel };
+  } catch (e) {
+    return { tanggal: "", sampel: [] };
+  }
+}
+
+function simpanGrafik(arsip) {
+  try {
+    fs.writeFileSync(BERKAS_GRAFIK, JSON.stringify(arsip));
+  } catch (e) {
+    console.error("[grafik] gagal menyimpan sampel:", e.message);
+  }
+}
+
+function catatSampel(data) {
+  if (!data) return;
+  const d = new Date();
+  const tanggal = d.getFullYear() + "-" + dua(d.getMonth() + 1) + "-" + dua(d.getDate());
+  const waktu = dua(d.getHours()) + ":" + dua(d.getMinutes());
+  const arsip = bacaGrafik();
+  if (arsip.tanggal !== tanggal) {
+    arsip.tanggal = tanggal;
+    arsip.sampel = [];
+  }
+  const sampel = {
+    waktu: waktu,
+    pvW: angkaAtauNull(data.pvW),
+    socPct: angkaAtauNull(data.socPct),
+    bebanW: angkaAtauNull(data.bebanW),
+    batPowerW: angkaAtauNull(data.batPowerW),
+    gridW: angkaAtauNull(data.feedinpowerW)
+  };
+  const akhir = arsip.sampel[arsip.sampel.length - 1];
+  if (akhir && akhir.waktu === waktu) arsip.sampel[arsip.sampel.length - 1] = sampel;
+  else arsip.sampel.push(sampel);
+  if (arsip.sampel.length > 1500) arsip.sampel = arsip.sampel.slice(-1500);
+  simpanGrafik(arsip);
+}
+
+function apiSolaxGrafik() {
+  const arsip = bacaGrafik();
+  return { ok: true, tanggal: arsip.tanggal, sampel: arsip.sampel };
+}
+
+let sedangSampel = false;
+async function sampelBerkala() {
+  if (sedangSampel) return;
+  sedangSampel = true;
+  try {
+    const hasil = await ambilSolaxRealtime();
+    if (hasil && hasil.terkonfigurasi && hasil.data) catatSampel(hasil.data);
+  } catch (e) {
+    /* diamkan: sampler tidak boleh mengganggu server */
+  } finally {
+    sedangSampel = false;
+  }
 }
 
 async function postSolaxKonfigurasi(req) {
@@ -2436,6 +2504,7 @@ async function tangani(req, res) {
           "GET /api/github/log",
           "POST /api/cek-github",
           "GET /api/solax/status",
+          "GET /api/solax/grafik",
           "POST /api/solax/konfigurasi",
           "POST /api/backup",
           "POST /api/restore",
@@ -2477,6 +2546,11 @@ async function tangani(req, res) {
 
     if (metode === "GET" && jalur === "/api/solax/status") {
       kirim(res, 200, await apiSolaxStatus());
+      return;
+    }
+
+    if (metode === "GET" && jalur === "/api/solax/grafik") {
+      kirim(res, 200, apiSolaxGrafik());
       return;
     }
 
@@ -2533,6 +2607,9 @@ async function main() {
     console.log(`[server] project : ${PROJECT}`);
     console.log(`[server] backup  : ${path.resolve(konf.folderBackup)}`);
     console.log(`[server] konfig  : ${BERKAS_KONFIG}`);
+    console.log(`[server] grafik  : ${BERKAS_GRAFIK} (sampel tiap 60 detik)`);
+    setTimeout(sampelBerkala, 4000);
+    setInterval(sampelBerkala, 60000);
   });
 
   for (const sinyal of ["SIGINT", "SIGTERM"]) {
