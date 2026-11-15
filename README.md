@@ -2,7 +2,7 @@
 
 Aplikasi web **offline** untuk mencatat pemakaian listrik rumah dari **angka sisa kWh di meteran/token**, lalu menghitung sendiri pemakaian, biaya, rekap mingguan/bulanan, dan perkiraan kapan token habis. Tidak butuh internet, server, atau akun — cukup buka `index.html` di browser.
 
-Data Oktober 2026 (hasil pemindahan dari catatan manual) sudah dimuat sebagai data awal, jadi grafik dan analisa langsung terisi.
+Data Oktober 2026 (hasil pemindahan dari catatan manual) sudah dimuat sebagai data awal, jadi grafik dan analisa langsung terisi. Data historis **Mei–September 2026** dari `DATA KWH TOKEN.xls` juga ikut digabungkan otomatis (lihat bagian [Data historis](#data-historis-meiseptember-2026)).
 
 ## Cara pakai harian (30 detik)
 
@@ -242,6 +242,34 @@ Data disimpan otomatis di **localStorage** browser. Agar aman:
 
 > Penyimpanan terikat pada browser + alamat halaman. Membuka aplikasi lewat `file://` dan lewat `http://localhost` dianggap dua penyimpanan berbeda — pilih satu cara dan konsisten.
 
+## Data historis (Mei–September 2026)
+
+Data dari berkas **`DATA KWH TOKEN.xls`** (lembar catatan manual "BULAN: MAY–SEPTEMBER 2026") sudah dimasukkan ke aplikasi sebagai `data-kwh-token.js`:
+
+- **136 catatan** harian, 18 Mei 2026 – 30 September 2026 (Mei 14 hari, Juni 30, Juli 31, Agustus 31, September 30).
+- **7 pengisian token** tercatat: 17 Mei (108,99 kWh), 31 Mei, 13 Juni, 21 Juni, 28 Juli, 29 Agustus, 19 September (masing-masing 109 kWh).
+- `urutanToken` diisi **sebelum** atau **sesudah** pembacaan sesuai posisi token pada lembar asli, sehingga perhitungan tidak bergeser.
+- Catatan cuaca/status (MENDUNG, HUJAN, OFF, DIRUMAH, dll.) disalin ke kolom catatan.
+
+Cara masuknya:
+
+- Saat aplikasi dibuka, `app.js` **menggabungkan sekali** data historis ini ke data yang ada; **tanggal yang sudah ada tidak ditimpa**.
+- Penanda `kwh-token-v1` di localStorage mencegah data muncul lagi bila Anda sengaja menghapusnya.
+- Tombol **Pengaturan → Muat data bawaan** memuat ulang data Oktober 2026 + histori ini (dengan konfirmasi).
+- Untuk perangkat/browser lain tersedia berkas **`impor-data-kwh-token.csv`** (bisa diimpor lewat menu **Impor**).
+
+Rekap yang dihitung aplikasi dari data ini:
+
+| Bulan | Pemakaian | Hari | Token masuk |
+|---|---|---|---|
+| Mei 2026 | 151 kWh | 14 | 217,99 kWh |
+| Juni 2026 | 329,9 kWh | 30 | 218 kWh |
+| Juli 2026 | 110,1 kWh | 31 | 109 kWh |
+| Agustus 2026 | 171 kWh | 31 | 109 kWh |
+| September 2026 | 164 kWh | 30 | 109 kWh |
+
+> Beberapa baris pada lembar asli punya angka sisa yang berulang/tertukar (mis. 21–24 Juni dan 7–8 Agustus), sehingga total harian pada lembar (kolom "KWH TERPAKAI") tidak selalu konsisten dengan selisih angka sisa. Aplikasi menghitung ulang dari angka sisa yang tercatat, jadi ada selisih kecil pada total Juni/Agustus dibanding penjumlahan kolom lembar; Mei, Juli, dan September cocok.
+
 ## Data bawaan (Oktober 2026)
 
 32 catatan: 1–31 Oktober 2026 + 1 November 2026 (pembanding agar pemakaian 31 Oktober bisa dihitung). Sumber: pembacaan ulang lembar catatan manual "BULAN: OKTOBER 2026".
@@ -273,9 +301,12 @@ Lihat `analisa/laporan-analisa-oktober-2026.html` (siap cetak A4, ada versi `.md
 | `jalankan-helper.vbs` | Menjalankan helper tanpa jendela (dipakai auto-start & tombol) |
 | `login-github.cmd` / `login-github.ps1` | Login GitHub sekali untuk backup (Git Credential Manager) |
 | `data-oktober-2026.js` | Data catatan Oktober 2026 |
+| `data-kwh-token.js` | Data historis Mei–September 2026 dari `DATA KWH TOKEN.xls` |
+| `impor-data-kwh-token.csv` | CSV data historis (untuk impor di perangkat lain) |
 | `backup-config.json` | Pengaturan folder L:\ & repo GitHub (dibuat otomatis oleh helper) |
 | `contoh-catatan.csv` | Contoh format impor |
 | `uji/core.test.cjs` | Uji logika dengan Node (`node uji/core.test.cjs`) |
+| `uji/uji-data-kwh-token.cjs` | Uji data historis Mei–September 2026 |
 | `uji/uji-backup.mjs` | Uji otomatis helper backup (`node uji/uji-backup.mjs`) |
 | `uji/` | Skrip & tangkapan layar pengujian browser |
 | `analisa/` | Data olahan, laporan analisa, dan skrip hitung |

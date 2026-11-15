@@ -48,6 +48,45 @@
   }
 
   /* ================= penyimpanan ================= */
+  /**
+   * Menggabungkan data historis "DATA KWH TOKEN.xls" (Mei–September 2026) ke data aplikasi.
+   * Hanya menambah tanggal yang belum ada — catatan pengguna tidak pernah ditimpa.
+   * Dijalankan sekali (penanda di localStorage) agar catatan yang sengaja dihapus tidak muncul lagi.
+   */
+  function gabungDataKwhToken(paksa) {
+    var data = window.DATA_KWH_TOKEN;
+    if (!data || !Array.isArray(data.catatan)) return 0;
+    var kunci = "kwh-token-v1";
+    try {
+      if (!paksa && localStorage.getItem(kunci)) return 0;
+    } catch (e) { /* localStorage tidak aktif: tetap coba gabung di memori */ }
+
+    var ada = {};
+    state.catatan.forEach(function (r) { ada[r.tanggal] = true; });
+    var tambah = 0;
+    data.catatan.forEach(function (r) {
+      if (!r || !r.tanggal || ada[r.tanggal]) return;
+      var rec = {
+        id: "kwh-token-" + r.tanggal,
+        tanggal: r.tanggal,
+        sisa: Number(r.sisa),
+        masuk: Number(r.masuk) || 0,
+        urutanToken: r.urutanToken || "auto",
+        catatan: r.catatan || ""
+      };
+      if (r.pltsOff) rec.pltsOff = true;
+      state.catatan.push(rec);
+      ada[r.tanggal] = true;
+      tambah++;
+    });
+    if (tambah) {
+      state = Core.normalise(state);
+      simpan();
+    }
+    try { localStorage.setItem(kunci, "1"); } catch (e) { }
+    return tambah;
+  }
+
   function muatData() {
     var mentah = null;
     try { mentah = localStorage.getItem(STORE); }
@@ -58,6 +97,7 @@
         var obj = JSON.parse(mentah);
         if (obj && (obj.catatan || obj.settings)) {
           state = Core.normalise(obj);
+          gabungDataKwhToken();
           return;
         }
       } catch (e) { /* data rusak -> pakai data bawaan */ }
@@ -67,10 +107,12 @@
     if (window.DATA_OKTOBER_2026) {
       state = Core.normalise(window.DATA_OKTOBER_2026);
       state.catatan.forEach(function (r) { r.id = "bawaan-" + r.tanggal; });
+      gabungDataKwhToken();
       simpan();
       window.__dataBawaan = true;
     } else {
       state = Core.normalise({ settings: Core.pengaturanBawaan(), catatan: [] });
+      gabungDataKwhToken();
     }
   }
 
@@ -918,7 +960,7 @@
   }
   function muatDataBawaan() {
     if (!window.DATA_OKTOBER_2026) { tampilToast("Data bawaan tidak tersedia.", "error"); return; }
-    if (!confirm("Muat ulang data Oktober 2026 (31 catatan)? Catatan dengan tanggal yang sama akan diganti.")) return;
+    if (!confirm("Muat ulang data bawaan (Oktober 2026 + histori Mei–September 2026)? Catatan dengan tanggal yang sama akan diganti.")) return;
     var baru = Core.normalise(window.DATA_OKTOBER_2026);
     baru.catatan.forEach(function (r) { r.id = "bawaan-" + r.tanggal; });
     var peta = {};
@@ -926,10 +968,11 @@
     baru.catatan.forEach(function (r) { peta[r.tanggal] = r; });
     state.catatan = Object.keys(peta).map(function (k) { return peta[k]; });
     state = Core.normalise(state);
+    var tambah = gabungDataKwhToken(true);
     simpan();
     tutupModal("modalPengaturan");
     render();
-    tampilToast("Data Oktober 2026 dimuat.", "ok");
+    tampilToast("Data bawaan dimuat" + (tambah ? " (+" + tambah + " catatan historis)" : "") + ".", "ok");
   }
 
   /* ================= modal ================= */
