@@ -155,6 +155,7 @@
     if (modeOffGrid) tone = "waspada";
     var hasil = d.yieldTodayKwh === null || d.yieldTodayKwh === undefined ? "—" : angka(d.yieldTodayKwh, 2) + " kWh";
     var ac = d.acpowerW === null || d.acpowerW === undefined ? "—" : wattTeks(d.acpowerW);
+    var statusInvTeks = d.inverterStatusTeks || (modeOffGrid ? "OFF-GRID (estimasi)" : "ON-GRID (estimasi)");
 
     var html = '<div class="plts-status ' + tone + '">' +
       '<div class="plts-status-kepala"><span class="plts-titik"></span><b>' + esc(statusUtama) + "</b>" +
@@ -227,7 +228,7 @@
       '<div class="plts-mini-stats">' +
         '<div><span>AC output</span><b>' + esc(ac) + "</b></div>" +
         '<div><span>SOC baterai</span><b>' + esc(socTeks) + "</b></div>" +
-        '<div><span>Status inverter</span><b>' + esc(d.inverterStatusTeks || "—") + "</b></div>" +
+        '<div><span>Status inverter</span><b>' + esc(statusInvTeks) + "</b></div>" +
         '<div><span>Data inverter</span><b>' + esc(formatWaktuUpload(d.uploadTime)) + "</b></div>" +
       "</div>" +
 
