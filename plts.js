@@ -96,6 +96,26 @@
     $("pltsWaktu").textContent = "";
   }
 
+  /** Ikon garis untuk diagram aliran energi (tanpa gambar eksternal). */
+  function ikonFlow(nama) {
+    var ikon = {
+      pv: '<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">' +
+        '<circle cx="35" cy="13" r="4"/><path d="M35 4v3M35 19v3M26 13h3M41 13h3"/>' +
+        '<rect x="5" y="24" width="29" height="15" rx="2"/><path d="M5 31h29M20 24v15M6 39l-3 4M33 39l3 4"/></svg>',
+      baterai: '<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">' +
+        '<rect x="6" y="10" width="30" height="28" rx="5"/><path d="M16 6h7v4h-7z"/>' +
+        '<path d="M12 20h16M12 26h16M12 32h10"/></svg>',
+      grid: '<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">' +
+        '<path d="M9 41 L24 7 L39 41 M16 28h16 M12 35h24 M24 7V3 M18 9h12"/></svg>',
+      beban: '<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">' +
+        '<path d="M5 25 L24 8 L43 25"/><path d="M10 23v18h28V23"/><rect x="19" y="31" width="10" height="10"/></svg>',
+      inverter: '<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">' +
+        '<rect x="7" y="7" width="34" height="34" rx="7"/><circle cx="24" cy="24" r="6"/>' +
+        '<path d="M24 11v4M24 33v4M12 24h4M32 24h4"/></svg>'
+    };
+    return ikon[nama] || "";
+  }
+
   function renderStatus(d) {
     var tone = d.offGrid ? "bahaya" : d.socRendah ? "waspada" : "normal";
     var soc = d.socPct;
@@ -109,6 +129,7 @@
       : d.batPowerW > 0 ? "mengosongkan" : d.batPowerW < 0 ? "mengisi" : "idle";
     var bebanNilai = d.bebanW === null || d.bebanW === undefined ? "—" : kw(d.bebanW);
     var pvNilai = d.pvW === null || d.pvW === undefined ? "—" : kw(d.pvW);
+    var gridVoltTeks = d.gridVoltageV !== null && d.gridVoltageV !== undefined ? angka(d.gridVoltageV, 1) + " V" : gridNilai;
     var hasil = d.yieldTodayKwh === null || d.yieldTodayKwh === undefined ? "—" : angka(d.yieldTodayKwh, 2) + " kWh";
     var ac = d.acpowerW === null || d.acpowerW === undefined ? "—" : watt(d.acpowerW);
 
@@ -117,56 +138,24 @@
         '<span class="plts-live">realtime</span></div>' +
       (d.peringatan ? '<div class="plts-peringatan">' + esc(d.peringatan) + "</div>" : "") +
 
-      '<div class="plts-flow">' +
-        '<svg class="plts-flow-svg" viewBox="0 0 760 420" preserveAspectRatio="xMidYMid meet" aria-hidden="true">' +
+      '<div class="plts-flow2 ' + tone + '">' +
+        '<svg class="flow2-lines" viewBox="0 0 760 420" preserveAspectRatio="xMidYMid meet" aria-hidden="true">' +
           '<defs>' +
-            '<linearGradient id="pltsSky" x1="0" y1="0" x2="0" y2="1">' +
-              '<stop offset="0" stop-color="#e8f5ff"/><stop offset="1" stop-color="#f7fbff"/>' +
-            '</linearGradient>' +
-            '<marker id="pltsArrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">' +
-              '<path d="M0,0 L10,5 L0,10 z" fill="var(--aksen)"/></marker>' +
+            '<marker id="arrowPv" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2dd4bf"/></marker>' +
+            '<marker id="arrowGrid" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#fb923c"/></marker>' +
+            '<marker id="arrowBat" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#facc15"/></marker>' +
+            '<marker id="arrowLoad" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#22d3ee"/></marker>' +
           '</defs>' +
-          '<rect x="0" y="0" width="760" height="420" rx="18" fill="url(#pltsSky)"/>' +
-          '<circle cx="655" cy="70" r="34" fill="#fde68a" opacity=".85"/>' +
-          '<circle cx="655" cy="70" r="46" fill="#fde68a" opacity=".18"/>' +
-          '<path d="M0 350 H760" stroke="var(--garis)" stroke-width="2"/>' +
-          /* rumah */
-          '<rect x="322" y="205" width="188" height="140" rx="6" fill="#ffffff" stroke="var(--garis)" stroke-width="2"/>' +
-          '<polygon points="304,207 416,128 528,207" fill="#e2e8f0" stroke="var(--garis)" stroke-width="2"/>' +
-          '<rect x="396" y="270" width="40" height="75" rx="3" fill="#94a3b8"/>' +
-          '<rect x="348" y="235" width="34" height="30" rx="3" fill="#bfdbfe"/>' +
-          '<rect x="454" y="235" width="34" height="30" rx="3" fill="#bfdbfe"/>' +
-          /* panel PV di atap */
-          '<g transform="translate(340,158) skewX(-24)">' +
-            '<rect x="0" y="0" width="118" height="47" rx="4" fill="#60a5fa" stroke="#1d4ed8" stroke-width="2"/>' +
-            '<path d="M0 16 H118 M0 32 H118 M40 0 V47 M80 0 V47" stroke="#1e40af" stroke-width="1.4" opacity=".8"/>' +
-          '</g>' +
-          /* baterai */
-          '<g>' +
-            '<rect x="76" y="252" width="68" height="104" rx="10" fill="#f8fafc" stroke="var(--garis)" stroke-width="2"/>' +
-            '<rect x="98" y="244" width="24" height="10" rx="3" fill="var(--garis)"/>' +
-            '<rect x="86" y="278" width="48" height="10" rx="3" fill="#a7f3d0"/>' +
-            '<rect x="86" y="296" width="48" height="10" rx="3" fill="#a7f3d0"/>' +
-            '<rect x="86" y="314" width="48" height="10" rx="3" fill="#e2e8f0"/>' +
-          '</g>' +
-          /* pylon */
-          '<g>' +
-            '<path d="M138 350 L166 270 L194 350 M152 318 H180 M146 334 H186" fill="none" stroke="var(--garis)" stroke-width="3" stroke-linejoin="round"/>' +
-          '</g>' +
-          /* aliran energi */
-          '<path class="flow-line" d="M420 172 C390 190 360 196 330 215" stroke="#f59e0b" fill="none" stroke-width="4" marker-end="url(#pltsArrow)"/>' +
-          '<path class="flow-line" d="M146 270 C200 270 250 250 322 250" stroke="#10b981" fill="none" stroke-width="4" marker-end="url(#pltsArrow)"/>' +
-          '<path class="flow-line" d="M180 300 C240 300 270 292 322 292" stroke="#94a3b8" fill="none" stroke-width="4" marker-end="url(#pltsArrow)"/>' +
-          '<path d="M510 250 C560 250 590 280 620 300" stroke="#ef4444" fill="none" stroke-width="4" opacity=".5"/>' +
+          '<path class="flow2-line" d="M140 82 C220 105 300 160 352 193" stroke="#2dd4bf" fill="none" stroke-width="3" marker-end="url(#arrowPv)"/>' +
+          '<path class="flow2-line" d="M620 82 C540 105 460 160 408 193" stroke="#fb923c" fill="none" stroke-width="3" marker-end="url(#arrowGrid)"/>' +
+          '<path class="flow2-line" d="M352 227 C290 265 220 300 150 315" stroke="#facc15" fill="none" stroke-width="3" marker-end="url(#arrowBat)"/>' +
+          '<path class="flow2-line" d="M408 227 C470 265 540 300 612 315" stroke="#22d3ee" fill="none" stroke-width="3" marker-end="url(#arrowLoad)"/>' +
         '</svg>' +
-
-        '<div class="flow-node flow-pv"><span>PV</span><b>' + esc(pvNilai) + "</b><small>produksi</small></div>" +
-        '<div class="flow-node flow-bat"><span>Baterai</span><b>' + esc(bateraiNilai) + "</b><small>" + esc(bateraiSub) + "</small>" +
-          '<div class="plts-bar flow-bar"><i style="width:' + lebar + '%"></i></div><em>' + esc(socTeks) + "</em></div>" +
-        '<div class="flow-node flow-grid"><span>Grid</span><b>' + esc(gridNilai) + "</b><small>" + esc(gridSub) + "</small></div>" +
-        '<div class="flow-node flow-load"><span>Beban rumah</span><b>' + esc(bebanNilai) + "</b><small>load</small></div>" +
-        '<div class="flow-yield"><span>Hasil hari ini</span><b>' + esc(hasil) + "</b></div>" +
-        '<div class="flow-center">Rumah</div>' +
+        '<div class="flow2-node flow2-pv"><div class="flow2-orb orb-pv">' + ikonFlow("pv") + '</div><span class="flow2-label">PV</span><b class="flow2-value">' + esc(pvNilai) + '</b></div>' +
+        '<div class="flow2-node flow2-grid"><div class="flow2-orb orb-grid">' + ikonFlow("grid") + '</div><span class="flow2-label">Grid</span><b class="flow2-value">' + esc(gridVoltTeks) + '</b></div>' +
+        '<div class="flow2-node flow2-bat"><div class="flow2-orb orb-bat">' + ikonFlow("baterai") + '</div><span class="flow2-label">Baterai</span><b class="flow2-value">' + esc(socTeks) + '</b><small class="flow2-sub">' + esc(bateraiSub) + '</small></div>' +
+        '<div class="flow2-node flow2-load"><div class="flow2-orb orb-load">' + ikonFlow("beban") + '</div><span class="flow2-label">Beban rumah</span><b class="flow2-value">' + esc(bebanNilai) + '</b></div>' +
+        '<div class="flow2-center"><div class="flow2-orb orb-center">' + ikonFlow("inverter") + '</div><span class="flow2-center-label">INVERTER</span></div>' +
       '</div>' +
 
       '<div class="plts-mini-stats">' +

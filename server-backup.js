@@ -756,6 +756,12 @@ function petaSolaxOAuth(konf, inv, bat) {
   if (!pv) pv = angkaAtauNull(inv && inv.MPPTTotalInputPower) || 0;
   if (!pv) pv = jumlahNilai(inv && inv.pvMap);
   const acpower = ["acPower1", "acPower2", "acPower3"].reduce(function (s, k) { return s + (angkaAtauNull(inv && inv[k]) || 0); }, 0);
+  const voltase = ["acVoltage1", "acVoltage2", "acVoltage3"]
+    .map(function (k) { return angkaAtauNull(inv && inv[k]); })
+    .filter(function (v) { return v !== null && v > 0; });
+  const gridVoltageV = voltase.length
+    ? Math.round((voltase.reduce(function (s, v) { return s + v; }, 0) / voltase.length) * 10) / 10
+    : null;
   const soc = angkaAtauNull(bat && bat.batterySOC) !== null ? angkaAtauNull(bat.batterySOC) : angkaAtauNull(inv && inv.batterySOC);
   const batPower = angkaAtauNull(bat && bat.chargeDischargePower);
   const gridPower = angkaAtauNull(inv && inv.gridPower);
@@ -790,6 +796,7 @@ function petaSolaxOAuth(konf, inv, bat) {
     wifiSn: (inv && (inv.registerNo || inv.deviceSn)) || "",
     inverterSN: (inv && inv.deviceSn) || "",
     acpowerW: Math.round((acpower > 0 ? acpower : beban) * 100) / 100,
+    gridVoltageV: gridVoltageV,
     pvW: Math.round(pv),
     bebanW: Math.max(0, Math.round(beban)),
     batPowerW: batPower,
