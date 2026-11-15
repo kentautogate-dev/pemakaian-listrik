@@ -101,36 +101,83 @@
     var soc = d.socPct;
     var socTeks = soc === null || soc === undefined ? "—" : angka(soc, 0) + "%";
     var lebar = soc === null || soc === undefined ? 0 : Math.max(0, Math.min(100, soc));
-    var gridTeks = d.feedinpowerW === null || d.feedinpowerW === undefined ? "—"
-      : (d.feedinpowerW > 0 ? "Ekspor " + watt(d.feedinpowerW)
-        : d.feedinpowerW < 0 ? "Impor " + watt(Math.abs(d.feedinpowerW))
-          : watt(0));
-
-    var kartu = [
-      { label: "SOC baterai", nilai: socTeks, cat: "bar", lebar: lebar },
-      { label: "Produksi PV", nilai: watt(d.pvW) },
-      { label: "Daya baterai", nilai: watt(d.batPowerW) },
-      { label: "Grid", nilai: gridTeks },
-      { label: "Hasil hari ini", nilai: d.yieldTodayKwh === null || d.yieldTodayKwh === undefined ? "—" : angka(d.yieldTodayKwh, 2) + " kWh" },
-      { label: "AC output", nilai: watt(d.acpowerW) }
-    ];
+    var gridNilai = d.feedinpowerW === null || d.feedinpowerW === undefined ? "—" : kw(Math.abs(d.feedinpowerW));
+    var gridSub = d.feedinpowerW === null || d.feedinpowerW === undefined ? "tidak tersedia"
+      : d.feedinpowerW > 0 ? "Ekspor ke PLN" : d.feedinpowerW < 0 ? "Impor dari PLN" : "idle";
+    var bateraiNilai = d.batPowerW === null || d.batPowerW === undefined ? "—" : kw(Math.abs(d.batPowerW));
+    var bateraiSub = d.batPowerW === null || d.batPowerW === undefined ? "tidak tersedia"
+      : d.batPowerW > 0 ? "mengosongkan" : d.batPowerW < 0 ? "mengisi" : "idle";
+    var bebanNilai = d.bebanW === null || d.bebanW === undefined ? "—" : kw(d.bebanW);
+    var pvNilai = d.pvW === null || d.pvW === undefined ? "—" : kw(d.pvW);
+    var hasil = d.yieldTodayKwh === null || d.yieldTodayKwh === undefined ? "—" : angka(d.yieldTodayKwh, 2) + " kWh";
+    var ac = d.acpowerW === null || d.acpowerW === undefined ? "—" : watt(d.acpowerW);
 
     var html = '<div class="plts-status ' + tone + '">' +
-      '<div class="plts-status-kepala"><span class="plts-titik"></span><b>' + esc(d.statusTeks) + "</b></div>" +
+      '<div class="plts-status-kepala"><span class="plts-titik"></span><b>' + esc(d.statusTeks) + "</b>" +
+        '<span class="plts-live">realtime</span></div>' +
       (d.peringatan ? '<div class="plts-peringatan">' + esc(d.peringatan) + "</div>" : "") +
-      '<div class="plts-stats">' +
-      kartu.map(function (k) {
-        return '<div class="plts-stat"><span class="plts-label">' + esc(k.label) + "</span>" +
-          '<b class="plts-nilai">' + esc(k.nilai) + "</b>" +
-          (k.cat === "bar" ? '<div class="plts-bar"><i style="width:' + k.lebar + '%"></i></div>' : "") +
-          "</div>";
-      }).join("") +
+
+      '<div class="plts-flow">' +
+        '<svg class="plts-flow-svg" viewBox="0 0 760 420" preserveAspectRatio="xMidYMid meet" aria-hidden="true">' +
+          '<defs>' +
+            '<linearGradient id="pltsSky" x1="0" y1="0" x2="0" y2="1">' +
+              '<stop offset="0" stop-color="#e8f5ff"/><stop offset="1" stop-color="#f7fbff"/>' +
+            '</linearGradient>' +
+            '<marker id="pltsArrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">' +
+              '<path d="M0,0 L10,5 L0,10 z" fill="var(--aksen)"/></marker>' +
+          '</defs>' +
+          '<rect x="0" y="0" width="760" height="420" rx="18" fill="url(#pltsSky)"/>' +
+          '<circle cx="655" cy="70" r="34" fill="#fde68a" opacity=".85"/>' +
+          '<circle cx="655" cy="70" r="46" fill="#fde68a" opacity=".18"/>' +
+          '<path d="M0 350 H760" stroke="var(--garis)" stroke-width="2"/>' +
+          /* rumah */
+          '<rect x="322" y="205" width="188" height="140" rx="6" fill="#ffffff" stroke="var(--garis)" stroke-width="2"/>' +
+          '<polygon points="304,207 416,128 528,207" fill="#e2e8f0" stroke="var(--garis)" stroke-width="2"/>' +
+          '<rect x="396" y="270" width="40" height="75" rx="3" fill="#94a3b8"/>' +
+          '<rect x="348" y="235" width="34" height="30" rx="3" fill="#bfdbfe"/>' +
+          '<rect x="454" y="235" width="34" height="30" rx="3" fill="#bfdbfe"/>' +
+          /* panel PV di atap */
+          '<g transform="translate(340,158) skewX(-24)">' +
+            '<rect x="0" y="0" width="118" height="47" rx="4" fill="#60a5fa" stroke="#1d4ed8" stroke-width="2"/>' +
+            '<path d="M0 16 H118 M0 32 H118 M40 0 V47 M80 0 V47" stroke="#1e40af" stroke-width="1.4" opacity=".8"/>' +
+          '</g>' +
+          /* baterai */
+          '<g>' +
+            '<rect x="76" y="252" width="68" height="104" rx="10" fill="#f8fafc" stroke="var(--garis)" stroke-width="2"/>' +
+            '<rect x="98" y="244" width="24" height="10" rx="3" fill="var(--garis)"/>' +
+            '<rect x="86" y="278" width="48" height="10" rx="3" fill="#a7f3d0"/>' +
+            '<rect x="86" y="296" width="48" height="10" rx="3" fill="#a7f3d0"/>' +
+            '<rect x="86" y="314" width="48" height="10" rx="3" fill="#e2e8f0"/>' +
+          '</g>' +
+          /* pylon */
+          '<g>' +
+            '<path d="M138 350 L166 270 L194 350 M152 318 H180 M146 334 H186" fill="none" stroke="var(--garis)" stroke-width="3" stroke-linejoin="round"/>' +
+          '</g>' +
+          /* aliran energi */
+          '<path class="flow-line" d="M420 172 C390 190 360 196 330 215" stroke="#f59e0b" fill="none" stroke-width="4" marker-end="url(#pltsArrow)"/>' +
+          '<path class="flow-line" d="M146 270 C200 270 250 250 322 250" stroke="#10b981" fill="none" stroke-width="4" marker-end="url(#pltsArrow)"/>' +
+          '<path class="flow-line" d="M180 300 C240 300 270 292 322 292" stroke="#94a3b8" fill="none" stroke-width="4" marker-end="url(#pltsArrow)"/>' +
+          '<path d="M510 250 C560 250 590 280 620 300" stroke="#ef4444" fill="none" stroke-width="4" opacity=".5"/>' +
+        '</svg>' +
+
+        '<div class="flow-node flow-pv"><span>PV</span><b>' + esc(pvNilai) + "</b><small>produksi</small></div>" +
+        '<div class="flow-node flow-bat"><span>Baterai</span><b>' + esc(bateraiNilai) + "</b><small>" + esc(bateraiSub) + "</small>" +
+          '<div class="plts-bar flow-bar"><i style="width:' + lebar + '%"></i></div><em>' + esc(socTeks) + "</em></div>" +
+        '<div class="flow-node flow-grid"><span>Grid</span><b>' + esc(gridNilai) + "</b><small>" + esc(gridSub) + "</small></div>" +
+        '<div class="flow-node flow-load"><span>Beban rumah</span><b>' + esc(bebanNilai) + "</b><small>load</small></div>" +
+        '<div class="flow-yield"><span>Hasil hari ini</span><b>' + esc(hasil) + "</b></div>" +
+        '<div class="flow-center">Rumah</div>' +
+      '</div>' +
+
+      '<div class="plts-mini-stats">' +
+        '<div><span>AC output</span><b>' + esc(ac) + "</b></div>" +
+        '<div><span>SOC baterai</span><b>' + esc(socTeks) + "</b></div>" +
+        '<div><span>Status inverter</span><b>' + esc(d.inverterStatusTeks || "—") + "</b></div>" +
+        '<div><span>Data inverter</span><b>' + esc(d.uploadTime || "—") + "</b></div>" +
       "</div>" +
+
       '<div class="plts-meta">Sumber: ' + (d.mode === "oauth" ? "Developer Portal (OAuth)" : "API TokenId") +
       (d.plantName ? " • " + esc(d.plantName) : "") +
-      " • Status inverter: " + esc(d.inverterStatusTeks || "—") +
-      (d.inverterStatusKode !== null && d.inverterStatusKode !== undefined ? " (kode " + esc(d.inverterStatusKode) + ")" : "") +
-      (d.uploadTime ? " • data inverter: " + esc(d.uploadTime) : "") +
       (d.wifiSn ? " • SN " + esc(d.wifiSn) : "") + "</div>" +
       (d.batPowerW !== null && d.batPowerW !== undefined
         ? '<div class="plts-meta">Daya baterai (batPower) ditampilkan apa adanya dari inverter: tanda positif/negatif menunjukkan arah pengisian/pengosongan.</div>'
@@ -139,6 +186,14 @@
 
     $("pltsStatus").innerHTML = html;
     $("pltsWaktu").textContent = "Diperbarui: " + new Date().toLocaleTimeString("id-ID");
+  }
+
+  /** W dalam kW dengan 2 desimal; <1 kW tetap ditampilkan kW agar seragam. */
+  function kw(nilai) {
+    if (nilai === null || nilai === undefined) return "—";
+    var w = Number(nilai);
+    if (!isFinite(w)) return "—";
+    return angka(w / 1000, 2) + " kW";
   }
 
   /**

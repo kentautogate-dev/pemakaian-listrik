@@ -108,9 +108,10 @@ Jalur resmi untuk akun biasa adalah **SolaX Developer Portal**:
 Jika muncul kode **10403**, aplikasi belum diberi akses ke API yang dipilih — tambahkan/otorisasi
 **Service Package** di Developer Portal. Jika **10402**, Client ID/Secret salah atau aplikasi belum aktif.
 
-Halaman PLTS menampilkan: SOC baterai, produksi PV, daya baterai, grid (ekspor/impor), hasil hari ini,
-AC output, status inverter, waktu data inverter, serta status seperti **“Mode EPS / OFF-GRID”**,
-**“Baterai lemah & PLTS tidak produksi”**, atau **“PLTS normal”**. Data diperbarui otomatis tiap 60 detik.
+Halaman PLTS menampilkan: SOC baterai, produksi PV, daya baterai, grid (ekspor/impor), beban rumah, hasil hari ini,
+AC output, status inverter, waktu data inverter, serta **diagram aliran energi besar** (PV → rumah → baterai/grid/beban)
+dan status seperti **“Mode EPS / OFF-GRID”**, **“Baterai lemah & PLTS tidak produksi”**, atau **“PLTS normal”**.
+Data diperbarui otomatis tiap 60 detik.
 
 > **Tanpa akses API?** Pengamatan PLTS tetap bisa dilakukan lewat **penanda manual “Hari ini PLTS off-grid”**
 > di catatan harian, dan analisa bulanan membandingkan pemakaian hari off-grid vs hari normal.

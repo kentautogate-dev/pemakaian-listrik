@@ -760,6 +760,8 @@ function petaSolaxOAuth(konf, inv, bat) {
   const batPower = angkaAtauNull(bat && bat.chargeDischargePower);
   const gridPower = angkaAtauNull(inv && inv.gridPower);
   const feedin = gridPower === null ? null : -gridPower; // gridPower positif = impor, negatif = ekspor
+  // Beban rumah = PV + baterai (positif = discharge) + impor grid − ekspor grid.
+  const beban = pv + (batPower || 0) + (gridPower || 0);
   const statusKode = inv && inv.deviceStatus !== undefined && inv.deviceStatus !== null ? Number(inv.deviceStatus) : null;
   const ambang = Number(konf.ambangSoc) || 20;
   const offGrid = statusKode === 107;
@@ -787,8 +789,9 @@ function petaSolaxOAuth(konf, inv, bat) {
     ambilWaktu: isoWaktu(),
     wifiSn: (inv && (inv.registerNo || inv.deviceSn)) || "",
     inverterSN: (inv && inv.deviceSn) || "",
-    acpowerW: Math.round(acpower * 100) / 100,
+    acpowerW: Math.round((acpower > 0 ? acpower : beban) * 100) / 100,
     pvW: Math.round(pv),
+    bebanW: Math.max(0, Math.round(beban)),
     batPowerW: batPower,
     socPct: soc,
     feedinpowerW: feedin,

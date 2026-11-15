@@ -625,3 +625,67 @@ code {
 @media (max-width: 720px) {
   .plts-korelasi-angka { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
+
+/* ---------- PLTS: diagram aliran energi (tampilan besar) ---------- */
+.plts-status-card { grid-column: 1 / -1; }
+.plts-status-card .plts-status { padding: 0; border: 0; background: transparent; }
+.plts-live {
+  margin-left: auto; font-size: .68rem; font-weight: 800; letter-spacing: .06em;
+  text-transform: uppercase; color: #047857; background: #d1fae5;
+  border: 1px solid #a7f3d0; border-radius: 999px; padding: 3px 9px;
+}
+.plts-flow {
+  position: relative; width: 100%; aspect-ratio: 760 / 420;
+  margin: 12px 0 10px; border-radius: 18px; overflow: hidden;
+  border: 1px solid var(--garis); background: linear-gradient(#e8f5ff, #f7fbff);
+}
+.plts-flow-svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.flow-line { stroke-dasharray: 9 9; animation: pltsFlow 1.6s linear infinite; }
+@keyframes pltsFlow { to { stroke-dashoffset: -18; } }
+.flow-node {
+  position: absolute; z-index: 2;
+  background: color-mix(in srgb, var(--panel) 92%, transparent);
+  border: 1px solid var(--garis); border-radius: 14px;
+  padding: 9px 13px; min-width: 116px;
+  box-shadow: 0 10px 24px -18px rgba(15, 23, 42, .55);
+  backdrop-filter: blur(4px);
+}
+.flow-node > span { display: block; font-size: .66rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--teks-lembut); }
+.flow-node > b { display: block; font-size: 1.32rem; line-height: 1.15; margin: 2px 0 1px; font-variant-numeric: tabular-nums; }
+.flow-node > small { display: block; font-size: .7rem; color: var(--teks-lembut); }
+.flow-node > em { display: block; font-style: normal; font-size: .68rem; color: var(--teks-lembut); margin-top: 2px; }
+.flow-pv { top: 5%; left: 50%; transform: translateX(-50%); text-align: center; border-radius: 999px; padding: 12px 22px; }
+.flow-pv > b { font-size: 1.5rem; }
+.flow-bat { left: 3%; bottom: 22%; }
+.flow-grid { left: 8%; bottom: 4%; }
+.flow-load { right: 4%; bottom: 6%; }
+.flow-yield {
+  position: absolute; top: 4%; left: 4%; z-index: 2;
+  background: color-mix(in srgb, var(--panel) 92%, transparent);
+  border: 1px solid var(--garis); border-radius: 12px; padding: 8px 12px;
+}
+.flow-yield > span { display: block; font-size: .64rem; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; color: var(--teks-lembut); }
+.flow-yield > b { font-size: 1.02rem; }
+.flow-center {
+  position: absolute; z-index: 1; left: 50%; top: 58%; transform: translate(-50%, -50%);
+  font-size: .78rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: #475569;
+}
+.flow-bar { width: 92px; margin-top: 5px; }
+.flow-bar i { background: #10b981; }
+.plts-mini-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin: 10px 0 4px; }
+.plts-mini-stats > div { background: var(--panel-2); border: 1px solid var(--garis); border-radius: 10px; padding: 8px 10px; display: grid; gap: 2px; }
+.plts-mini-stats span { font-size: .64rem; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; color: var(--teks-lembut); }
+.plts-mini-stats b { font-size: .88rem; font-variant-numeric: tabular-nums; }
+@media (max-width: 720px) {
+  .plts-flow { aspect-ratio: auto; height: 430px; }
+  .flow-node { min-width: 92px; padding: 7px 9px; }
+  .flow-node > b { font-size: 1.02rem; }
+  .flow-pv { padding: 9px 14px; }
+  .flow-pv > b { font-size: 1.15rem; }
+  .flow-yield { padding: 6px 8px; }
+  .flow-yield > b { font-size: .82rem; }
+  .flow-bat { left: 2%; bottom: 24%; }
+  .flow-grid { left: 4%; bottom: 3%; }
+  .flow-load { right: 2%; bottom: 4%; }
+  .plts-mini-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
