@@ -1043,3 +1043,7 @@ code {
 /* Posisi kotak nilai PV: dekat sisi kanan gambar panel surya */
 .flow3-pv { top: 16%; right: 16%; }
 @media (max-width: 560px) { .flow3-pv { right: 5%; } }
+
+/* Posisi kotak nilai PV: sisi KIRI gambar panel surya */
+.flow3-pv { top: 16%; left: 30%; right: auto; text-align: left; }
+@media (max-width: 560px) { .flow3-pv { left: 24%; right: auto; } }
