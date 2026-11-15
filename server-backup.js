@@ -762,6 +762,12 @@ function petaSolaxOAuth(konf, inv, bat) {
   const gridVoltageV = voltase.length
     ? Math.round((voltase.reduce(function (s, v) { return s + v; }, 0) / voltase.length) * 10) / 10
     : null;
+  const frekuensi = ["gridFrequency", "acFrequency1", "acFrequency2", "acFrequency3"]
+    .map(function (k) { return angkaAtauNull(inv && inv[k]); })
+    .filter(function (v) { return v !== null; });
+  const gridFrequencyHz = frekuensi.length
+    ? Math.round((frekuensi.reduce(function (s, v) { return s + v; }, 0) / frekuensi.length) * 10) / 10
+    : null;
   const soc = angkaAtauNull(bat && bat.batterySOC) !== null ? angkaAtauNull(bat.batterySOC) : angkaAtauNull(inv && inv.batterySOC);
   const batPower = angkaAtauNull(bat && bat.chargeDischargePower);
   const gridPower = angkaAtauNull(inv && inv.gridPower);
@@ -797,6 +803,7 @@ function petaSolaxOAuth(konf, inv, bat) {
     inverterSN: (inv && inv.deviceSn) || "",
     acpowerW: Math.round((acpower > 0 ? acpower : beban) * 100) / 100,
     gridVoltageV: gridVoltageV,
+    gridFrequencyHz: gridFrequencyHz,
     pvW: Math.round(pv),
     bebanW: Math.max(0, Math.round(beban)),
     batPowerW: batPower,

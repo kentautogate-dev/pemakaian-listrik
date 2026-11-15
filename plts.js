@@ -130,6 +130,8 @@
     var bebanNilai = d.bebanW === null || d.bebanW === undefined ? "—" : kw(d.bebanW);
     var pvNilai = d.pvW === null || d.pvW === undefined ? "—" : kw(d.pvW);
     var gridVoltTeks = d.gridVoltageV !== null && d.gridVoltageV !== undefined ? angka(d.gridVoltageV, 1) + " V" : gridNilai;
+    var gridTeks = d.gridFrequencyHz !== null && d.gridFrequencyHz !== undefined
+      ? angka(d.gridFrequencyHz, 0) + " Hz" : gridVoltTeks;
     var hasil = d.yieldTodayKwh === null || d.yieldTodayKwh === undefined ? "—" : angka(d.yieldTodayKwh, 2) + " kWh";
     var ac = d.acpowerW === null || d.acpowerW === undefined ? "—" : watt(d.acpowerW);
 
@@ -141,20 +143,17 @@
       '<div class="plts-flow2 ' + tone + '">' +
         '<svg class="flow2-lines" viewBox="0 0 760 420" preserveAspectRatio="xMidYMid meet" aria-hidden="true">' +
           '<defs>' +
-            '<marker id="arrowPv" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2dd4bf"/></marker>' +
-            '<marker id="arrowGrid" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#fb923c"/></marker>' +
-            '<marker id="arrowBat" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#facc15"/></marker>' +
-            '<marker id="arrowLoad" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#22d3ee"/></marker>' +
+            '<marker id="flowDot" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="7" markerHeight="7"><circle cx="5" cy="5" r="3" fill="#3b82f6"/></marker>' +
           '</defs>' +
-          '<path class="flow2-line" d="M140 82 C220 105 300 160 352 193" stroke="#2dd4bf" fill="none" stroke-width="3" marker-end="url(#arrowPv)"/>' +
-          '<path class="flow2-line" d="M620 82 C540 105 460 160 408 193" stroke="#fb923c" fill="none" stroke-width="3" marker-end="url(#arrowGrid)"/>' +
-          '<path class="flow2-line" d="M352 227 C290 265 220 300 150 315" stroke="#facc15" fill="none" stroke-width="3" marker-end="url(#arrowBat)"/>' +
-          '<path class="flow2-line" d="M408 227 C470 265 540 300 612 315" stroke="#22d3ee" fill="none" stroke-width="3" marker-end="url(#arrowLoad)"/>' +
+          '<path class="flow2-line" d="M140 82 V145 Q140 172 167 172 H325 Q352 172 352 193" fill="none" stroke="#94a3b8" stroke-width="2.5" marker-end="url(#flowDot)"/>' +
+          '<path class="flow2-line" d="M620 82 V145 Q620 172 593 172 H435 Q408 172 408 193" fill="none" stroke="#94a3b8" stroke-width="2.5" marker-end="url(#flowDot)"/>' +
+          '<path class="flow2-line" d="M352 227 Q352 252 325 252 H167 Q140 252 140 279 V315" fill="none" stroke="#94a3b8" stroke-width="2.5" marker-end="url(#flowDot)"/>' +
+          '<path class="flow2-line" d="M408 227 Q408 252 435 252 H593 Q620 252 620 279 V315" fill="none" stroke="#94a3b8" stroke-width="2.5" marker-end="url(#flowDot)"/>' +
         '</svg>' +
-        '<div class="flow2-node flow2-pv"><div class="flow2-orb orb-pv">' + ikonFlow("pv") + '</div><span class="flow2-label">PV</span><b class="flow2-value">' + esc(pvNilai) + '</b></div>' +
-        '<div class="flow2-node flow2-grid"><div class="flow2-orb orb-grid">' + ikonFlow("grid") + '</div><span class="flow2-label">Grid</span><b class="flow2-value">' + esc(gridVoltTeks) + '</b></div>' +
-        '<div class="flow2-node flow2-bat"><div class="flow2-orb orb-bat">' + ikonFlow("baterai") + '</div><span class="flow2-label">Baterai</span><b class="flow2-value">' + esc(socTeks) + '</b><small class="flow2-sub">' + esc(bateraiSub) + '</small></div>' +
-        '<div class="flow2-node flow2-load"><div class="flow2-orb orb-load">' + ikonFlow("beban") + '</div><span class="flow2-label">Beban rumah</span><b class="flow2-value">' + esc(bebanNilai) + '</b></div>' +
+        '<div class="flow2-node flow2-pv"><div class="flow2-orb orb-pv">' + ikonFlow("pv") + '</div><span class="flow2-label">PV Panel</span><b class="flow2-value">' + esc(pvNilai) + '</b></div>' +
+        '<div class="flow2-node flow2-grid"><div class="flow2-orb orb-grid">' + ikonFlow("grid") + '</div><span class="flow2-label">Power Grid</span><b class="flow2-value">' + esc(gridTeks) + '</b></div>' +
+        '<div class="flow2-node flow2-bat"><div class="flow2-orb orb-bat">' + ikonFlow("baterai") + '</div><span class="flow2-label">Battery</span><b class="flow2-value">' + esc(socTeks) + '</b><small class="flow2-sub">' + esc(bateraiSub) + '</small></div>' +
+        '<div class="flow2-node flow2-load"><div class="flow2-orb orb-load">' + ikonFlow("beban") + '</div><span class="flow2-label">Load</span><b class="flow2-value">' + esc(bebanNilai) + '</b></div>' +
         '<div class="flow2-center"><div class="flow2-orb orb-center">' + ikonFlow("inverter") + '</div><span class="flow2-center-label">INVERTER</span></div>' +
       '</div>' +
 

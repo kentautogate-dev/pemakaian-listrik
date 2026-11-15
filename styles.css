@@ -811,3 +811,43 @@ code {
   .flow2-bat { left: 2%; bottom: 5%; }
   .flow2-load { right: 2%; bottom: 5%; }
 }
+
+/* ---------- PLTS: diagram terang ala aplikasi Solax ---------- */
+.plts-flow2 {
+  background: radial-gradient(circle at 50% 45%, #ffffff 0%, #eef7ff 55%, #e6f2ff 100%);
+  border: 1px solid #d7e7f7;
+  color: #0f172a;
+}
+.plts-flow2::before {
+  background: radial-gradient(circle, rgba(59, 130, 246, .12), transparent 70%);
+  filter: blur(30px);
+}
+.flow2-line {
+  stroke-dasharray: 2 8;
+  stroke-linecap: round;
+  animation: flow2 2.2s linear infinite;
+  filter: none;
+}
+.flow2-orb {
+  background: #ffffff;
+  border: 2px solid currentColor;
+  box-shadow: 0 10px 24px -16px rgba(15, 23, 42, .45), inset 0 0 18px rgba(255, 255, 255, .7);
+}
+.orb-pv { color: #3b82f6; box-shadow: 0 10px 24px -16px rgba(59, 130, 246, .55), inset 0 0 18px rgba(219, 234, 254, .9); }
+.orb-grid { color: #64748b; box-shadow: 0 10px 24px -16px rgba(100, 116, 139, .5), inset 0 0 18px rgba(241, 245, 249, .9); }
+.orb-bat { color: #22c55e; box-shadow: 0 10px 24px -16px rgba(34, 197, 94, .5), inset 0 0 18px rgba(220, 252, 231, .9); }
+.orb-load { color: #ec4899; box-shadow: 0 10px 24px -16px rgba(236, 72, 153, .5), inset 0 0 18px rgba(252, 231, 243, .9); }
+.flow2-center .flow2-orb {
+  color: #f59e0b;
+  background: #fffaf2;
+  border-color: #f59e0b;
+  box-shadow: 0 12px 26px -16px rgba(245, 158, 11, .55), inset 0 0 18px rgba(254, 243, 199, .9);
+}
+.flow2-label { color: #475569; letter-spacing: .04em; text-transform: none; font-size: .72rem; }
+.flow2-value { color: #0f172a; font-size: 1.02rem; }
+.flow2-pv .flow2-value,
+.flow2-grid .flow2-value,
+.flow2-bat .flow2-value,
+.flow2-load .flow2-value { color: #0f172a; }
+.flow2-sub { color: #64748b; }
+.flow2-center-label { color: #b45309; }
