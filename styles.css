@@ -920,3 +920,19 @@ code {
 
 .flow3-pv { top: 17%; right: 5%; }
 
+
+/* ---------- PLTS: kartu hasil hari ini (di bawah label status) ---------- */
+.plts-hasil-card {
+  display: inline-grid; gap: 2px; justify-self: start;
+  margin: 2px 0 10px;
+  padding: 9px 14px;
+  background: var(--panel);
+  border: 1px solid var(--garis);
+  border-radius: 12px;
+  box-shadow: 0 10px 24px -20px rgba(15, 23, 42, .5);
+}
+.plts-hasil-card span {
+  font-size: .64rem; font-weight: 800; letter-spacing: .06em;
+  text-transform: uppercase; color: var(--teks-lembut);
+}
+.plts-hasil-card b { font-size: 1.08rem; color: var(--teks); font-variant-numeric: tabular-nums; }

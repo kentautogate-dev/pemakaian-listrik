@@ -141,6 +141,7 @@
       '<div class="plts-status-kepala"><span class="plts-titik"></span><b>' + esc(d.statusTeks) + "</b>" +
         '<span class="plts-live">realtime</span></div>' +
       (d.peringatan ? '<div class="plts-peringatan">' + esc(d.peringatan) + "</div>" : "") +
+      '<div class="plts-hasil-card"><span>Hasil hari ini</span><b>' + esc(hasil) + "</b></div>" +
 
       '<div class="plts-flow-grid">' +
         '<div class="plts-flow2 ' + tone + '">' +
