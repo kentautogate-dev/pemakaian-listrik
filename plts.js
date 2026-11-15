@@ -149,9 +149,9 @@
       ? angka(d.gridFrequencyHz, 0) + " Hz" : gridVoltTeks;
     var suhuTeks = d.temperatureC !== null && d.temperatureC !== undefined ? angka(d.temperatureC, 0) + "°C" : "—°C";
     var gridDayaTeks = d.feedinpowerW === null || d.feedinpowerW === undefined ? "—" : wattTeks(Math.abs(d.feedinpowerW));
-    // Sistem ini memang off-grid secara normal; tampilkan status Normal.
-    var modeLabel = "Normal";
-    var statusUtama = d.statusTeks;
+    // Sistem ini memang off-grid secara normal.
+    var modeLabel = "Normal Off-grid";
+    var statusUtama = "PLTS Normal Off-grid";
     var hasil = d.yieldTodayKwh === null || d.yieldTodayKwh === undefined ? "—" : angka(d.yieldTodayKwh, 2) + " kWh";
     var ac = d.acpowerW === null || d.acpowerW === undefined ? "—" : wattTeks(d.acpowerW);
     var statusInvTeks = d.inverterStatusTeks || "Normal";

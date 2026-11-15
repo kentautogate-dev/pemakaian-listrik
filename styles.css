@@ -970,3 +970,6 @@ code {
   .flow2-pv .flow2-orb, .flow2-grid .flow2-orb { width: 58px; height: 58px; }
   .flow2-pv .flow2-orb svg, .flow2-grid .flow2-orb svg { width: 30px; height: 30px; }
 }
+
+.flow2-mode { white-space: nowrap; }
+
