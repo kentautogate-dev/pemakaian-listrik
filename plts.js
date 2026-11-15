@@ -132,6 +132,8 @@
     var gridVoltTeks = d.gridVoltageV !== null && d.gridVoltageV !== undefined ? angka(d.gridVoltageV, 1) + " V" : gridNilai;
     var gridTeks = d.gridFrequencyHz !== null && d.gridFrequencyHz !== undefined
       ? angka(d.gridFrequencyHz, 0) + " Hz" : gridVoltTeks;
+    var suhuTeks = d.temperatureC !== null && d.temperatureC !== undefined ? angka(d.temperatureC, 0) + "°C" : "—°C";
+    var gridDayaTeks = d.feedinpowerW === null || d.feedinpowerW === undefined ? "—" : watt(Math.abs(d.feedinpowerW));
     var hasil = d.yieldTodayKwh === null || d.yieldTodayKwh === undefined ? "—" : angka(d.yieldTodayKwh, 2) + " kWh";
     var ac = d.acpowerW === null || d.acpowerW === undefined ? "—" : watt(d.acpowerW);
 
@@ -140,7 +142,8 @@
         '<span class="plts-live">realtime</span></div>' +
       (d.peringatan ? '<div class="plts-peringatan">' + esc(d.peringatan) + "</div>" : "") +
 
-      '<div class="plts-flow2 ' + tone + '">' +
+      '<div class="plts-flow-grid">' +
+        '<div class="plts-flow2 ' + tone + '">' +
         '<svg class="flow2-lines" viewBox="0 0 760 420" preserveAspectRatio="xMidYMid meet" aria-hidden="true">' +
           '<defs>' +
             '<marker id="flowDot" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="7" markerHeight="7"><circle cx="5" cy="5" r="3" fill="#3b82f6"/></marker>' +
@@ -155,6 +158,49 @@
         '<div class="flow2-node flow2-bat"><div class="flow2-orb orb-bat">' + ikonFlow("baterai") + '</div><span class="flow2-label">Battery</span><b class="flow2-value">' + esc(socTeks) + '</b><small class="flow2-sub">' + esc(bateraiSub) + '</small></div>' +
         '<div class="flow2-node flow2-load"><div class="flow2-orb orb-load">' + ikonFlow("beban") + '</div><span class="flow2-label">Load</span><b class="flow2-value">' + esc(bebanNilai) + '</b></div>' +
         '<div class="flow2-center"><div class="flow2-orb orb-center">' + ikonFlow("inverter") + '</div><span class="flow2-center-label">INVERTER</span></div>' +
+      '</div>' +
+
+        '<div class="plts-flow3">' +
+          '<div class="flow3-top"><span class="flow3-status">✓ Normal</span><span class="flow3-temp">' + esc(suhuTeks) + '</span></div>' +
+          '<svg class="flow3-svg" viewBox="0 0 760 420" preserveAspectRatio="xMidYMid meet" aria-hidden="true">' +
+            '<g transform="translate(300,42)">' +
+              '<polygon points="0,42 150,0 268,32 118,74" fill="#dbeafe" stroke="#64748b" stroke-width="2"/>' +
+              '<path d="M15 42 L133 74 M40 34 L158 66 M65 26 L183 58 M90 18 L208 50 M115 10 L233 42" stroke="#93c5fd" stroke-width="1.4"/>' +
+              '<path d="M38 8 L55 39 M80 0 L97 31 M122 0 L139 31 M164 3 L181 34 M206 12 L223 43" stroke="#93c5fd" stroke-width="1.4"/>' +
+              '<path d="M118 74 V112 M168 62 V100 M118 112 H168" stroke="#94a3b8" stroke-width="2.4" fill="none"/>' +
+              '<path d="M96 112 H190" stroke="#94a3b8" stroke-width="3"/>' +
+            '</g>' +
+            '<g transform="translate(330,180)">' +
+              '<polygon points="0,70 95,30 190,65 95,105" fill="#f8fafc" stroke="#94a3b8" stroke-width="2"/>' +
+              '<polygon points="0,70 0,118 95,158 95,105" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/>' +
+              '<polygon points="95,105 95,158 190,118 190,65" fill="#cbd5e1" stroke="#94a3b8" stroke-width="2"/>' +
+              '<rect x="28" y="92" width="20" height="26" fill="#bfdbfe" stroke="#64748b" stroke-width="1.5"/>' +
+              '<rect x="118" y="96" width="34" height="26" fill="#bfdbfe" stroke="#64748b" stroke-width="1.5"/>' +
+              '<path d="M95 105 V158" stroke="#94a3b8" stroke-width="2"/>' +
+            '</g>' +
+            '<g transform="translate(86,270)">' +
+              '<polygon points="0,42 58,22 116,42 58,62" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/>' +
+              '<polygon points="0,42 0,78 58,98 58,62" fill="#cbd5e1" stroke="#94a3b8" stroke-width="2"/>' +
+              '<polygon points="58,62 58,98 116,78 116,42" fill="#94a3b8" stroke="#94a3b8" stroke-width="2"/>' +
+              '<polygon points="0,58 0,92 58,112 58,78" fill="#f1f5f9" stroke="#94a3b8" stroke-width="2"/>' +
+              '<polygon points="58,78 58,112 116,92 116,58" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/>' +
+              '<polygon points="0,74 0,108 58,128 58,94" fill="#f8fafc" stroke="#94a3b8" stroke-width="2"/>' +
+            '</g>' +
+            '<g transform="translate(610,250)" fill="none" stroke="#94a3b8" stroke-width="2.2">' +
+              '<path d="M30 140 L0 0 M30 140 L60 0"/>' +
+              '<path d="M10 32 H50 M5 62 H55 M2 96 H58"/>' +
+              '<path d="M10 32 L50 62 M50 32 L10 62 M5 62 L55 96 M55 62 L5 96" stroke-width="1.3"/>' +
+              '<path d="M0 0 H60" />' +
+            '</g>' +
+            '<path d="M300 130 V165 H330" stroke="#bfdbfe" stroke-width="3" fill="none"/>' +
+            '<path d="M430 300 H520 V330" stroke="#bfdbfe" stroke-width="3" fill="none"/>' +
+            '<path d="M330 340 H300 V370" stroke="#bfdbfe" stroke-width="3" fill="none"/>' +
+          '</svg>' +
+          '<div class="flow3-node flow3-pv"><b>' + esc(pvNilai) + '</b><small>PV</small></div>' +
+          '<div class="flow3-node flow3-house"><b>' + esc(bebanNilai) + '</b><small>Rumah</small></div>' +
+          '<div class="flow3-node flow3-bat"><b>' + esc(bateraiNilai) + '</b><small>Baterai</small><div class="flow3-socbar"><i style="width:' + lebar + '%"></i></div><em>' + esc(socTeks) + '</em></div>' +
+          '<div class="flow3-node flow3-grid"><b>' + esc(gridDayaTeks) + '</b><small>Grid</small></div>' +
+        '</div>' +
       '</div>' +
 
       '<div class="plts-mini-stats">' +

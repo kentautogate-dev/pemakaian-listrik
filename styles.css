@@ -851,3 +851,72 @@ code {
 .flow2-load .flow2-value { color: #0f172a; }
 .flow2-sub { color: #64748b; }
 .flow2-center-label { color: #b45309; }
+
+/* ---------- PLTS: dua kolom diagram + diagram isometrik kedua ---------- */
+.plts-flow-grid {
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 12px; margin: 12px 0 10px; align-items: stretch;
+}
+.plts-flow-grid .plts-flow2 { margin: 0; }
+.plts-flow3 {
+  position: relative; width: 100%; aspect-ratio: 760 / 420;
+  border-radius: 18px; overflow: hidden;
+  background: linear-gradient(165deg, #fbfdff 0%, #eef7ff 55%, #e4f1ff 100%);
+  border: 1px solid #d7e7f7;
+  color: #0f172a;
+}
+.flow3-svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.flow3-top {
+  position: absolute; z-index: 2; top: 12px; left: 14px; right: 14px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.flow3-status {
+  color: #059669; background: #ecfdf5; border: 1px solid #a7f3d0;
+  border-radius: 999px; padding: 3px 10px; font-size: .68rem; font-weight: 800;
+}
+.flow3-temp { color: #64748b; font-size: 1.12rem; font-weight: 700; }
+.flow3-node { position: absolute; z-index: 2; display: grid; gap: 1px; }
+.flow3-node b { font-size: 1.2rem; font-weight: 800; color: #1e293b; line-height: 1.1; }
+.flow3-node small { font-size: .68rem; font-weight: 700; color: #64748b; }
+.flow3-node em { font-style: normal; font-size: .68rem; color: #64748b; }
+.flow3-pv { top: 15%; left: 55%; }
+.flow3-house { top: 43%; left: 57%; }
+.flow3-bat { left: 7%; bottom: 7%; }
+.flow3-grid { right: 7%; bottom: 7%; text-align: right; }
+.flow3-socbar {
+  width: 84px; height: 7px; border-radius: 99px; background: #dbeafe; overflow: hidden; margin-top: 3px;
+}
+.flow3-socbar i { display: block; height: 100%; background: #38bdf8; }
+@media (max-width: 1000px) {
+  .plts-flow-grid { grid-template-columns: minmax(0, 1fr); }
+  .plts-flow3 { aspect-ratio: 760 / 420; }
+}
+@media (max-width: 560px) {
+  .flow3-node b { font-size: .95rem; }
+  .flow3-pv { left: 52%; }
+  .flow3-house { left: 54%; }
+  .flow3-bat { left: 4%; bottom: 5%; }
+  .flow3-grid { right: 4%; bottom: 5%; }
+}
+
+/* penyesuaian label diagram isometrik agar tidak menimpa gambar */
+.flow3-node {
+  background: rgba(255, 255, 255, .72);
+  border: 1px solid rgba(191, 219, 254, .6);
+  border-radius: 9px;
+  padding: 3px 7px;
+  backdrop-filter: blur(3px);
+}
+.flow3-pv { top: 7%; right: 6%; left: auto; text-align: right; }
+.flow3-house { top: 39%; left: 62%; }
+.flow3-bat { left: 5%; bottom: 2%; }
+.flow3-grid { right: 5%; bottom: 2%; text-align: right; }
+@media (max-width: 560px) {
+  .flow3-pv { right: 3%; }
+  .flow3-house { left: 56%; }
+  .flow3-bat { left: 3%; bottom: 1%; }
+  .flow3-grid { right: 3%; bottom: 1%; }
+}
+
+.flow3-pv { top: 17%; right: 5%; }
+
