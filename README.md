@@ -338,3 +338,22 @@ Lihat `analisa/laporan-analisa-oktober-2026.html` (siap cetak A4, ada versi `.md
   aplikasi tetap bisa dibuka langsung dari `index.html` (`file://`) tanpa mengubah data yang sudah ada.
 - Harga, tarif, nama rumah, dan jam catat bisa diubah kapan saja di **Pengaturan**.
 
+
+## Catatan perbaikan PLTS (16 Nov 2026)
+
+**Gejala:** kartu Status PLTS menampilkan "Tidak bisa mengambil data SolaxCloud —
+Inverter tidak ditemukan pada plant ini" padahal akun & plant benar.
+
+**Penyebab:** cache daftar perangkat OAuth di helper menyimpan hasil yang tidak
+lengkap. API SolaxCloud sesekali mengembalikan daftar inverter kosong untuk sesaat;
+hasil tidak lengkap itu ikut di-cache 10 menit sehingga error bertahan.
+
+**Perbaikan (server-backup.js, plts.js):**
+- Cache perangkat hanya disimpan bila **ada inverter**; hasil tidak lengkap tidak lagi di-cache.
+- Kalau inverter tidak ada di daftar, helper **otomatis mengambil ulang sekali** tanpa cache.
+- Cache plant: hasil kosong tidak disimpan + kedaluwarsa 10 menit (dulu tanpa kedaluwarsa).
+- Cache per plant (bukan satu kedaluwarsa global), plus pengenalan inverter/baterai cadangan
+  dari bentuk data bila deviceType tidak tersedia.
+- Tombol **Perbarui** dan **Coba lagi** memakai ?paksa=1 → mengambil data baru dari API
+  (auto-refresh 60 detik tetap memakai cache agar hemat kuota).
+- Pesan galat menyebutkan jumlah & tipe perangkat yang terbaca untuk memudahkan diagnosa.

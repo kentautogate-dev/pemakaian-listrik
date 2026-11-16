@@ -540,10 +540,10 @@
   }
 
   /* ---------------- muat data ---------------- */
-  function muat() {
+  function muat(paksa) {
     renderKorelasi();
     muatGrafik();
-    return panggil("/api/solax/status", { batasDetik: 40 }).then(function (jawab) {
+    return panggil("/api/solax/status" + (paksa ? "?paksa=1" : ""), { batasDetik: 40 }).then(function (jawab) {
       if (!jawab || (jawab.ok === false && jawab.offline)) {
         tampilkanOffline(true);
         renderGalat((jawab && jawab.galat) || "Helper backup belum aktif.");
@@ -593,8 +593,8 @@
         try { localStorage.setItem("plts-korelasi-terbuka", detailKorelasi.open ? "1" : "0"); } catch (e) { }
       });
     }
-    $("pltsPerbarui").addEventListener("click", muat);
-    $("pltsCobaLagi").addEventListener("click", muat);
+    $("pltsPerbarui").addEventListener("click", function () { muat(true); });
+    $("pltsCobaLagi").addEventListener("click", function () { muat(true); });
     $("pltsSimpan").addEventListener("click", simpanKonfigurasi);
     $("pltsMode").addEventListener("change", function () {
       aturModeTampil();

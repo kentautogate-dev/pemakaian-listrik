@@ -450,7 +450,11 @@ const SOLAX_REGION = Object.freeze({
 });
 
 // Cache token/daftar perangkat OAuth di memori helper (bukan di browser).
-const solaxOauthCache = { token: "", key: "", exp: 0, plants: null, plantsKey: "", devices: {}, devicesExp: 0 };
+const solaxOauthCache = {
+  token: "", key: "", exp: 0,
+  plants: null, plantsKey: "", plantsExp: 0,
+  devices: {}, devicesExp: {}
+};
 
 function muatSolax() {
   const isi = bacaJsonAman(BERKAS_SOLAX);
@@ -488,8 +492,9 @@ function simpanSolax(konf) {
   solaxOauthCache.token = "";
   solaxOauthCache.exp = 0;
   solaxOauthCache.plants = null;
+  solaxOauthCache.plantsExp = 0;
   solaxOauthCache.devices = {};
-  solaxOauthCache.devicesExp = 0;
+  solaxOauthCache.devicesExp = {};
 }
 
 function periksaSolax(body) {
@@ -698,17 +703,30 @@ async function oauthGet(konf, jalur, params, percobaan) {
 
 async function oauthPlants(konf) {
   const kunci = String(konf.clientId) + "|" + String(konf.region);
-  if (solaxOauthCache.plants && solaxOauthCache.plantsKey === kunci) return solaxOauthCache.plants;
+  // Daftar plant di-cache 10 menit, dan hasil KOSONG tidak disimpan supaya
+  // gangguan sesaat di API tidak membuat status "tidak ada plant" terus-menerus.
+  if (solaxOauthCache.plants && solaxOauthCache.plantsKey === kunci && Date.now() < solaxOauthCache.plantsExp) {
+    return solaxOauthCache.plants;
+  }
   const hasil = await oauthGet(konf, "/openapi/v2/plant/page_plant_info", { businessType: 1, size: 100, pageNo: 1 });
   const records = Array.isArray(hasil) ? hasil : ((hasil && hasil.records) || []);
-  solaxOauthCache.plants = records;
-  solaxOauthCache.plantsKey = kunci;
+  if (records.length) {
+    solaxOauthCache.plants = records;
+    solaxOauthCache.plantsKey = kunci;
+    solaxOauthCache.plantsExp = Date.now() + 10 * 60 * 1000;
+  } else {
+    solaxOauthCache.plants = null;
+    solaxOauthCache.plantsExp = 0;
+  }
   return records;
 }
 
-async function oauthDevices(konf, plantId) {
+async function oauthDevices(konf, plantId, paksa) {
   const kunci = String(konf.clientId) + "|" + String(konf.region) + "|" + String(plantId);
-  if (solaxOauthCache.devices[kunci] && Date.now() < solaxOauthCache.devicesExp) return solaxOauthCache.devices[kunci];
+  const kedaluwarsa = Number(solaxOauthCache.devicesExp[kunci]) || 0;
+  if (!paksa && solaxOauthCache.devices[kunci] && Date.now() < kedaluwarsa) {
+    return solaxOauthCache.devices[kunci];
+  }
   // page_device_info mewajibkan deviceType; ambil inverter (1) dan baterai (2) terpisah.
   const semua = [];
   const galat = [];
@@ -725,8 +743,19 @@ async function oauthDevices(konf, plantId) {
     }
   }
   if (!semua.length) throw galat[0] || new GalatHttp(502, "Tidak ada perangkat pada plant ini.");
-  solaxOauthCache.devices[kunci] = semua;
-  solaxOauthCache.devicesExp = Date.now() + 10 * 60 * 1000;
+
+  // PENTING: jangan simpan cache bila inverter tidak ada. API SolaxCloud kadang
+  // mengembalikan daftar inverter kosong untuk sesaat; kalau hasil tidak lengkap
+  // ini di-cache, status akan terus "Inverter tidak ditemukan" sampai cache
+  // kedaluwarsa. Simpan cache hanya bila datanya lengkap (ada inverter).
+  const adaInverter = semua.some(function (d) { return Number(d.deviceType) === 1; });
+  if (adaInverter) {
+    solaxOauthCache.devices[kunci] = semua;
+    solaxOauthCache.devicesExp[kunci] = Date.now() + 10 * 60 * 1000;
+  } else {
+    delete solaxOauthCache.devices[kunci];
+    delete solaxOauthCache.devicesExp[kunci];
+  }
   return semua;
 }
 
@@ -872,25 +901,48 @@ async function ambilSolaxToken(konf) {
   return { terkonfigurasi: true, mode: "token", data: petaSolaxRealtime(data.result || {}, konf), konfigurasi: ringkasSolax(konf) };
 }
 
-async function ambilSolaxOAuth(konf) {
+async function ambilSolaxOAuth(konf, paksa) {
   if (!konf.clientId || !konf.clientSecret) return { terkonfigurasi: false, konfigurasi: ringkasSolax(konf) };
+  // Tombol "Perbarui" manual memakai ?paksa=1 supaya daftar plant/perangkat
+  // diambil ulang dari API (tidak memakai cache yang mungkin sudah usang).
+  if (paksa) {
+    solaxOauthCache.plants = null;
+    solaxOauthCache.plantsExp = 0;
+    solaxOauthCache.devices = {};
+    solaxOauthCache.devicesExp = {};
+  }
   const plants = await oauthPlants(konf);
   if (!plants.length) throw new GalatHttp(502, "Tidak ada plant di akun SolaxCloud ini. Pastikan aplikasi Developer Portal sudah diberi akses ke plant.");
   const plant = konf.plantId
     ? plants.find(function (x) { return String(x.plantId) === String(konf.plantId); })
     : plants[0];
   if (!plant) throw new GalatHttp(502, "Plant ID " + konf.plantId + " tidak ditemukan pada akun ini.");
-  const devices = await oauthDevices(konf, plant.plantId);
+  let devices = await oauthDevices(konf, plant.plantId);
+  // Kalau inverter tidak ada di daftar (mis. hasil sesaat kosong dari API),
+  // paksa ambil ulang sekali tanpa cache sebelum menyerah.
+  if (!devices.some(function (d) { return Number(d.deviceType) === 1; })) {
+    devices = await oauthDevices(konf, plant.plantId, true);
+  }
   if (!devices.length) throw new GalatHttp(502, "Tidak ada perangkat (inverter/baterai) pada plant ini.");
 
   function tipe(dev) { return Number(dev.deviceType); }
   const inverters = devices.filter(function (d) { return tipe(d) === 1; });
   const batteries = devices.filter(function (d) { return tipe(d) === 2; });
-  const invDev = inverters[0] || null;
-  if (!invDev) throw new GalatHttp(502, "Inverter tidak ditemukan pada plant ini.");
+  // Cadangan: kenali inverter dari bentuk datanya bila deviceType tidak ada.
+  const invCadangan = devices.find(function (d) {
+    return d.batteryType === undefined && (d.deviceSn || d.registerNo) &&
+      (d.gwDeviceType !== undefined || d.deviceModelName || d.ratedPower !== undefined);
+  });
+  const batCadangan = devices.find(function (d) { return d.batteryType !== undefined; });
+  const invDev = inverters[0] || invCadangan || null;
+  if (!invDev) {
+    const tipeTerbaca = Array.from(new Set(devices.map(tipe))).join(", ") || "-";
+    throw new GalatHttp(502, "Inverter tidak ditemukan pada plant ini (perangkat terbaca: " +
+      devices.length + "; tipe: " + tipeTerbaca + "). Tekan Perbarui untuk mencoba lagi.");
+  }
   const inv = await oauthDeviceRealtime(konf, invDev.deviceSn || invDev.registerNo, 1);
   let bat = null;
-  const batDev = batteries[0] || null;
+  const batDev = batteries[0] || batCadangan || null;
   if (batDev) {
     const snBat = batDev.deviceSn || batDev.registerNo;
     try {
@@ -908,18 +960,19 @@ async function ambilSolaxOAuth(konf) {
     plantRt = null;
   }
   const data = petaSolaxOAuth(konf, inv || {}, bat, plantRt);
+  data.plantId = plant.plantId;
   data.plantName = plant.plantName || plant.name || "";
   return { terkonfigurasi: true, mode: "oauth", data, konfigurasi: ringkasSolax(konf) };
 }
 
-async function ambilSolaxRealtime() {
+async function ambilSolaxRealtime(paksa) {
   const konf = muatSolax();
-  if ((konf.mode || "token") === "oauth") return ambilSolaxOAuth(konf);
+  if ((konf.mode || "token") === "oauth") return ambilSolaxOAuth(konf, paksa);
   return ambilSolaxToken(konf);
 }
 
-async function apiSolaxStatus() {
-  const hasil = await ambilSolaxRealtime();
+async function apiSolaxStatus(paksa) {
+  const hasil = await ambilSolaxRealtime(paksa);
   if (hasil && hasil.terkonfigurasi && hasil.data) catatSampel(hasil.data);
   return { ok: true, ...hasil };
 }
@@ -2473,11 +2526,16 @@ const server = http.createServer((req, res) => {
 async function tangani(req, res) {
   const metode = String(req.method || "GET").toUpperCase();
   let jalur = "/";
+  let urlReq = null;
   try {
-    jalur = new URL(req.url || "/", `http://${HOST}`).pathname;
+    urlReq = new URL(req.url || "/", `http://${HOST}`);
+    jalur = urlReq.pathname;
   } catch (e) {
     jalur = "/";
+    urlReq = null;
   }
+  // ?paksa=1 → buang cache OAuth (dipakai tombol "Perbarui" manual).
+  const paksaSolax = !!(urlReq && urlReq.searchParams.get("paksa") === "1");
   if (jalur.length > 1) jalur = jalur.replace(/\/+$/, "") || "/";
 
   setHeaderUmum(res);
@@ -2545,7 +2603,7 @@ async function tangani(req, res) {
     }
 
     if (metode === "GET" && jalur === "/api/solax/status") {
-      kirim(res, 200, await apiSolaxStatus());
+      kirim(res, 200, await apiSolaxStatus(paksaSolax));
       return;
     }
 
