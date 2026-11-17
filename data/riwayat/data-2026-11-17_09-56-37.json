@@ -1,0 +1,1659 @@
+{
+  "v": 2,
+  "settings": {
+    "nama": "Rumah",
+    "hargaKwh": 1835,
+    "tarifDasar": 1699.53,
+    "ppj": 8,
+    "jamCatat": "09:00"
+  },
+  "catatan": [
+    {
+      "id": "kwh-token-2026-05-18",
+      "tanggal": "2026-05-18",
+      "sisa": 1558,
+      "masuk": 108.99,
+      "urutanToken": "sebelum",
+      "pltsOff": false,
+      "catatan": "token 108.99 kWh (2026-05-17)"
+    },
+    {
+      "id": "kwh-token-2026-05-19",
+      "tanggal": "2026-05-19",
+      "sisa": 1542.98,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "kwh-token-2026-05-20",
+      "tanggal": "2026-05-20",
+      "sisa": 1528.89,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "kwh-token-2026-05-21",
+      "tanggal": "2026-05-21",
+      "sisa": 1518.67,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "kwh-token-2026-05-22",
+      "tanggal": "2026-05-22",
+      "sisa": 1509,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "kwh-token-2026-05-23",
+      "tanggal": "2026-05-23",
+      "sisa": 1507.87,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "kwh-token-2026-05-24",
+      "tanggal": "2026-05-24",
+      "sisa": 1498,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "kwh-token-2026-05-25",
+      "tanggal": "2026-05-25",
+      "sisa": 1485,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "kwh-token-2026-05-26",
+      "tanggal": "2026-05-26",
+      "sisa": 1474,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "kwh-token-2026-05-27",
+      "tanggal": "2026-05-27",
+      "sisa": 1461,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "kwh-token-2026-05-28",
+      "tanggal": "2026-05-28",
+      "sisa": 1447,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "kwh-token-2026-05-29",
+      "tanggal": "2026-05-29",
+      "sisa": 1439,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "kwh-token-2026-05-30",
+      "tanggal": "2026-05-30",
+      "sisa": 1429,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "kwh-token-2026-05-31",
+      "tanggal": "2026-05-31",
+      "sisa": 1527,
+      "masuk": 109,
+      "urutanToken": "sebelum",
+      "pltsOff": false,
+      "catatan": "token 109 kWh (2026-05-31)"
+    },
+    {
+      "id": "kwh-token-2026-06-01",
+      "tanggal": "2026-06-01",
+      "sisa": 1516,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "kwh-token-2026-06-02",
+      "tanggal": "2026-06-02",
+      "sisa": 1505,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "kwh-token-2026-06-03",
+      "tanggal": "2026-06-03",
+      "sisa": 1492,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "kwh-token-2026-06-04",
+      "tanggal": "2026-06-04",
+      "sisa": 1483,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "kwh-token-2026-06-05",
+      "tanggal": "2026-06-05",
+      "sisa": 1473,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "kwh-token-2026-06-06",
+      "tanggal": "2026-06-06",
+      "sisa": 1463,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "kwh-token-2026-06-07",
+      "tanggal": "2026-06-07",
+      "sisa": 1451,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "kwh-token-2026-06-08",
+      "tanggal": "2026-06-08",
+      "sisa": 1442,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "kwh-token-2026-06-09",
+      "tanggal": "2026-06-09",
+      "sisa": 1432,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "kwh-token-2026-06-10",
+      "tanggal": "2026-06-10",
+      "sisa": 1420,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": "MENDUNG"
+    },
+    {
+      "id": "kwh-token-2026-06-11",
+      "tanggal": "2026-06-11",
+      "sisa": 1403,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "kwh-token-2026-06-12",
+      "tanggal": "2026-06-12",
+      "sisa": 1390,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "kwh-token-2026-06-13",
+      "tanggal": "2026-06-13",
+      "sisa": 1488,
+      "masuk": 109,
+      "urutanToken": "sebelum",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "kwh-token-2026-06-14",
+      "tanggal": "2026-06-14",
+      "sisa": 1478,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": "MENDUNG"
+    },
+    {
+      "id": "kwh-token-2026-06-15",
+      "tanggal": "2026-06-15",
+      "sisa": 1463,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": "MENDUNG"
+    },
+    {
+      "id": "kwh-token-2026-06-16",
+      "tanggal": "2026-06-16",
+      "sisa": 1443,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "kwh-token-2026-06-17",
+      "tanggal": "2026-06-17",
+      "sisa": 1430,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "kwh-token-2026-06-18",
+      "tanggal": "2026-06-18",
+      "sisa": 1418,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "kwh-token-2026-06-19",
+      "tanggal": "2026-06-19",
+      "sisa": 1407,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "kwh-token-2026-06-20",
+      "tanggal": "2026-06-20",
+      "sisa": 1390,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "kwh-token-2026-06-21",
+      "tanggal": "2026-06-21",
+      "sisa": 1490,
+      "masuk": 109,
+      "urutanToken": "sebelum",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "kwh-token-2026-06-22",
+      "tanggal": "2026-06-22",
+      "sisa": 1490,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "kwh-token-2026-06-23",
+      "tanggal": "2026-06-23",
+      "sisa": 1470,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "kwh-token-2026-06-24",
+      "tanggal": "2026-06-24",
+      "sisa": 1470,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": "UPGRADE"
+    },
+    {
+      "id": "kwh-token-2026-06-25",
+      "tanggal": "2026-06-25",
+      "sisa": 1440.17,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": "CERAH"
+    },
+    {
+      "id": "kwh-token-2026-06-26",
+      "tanggal": "2026-06-26",
+      "sisa": 1436.58,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": "CERAH"
+    },
+    {
+      "id": "kwh-token-2026-06-27",
+      "tanggal": "2026-06-27",
+      "sisa": 1431,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": "CERAH"
+    },
+    {
+      "id": "kwh-token-2026-06-28",
+      "tanggal": "2026-06-28",
+      "sisa": 1426.73,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": "MENDUNG"
+    },
+    {
+      "id": "kwh-token-2026-06-29",
+      "tanggal": "2026-06-29",
+      "sisa": 1417.43,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": "MENDUNG"
+    },
+    {
+      "id": "kwh-token-2026-06-30",
+      "tanggal": "2026-06-30",
+      "sisa": 1407.45,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": "TERIK"
+    },
+    {
+      "id": "kwh-token-2026-07-01",
+      "tanggal": "2026-07-01",
+      "sisa": 1404.14,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": "TERIK"
+    },
+    {
+      "id": "kwh-token-2026-07-02",
+      "tanggal": "2026-07-02",
+      "sisa": 1400,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": "MENDUNG"
+    },
+    {
+      "id": "kwh-token-2026-07-03",
+      "tanggal": "2026-07-03",
+      "sisa": 1400,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": "OFF"
+    },
+    {
+      "id": "kwh-token-2026-07-04",
+      "tanggal": "2026-07-04",
+      "sisa": 1400,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": "OFF"
+    },
+    {
+      "id": "kwh-token-2026-07-05",
+      "tanggal": "2026-07-05",
+      "sisa": 1400,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": "OFF"
+    },
+    {
+      "id": "kwh-token-2026-07-06",
+      "tanggal": "2026-07-06",
+      "sisa": 1400,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": "OFF"
+    },
+    {
+      "id": "kwh-token-2026-07-07",
+      "tanggal": "2026-07-07",
+      "sisa": 1400,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": "OFF"
+    },
+    {
+      "id": "kwh-token-2026-07-08",
+      "tanggal": "2026-07-08",
+      "sisa": 1400,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": "OFF"
+    },
+    {
+      "id": "kwh-token-2026-07-09",
+      "tanggal": "2026-07-09",
+      "sisa": 1400,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": "OFF"
+    },
+    {
+      "id": "kwh-token-2026-07-10",
+      "tanggal": "2026-07-10",
+      "sisa": 1400,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": "OFF"
+    },
+    {
+      "id": "kwh-token-2026-07-11",
+      "tanggal": "2026-07-11",
+      "sisa": 1400,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": "OFF"
+    },
+    {
+      "id": "kwh-token-2026-07-12",
+      "tanggal": "2026-07-12",
+      "sisa": 1400,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": "OFF"
+    },
+    {
+      "id": "kwh-token-2026-07-13",
+      "tanggal": "2026-07-13",
+      "sisa": 1400,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": "OFF"
+    },
+    {
+      "id": "kwh-token-2026-07-14",
+      "tanggal": "2026-07-14",
+      "sisa": 1400,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": "OFF"
+    },
+    {
+      "id": "kwh-token-2026-07-15",
+      "tanggal": "2026-07-15",
+      "sisa": 1400,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": "OFF"
+    },
+    {
+      "id": "kwh-token-2026-07-16",
+      "tanggal": "2026-07-16",
+      "sisa": 1400,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": "OFF"
+    },
+    {
+      "id": "kwh-token-2026-07-17",
+      "tanggal": "2026-07-17",
+      "sisa": 1400,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": "OFF"
+    },
+    {
+      "id": "kwh-token-2026-07-18",
+      "tanggal": "2026-07-18",
+      "sisa": 1400,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": "OFF"
+    },
+    {
+      "id": "kwh-token-2026-07-19",
+      "tanggal": "2026-07-19",
+      "sisa": 1399.98,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": "DIRUMAH"
+    },
+    {
+      "id": "kwh-token-2026-07-20",
+      "tanggal": "2026-07-20",
+      "sisa": 1386,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "kwh-token-2026-07-21",
+      "tanggal": "2026-07-21",
+      "sisa": 1374,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "kwh-token-2026-07-22",
+      "tanggal": "2026-07-22",
+      "sisa": 1367,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "kwh-token-2026-07-23",
+      "tanggal": "2026-07-23",
+      "sisa": 1362,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "kwh-token-2026-07-24",
+      "tanggal": "2026-07-24",
+      "sisa": 1358,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "kwh-token-2026-07-25",
+      "tanggal": "2026-07-25",
+      "sisa": 1351,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "kwh-token-2026-07-26",
+      "tanggal": "2026-07-26",
+      "sisa": 1343,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "kwh-token-2026-07-27",
+      "tanggal": "2026-07-27",
+      "sisa": 1336,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "kwh-token-2026-07-28",
+      "tanggal": "2026-07-28",
+      "sisa": 1325,
+      "masuk": 109,
+      "urutanToken": "sesudah",
+      "pltsOff": false,
+      "catatan": "37 hari · token 109 kWh (2026-07-28)"
+    },
+    {
+      "id": "kwh-token-2026-07-29",
+      "tanggal": "2026-07-29",
+      "sisa": 1427,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": "MENDUNG"
+    },
+    {
+      "id": "kwh-token-2026-07-30",
+      "tanggal": "2026-07-30",
+      "sisa": 1411,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "kwh-token-2026-07-31",
+      "tanggal": "2026-07-31",
+      "sisa": 1406,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "kwh-token-2026-08-01",
+      "tanggal": "2026-08-01",
+      "sisa": 1403,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "kwh-token-2026-08-02",
+      "tanggal": "2026-08-02",
+      "sisa": 1395,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "kwh-token-2026-08-03",
+      "tanggal": "2026-08-03",
+      "sisa": 1390,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "kwh-token-2026-08-04",
+      "tanggal": "2026-08-04",
+      "sisa": 1384,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "kwh-token-2026-08-05",
+      "tanggal": "2026-08-05",
+      "sisa": 1378,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "kwh-token-2026-08-06",
+      "tanggal": "2026-08-06",
+      "sisa": 1371,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "kwh-token-2026-08-07",
+      "tanggal": "2026-08-07",
+      "sisa": 1366,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "kwh-token-2026-08-08",
+      "tanggal": "2026-08-08",
+      "sisa": 1366,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "kwh-token-2026-08-09",
+      "tanggal": "2026-08-09",
+      "sisa": 1355,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "kwh-token-2026-08-10",
+      "tanggal": "2026-08-10",
+      "sisa": 1348,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "kwh-token-2026-08-11",
+      "tanggal": "2026-08-11",
+      "sisa": 1339,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "kwh-token-2026-08-12",
+      "tanggal": "2026-08-12",
+      "sisa": 1335,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "kwh-token-2026-08-13",
+      "tanggal": "2026-08-13",
+      "sisa": 1325,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "kwh-token-2026-08-14",
+      "tanggal": "2026-08-14",
+      "sisa": 1315,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "kwh-token-2026-08-15",
+      "tanggal": "2026-08-15",
+      "sisa": 1300,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "kwh-token-2026-08-16",
+      "tanggal": "2026-08-16",
+      "sisa": 1296,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "kwh-token-2026-08-17",
+      "tanggal": "2026-08-17",
+      "sisa": 1294,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "kwh-token-2026-08-18",
+      "tanggal": "2026-08-18",
+      "sisa": 1289,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "kwh-token-2026-08-19",
+      "tanggal": "2026-08-19",
+      "sisa": 1283,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "kwh-token-2026-08-20",
+      "tanggal": "2026-08-20",
+      "sisa": 1278,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "kwh-token-2026-08-21",
+      "tanggal": "2026-08-21",
+      "sisa": 1274,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "kwh-token-2026-08-22",
+      "tanggal": "2026-08-22",
+      "sisa": 1270,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "kwh-token-2026-08-23",
+      "tanggal": "2026-08-23",
+      "sisa": 1266,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "kwh-token-2026-08-24",
+      "tanggal": "2026-08-24",
+      "sisa": 1266,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "kwh-token-2026-08-25",
+      "tanggal": "2026-08-25",
+      "sisa": 1263,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "kwh-token-2026-08-26",
+      "tanggal": "2026-08-26",
+      "sisa": 1259,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "kwh-token-2026-08-27",
+      "tanggal": "2026-08-27",
+      "sisa": 1254,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "kwh-token-2026-08-28",
+      "tanggal": "2026-08-28",
+      "sisa": 1250,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "kwh-token-2026-08-29",
+      "tanggal": "2026-08-29",
+      "sisa": 1245,
+      "masuk": 109,
+      "urutanToken": "sesudah",
+      "pltsOff": false,
+      "catatan": "32 Hari · token 109 kWh (2026-08-29)"
+    },
+    {
+      "id": "kwh-token-2026-08-30",
+      "tanggal": "2026-08-30",
+      "sisa": 1349,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "kwh-token-2026-08-31",
+      "tanggal": "2026-08-31",
+      "sisa": 1346,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "kwh-token-2026-09-01",
+      "tanggal": "2026-09-01",
+      "sisa": 1341,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "kwh-token-2026-09-02",
+      "tanggal": "2026-09-02",
+      "sisa": 1337,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": "HUJAN"
+    },
+    {
+      "id": "kwh-token-2026-09-03",
+      "tanggal": "2026-09-03",
+      "sisa": 1329,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": "HUJAN"
+    },
+    {
+      "id": "kwh-token-2026-09-04",
+      "tanggal": "2026-09-04",
+      "sisa": 1317,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "kwh-token-2026-09-05",
+      "tanggal": "2026-09-05",
+      "sisa": 1313,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "kwh-token-2026-09-06",
+      "tanggal": "2026-09-06",
+      "sisa": 1308,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "kwh-token-2026-09-07",
+      "tanggal": "2026-09-07",
+      "sisa": 1305,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "kwh-token-2026-09-08",
+      "tanggal": "2026-09-08",
+      "sisa": 1301,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "kwh-token-2026-09-09",
+      "tanggal": "2026-09-09",
+      "sisa": 1298,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "kwh-token-2026-09-10",
+      "tanggal": "2026-09-10",
+      "sisa": 1297,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "kwh-token-2026-09-11",
+      "tanggal": "2026-09-11",
+      "sisa": 1293,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": "HUJAN"
+    },
+    {
+      "id": "kwh-token-2026-09-12",
+      "tanggal": "2026-09-12",
+      "sisa": 1283,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "kwh-token-2026-09-13",
+      "tanggal": "2026-09-13",
+      "sisa": 1280,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "kwh-token-2026-09-14",
+      "tanggal": "2026-09-14",
+      "sisa": 1271,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "kwh-token-2026-09-15",
+      "tanggal": "2026-09-15",
+      "sisa": 1266,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "kwh-token-2026-09-16",
+      "tanggal": "2026-09-16",
+      "sisa": 1264,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "kwh-token-2026-09-17",
+      "tanggal": "2026-09-17",
+      "sisa": 1260,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "kwh-token-2026-09-18",
+      "tanggal": "2026-09-18",
+      "sisa": 1257,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "kwh-token-2026-09-19",
+      "tanggal": "2026-09-19",
+      "sisa": 1245,
+      "masuk": 109,
+      "urutanToken": "sesudah",
+      "pltsOff": false,
+      "catatan": "21 HARI · token 109 kWh (2026-09-19)"
+    },
+    {
+      "id": "kwh-token-2026-09-20",
+      "tanggal": "2026-09-20",
+      "sisa": 1352,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": "HUJAN"
+    },
+    {
+      "id": "kwh-token-2026-09-21",
+      "tanggal": "2026-09-21",
+      "sisa": 1336,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "kwh-token-2026-09-22",
+      "tanggal": "2026-09-22",
+      "sisa": 1331,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "kwh-token-2026-09-23",
+      "tanggal": "2026-09-23",
+      "sisa": 1326,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": "HUJAN"
+    },
+    {
+      "id": "kwh-token-2026-09-24",
+      "tanggal": "2026-09-24",
+      "sisa": 1320,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": "CERAH"
+    },
+    {
+      "id": "kwh-token-2026-09-25",
+      "tanggal": "2026-09-25",
+      "sisa": 1317,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": "CERAH"
+    },
+    {
+      "id": "kwh-token-2026-09-26",
+      "tanggal": "2026-09-26",
+      "sisa": 1314,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": "CERAH"
+    },
+    {
+      "id": "kwh-token-2026-09-27",
+      "tanggal": "2026-09-27",
+      "sisa": 1310,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": "CERAH"
+    },
+    {
+      "id": "kwh-token-2026-09-28",
+      "tanggal": "2026-09-28",
+      "sisa": 1310,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": "CERAH"
+    },
+    {
+      "id": "kwh-token-2026-09-29",
+      "tanggal": "2026-09-29",
+      "sisa": 1308,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": "CERAH"
+    },
+    {
+      "id": "kwh-token-2026-09-30",
+      "tanggal": "2026-09-30",
+      "sisa": 1304,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": "HUJAN"
+    },
+    {
+      "id": "bawaan-2026-10-01",
+      "tanggal": "2026-10-01",
+      "sisa": 1286,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": "MENDUNG"
+    },
+    {
+      "id": "bawaan-2026-10-02",
+      "tanggal": "2026-10-02",
+      "sisa": 1279,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": "MENDUNG"
+    },
+    {
+      "id": "bawaan-2026-10-03",
+      "tanggal": "2026-10-03",
+      "sisa": 1266,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "bawaan-2026-10-04",
+      "tanggal": "2026-10-04",
+      "sisa": 1256,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "bawaan-2026-10-05",
+      "tanggal": "2026-10-05",
+      "sisa": 1247,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "bawaan-2026-10-06",
+      "tanggal": "2026-10-06",
+      "sisa": 1244,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": "MEDUNG"
+    },
+    {
+      "id": "bawaan-2026-10-07",
+      "tanggal": "2026-10-07",
+      "sisa": 1231,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "bawaan-2026-10-08",
+      "tanggal": "2026-10-08",
+      "sisa": 1227,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "bawaan-2026-10-09",
+      "tanggal": "2026-10-09",
+      "sisa": 1218,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "bawaan-2026-10-10",
+      "tanggal": "2026-10-10",
+      "sisa": 1214,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "bawaan-2026-10-11",
+      "tanggal": "2026-10-11",
+      "sisa": 1205,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "bawaan-2026-10-12",
+      "tanggal": "2026-10-12",
+      "sisa": 1309,
+      "masuk": 109,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": "MANTAP - tambah token 109 kWh"
+    },
+    {
+      "id": "bawaan-2026-10-13",
+      "tanggal": "2026-10-13",
+      "sisa": 1309,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": "ASAP"
+    },
+    {
+      "id": "bawaan-2026-10-14",
+      "tanggal": "2026-10-14",
+      "sisa": 1306,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": "ASAP"
+    },
+    {
+      "id": "bawaan-2026-10-15",
+      "tanggal": "2026-10-15",
+      "sisa": 1299,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": "HUJAN"
+    },
+    {
+      "id": "bawaan-2026-10-16",
+      "tanggal": "2026-10-16",
+      "sisa": 1293,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": "ASAP"
+    },
+    {
+      "id": "bawaan-2026-10-17",
+      "tanggal": "2026-10-17",
+      "sisa": 1290,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": "ASAP"
+    },
+    {
+      "id": "bawaan-2026-10-18",
+      "tanggal": "2026-10-18",
+      "sisa": 1281,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": "CERAH"
+    },
+    {
+      "id": "bawaan-2026-10-19",
+      "tanggal": "2026-10-19",
+      "sisa": 1278,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "bawaan-2026-10-20",
+      "tanggal": "2026-10-20",
+      "sisa": 1272,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "bawaan-2026-10-21",
+      "tanggal": "2026-10-21",
+      "sisa": 1261,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "bawaan-2026-10-22",
+      "tanggal": "2026-10-22",
+      "sisa": 1255,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "bawaan-2026-10-23",
+      "tanggal": "2026-10-23",
+      "sisa": 1249,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "bawaan-2026-10-24",
+      "tanggal": "2026-10-24",
+      "sisa": 1238,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": "MANTAP"
+    },
+    {
+      "id": "bawaan-2026-10-25",
+      "tanggal": "2026-10-25",
+      "sisa": 1238,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "bawaan-2026-10-26",
+      "tanggal": "2026-10-26",
+      "sisa": 1232,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "bawaan-2026-10-27",
+      "tanggal": "2026-10-27",
+      "sisa": 1229,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "bawaan-2026-10-28",
+      "tanggal": "2026-10-28",
+      "sisa": 1226,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "bawaan-2026-10-29",
+      "tanggal": "2026-10-29",
+      "sisa": 1221,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "bawaan-2026-10-30",
+      "tanggal": "2026-10-30",
+      "sisa": 1216,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "bawaan-2026-10-31",
+      "tanggal": "2026-10-31",
+      "sisa": 1215,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": "MANTAP"
+    },
+    {
+      "id": "bawaan-2026-11-01",
+      "tanggal": "2026-11-01",
+      "sisa": 1215,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": "Mendung"
+    },
+    {
+      "id": "cmvyl60fnzm5c",
+      "tanggal": "2026-11-02",
+      "sisa": 1209,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "cmw01hbc9n155",
+      "tanggal": "2026-11-03",
+      "sisa": 1205,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "cmw1lhps1apke",
+      "tanggal": "2026-11-04",
+      "sisa": 1202,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "cmw2xjqnw06hm",
+      "tanggal": "2026-11-05",
+      "sisa": 1201,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "cmw4cm6iafusj",
+      "tanggal": "2026-11-07",
+      "sisa": 1196,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "cmw74xrmbsd62",
+      "tanggal": "2026-11-08",
+      "sisa": 1190,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "cmw8li46n7rfi",
+      "tanggal": "2026-11-09",
+      "sisa": 1186,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "cmwa2yahco8ir",
+      "tanggal": "2026-11-10",
+      "sisa": 1183,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "cmwbjicvmc5a2",
+      "tanggal": "2026-11-11",
+      "sisa": 1182,
+      "masuk": 109,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": "Tambah Token"
+    },
+    {
+      "id": "cmwcut6jvsd7b",
+      "tanggal": "2026-11-12",
+      "sisa": 1291,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "cmwebq4ncfug0",
+      "tanggal": "2026-11-13",
+      "sisa": 1288,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": "MENDUNG"
+    },
+    {
+      "id": "cmwfpr26tdl8m",
+      "tanggal": "2026-11-14",
+      "sisa": 1280,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": "HUJAN"
+    },
+    {
+      "id": "cmwh5zv69570d",
+      "tanggal": "2026-11-15",
+      "sisa": 1275,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": "HUJAN"
+    },
+    {
+      "id": "cmwilqta8wzt2",
+      "tanggal": "2026-11-16",
+      "sisa": 1265,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "cmwk21hsdrpdo",
+      "tanggal": "2026-11-17",
+      "sisa": 1259,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": "HUJAN"
+    }
+  ]
+}
