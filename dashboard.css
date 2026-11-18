@@ -482,3 +482,67 @@
   #halaman-dashboard .dash-table th,
   #halaman-dashboard .dash-table td { padding: 7px 5px; }
 }
+
+/* ---------------- Energy Flow isometrik (ilustrasi rumah + panel) ---------------- */
+#halaman-dashboard .dash-eflow {
+  position: relative;
+  width: 100%;
+  height: 342px;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid #dbeafb;
+  background: radial-gradient(circle at 50% 35%, #ffffff, #edf7ff 70%);
+}
+#halaman-dashboard .ef-svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+#halaman-dashboard .ef-label {
+  position: absolute;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 170px;
+  padding: 7px 10px;
+  border-radius: 11px;
+  border: 1px solid rgba(255, 255, 255, .95);
+  background: rgba(255, 255, 255, .84);
+  box-shadow: 0 12px 26px -22px rgba(16, 35, 63, .65);
+  backdrop-filter: blur(7px);
+}
+#halaman-dashboard .ef-label > span:last-child { display: grid; gap: 1px; min-width: 0; }
+#halaman-dashboard .ef-label small {
+  font-size: .58rem; font-weight: 700; color: #7389a3; letter-spacing: .02em; white-space: nowrap;
+}
+#halaman-dashboard .ef-label b {
+  font-size: .86rem; line-height: 1.15; white-space: nowrap;
+  font-variant-numeric: tabular-nums; color: var(--dash-ink);
+}
+#halaman-dashboard .ef-label em {
+  font-style: normal; font-size: .56rem; color: #7389a3; white-space: nowrap;
+}
+#halaman-dashboard .ef-ikon {
+  width: 28px; height: 28px; flex: 0 0 auto; border-radius: 8px;
+  display: grid; place-items: center;
+  background: #eef6ff; color: var(--dash-blue); border: 1px solid #dbeafe;
+}
+#halaman-dashboard .ef-ikon svg { width: 16px; height: 16px; }
+#halaman-dashboard .ef-solar { left: 3%; top: 5%; }
+#halaman-dashboard .ef-grid { right: 3%; top: 5%; }
+#halaman-dashboard .ef-battery { left: 3%; bottom: 5%; }
+#halaman-dashboard .ef-load { right: 3%; bottom: 5%; }
+#halaman-dashboard .ef-grid .ef-ikon { color: #b3780d; background: #fff8ea; border-color: #f5e4bd; }
+#halaman-dashboard .ef-battery .ef-ikon { color: #0e9f9a; background: #eafafa; border-color: #c9efed; }
+#halaman-dashboard .ef-load .ef-ikon { color: #e0567f; background: #fff0f5; border-color: #f7d6e2; }
+
+@media (max-width: 620px) {
+  #halaman-dashboard .dash-eflow { height: 360px; }
+  #halaman-dashboard .ef-label { max-width: 128px; padding: 6px 8px; gap: 6px; }
+  #halaman-dashboard .ef-label b { font-size: .76rem; }
+  #halaman-dashboard .ef-label small { font-size: .52rem; }
+  #halaman-dashboard .ef-label em { font-size: .5rem; }
+  #halaman-dashboard .ef-ikon { width: 23px; height: 23px; border-radius: 7px; }
+  #halaman-dashboard .ef-ikon svg { width: 14px; height: 14px; }
+  #halaman-dashboard .ef-solar { left: 2%; top: 3%; }
+  #halaman-dashboard .ef-grid { right: 2%; top: 3%; }
+  #halaman-dashboard .ef-battery { left: 2%; bottom: 3%; }
+  #halaman-dashboard .ef-load { right: 2%; bottom: 3%; }
+}
