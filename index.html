@@ -6,6 +6,7 @@
 <meta name="description" content="Pencatat pemakaian kWh listrik rumah dari angka sisa token/meteran, otomatis menghitung pemakaian dan biaya.">
 <title>Pemakaian Listrik Rumah — Catatan kWh &amp; Biaya</title>
 <link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="dashboard.css">
 </head>
 <body>
 
@@ -30,6 +31,7 @@
   </header>
 
   <nav class="nav-laman" id="navLaman" aria-label="Pilih halaman">
+    <button type="button" data-laman="dashboard">Dashboard</button>
     <button type="button" data-laman="pencatatan" class="on">Catatan Listrik</button>
     <button type="button" data-laman="plts">PLTS (Solar)</button>
     <button type="button" data-laman="backup">Backup &amp; Restore</button>
@@ -542,6 +544,95 @@
   </div>
 </div>
 
+<div id="halaman-dashboard" class="hidden">
+  <div class="dash-shell">
+
+    <section class="dash-hero">
+      <svg class="dash-hero-art" viewBox="0 0 600 300" aria-hidden="true">
+        <defs>
+          <linearGradient id="dashPanel" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#2f8df4"/><stop offset="1" stop-color="#075dc5"/>
+          </linearGradient>
+          <linearGradient id="dashHill" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#9fd8b8" stop-opacity=".55"/><stop offset="1" stop-color="#dff1e8" stop-opacity=".1"/>
+          </linearGradient>
+        </defs>
+        <circle cx="500" cy="72" r="58" fill="#ffe6a5" opacity=".85"/>
+        <circle cx="500" cy="72" r="88" fill="#ffe6a5" opacity=".18"/>
+        <path d="M0 245 C110 205 210 220 300 245 C400 272 500 226 600 246 L600 300 L0 300 Z" fill="url(#dashHill)"/>
+        <g transform="translate(65 130) skewX(-18)">
+          <rect x="0" y="0" width="230" height="82" rx="7" fill="url(#dashPanel)" stroke="#ffffff" stroke-width="3"/>
+          <path d="M0 27 H230 M0 55 H230 M57 0 V82 M114 0 V82 M171 0 V82" stroke="#ffffff" stroke-opacity=".45" stroke-width="2"/>
+        </g>
+        <g transform="translate(300 158) skewX(-18)">
+          <rect x="0" y="0" width="170" height="62" rx="6" fill="url(#dashPanel)" opacity=".8" stroke="#ffffff" stroke-width="3"/>
+          <path d="M0 21 H170 M0 42 H170 M56 0 V62 M113 0 V62" stroke="#ffffff" stroke-opacity=".4" stroke-width="2"/>
+        </g>
+        <path d="M150 212 L145 258 M330 220 L325 260" stroke="#6f8fac" stroke-width="3" opacity=".5"/>
+      </svg>
+
+      <div class="dash-hero-top">
+        <div class="dash-hero-copy">
+          <div class="dash-kicker"><span class="dash-live-dot"></span> Solar energy overview</div>
+          <h1 id="dashSapaan">Selamat pagi. <span>Energi Anda terkendali.</span></h1>
+          <p class="dash-hero-sub" id="dashSub">Ringkasan pemakaian listrik rumah dan performa PLTS dalam satu tampilan.</p>
+        </div>
+        <div class="dash-hero-meta">
+          <span class="dash-pill" id="dashTanggal">Memuat tanggal…</span>
+          <span class="dash-pill status" id="dashStatus">● Normal Off-grid</span>
+          <span class="dash-pill temp" id="dashTemp">—°C</span>
+        </div>
+      </div>
+
+      <div class="dash-kpis" id="dashKpis">
+        <div class="dash-kpi"><div class="dash-skeleton" style="width:34px;height:34px;border-radius:10px"></div><div class="dash-kpi-teks"><span>Memuat</span><div class="dash-skeleton" style="width:80px"></div></div></div>
+        <div class="dash-kpi"><div class="dash-skeleton" style="width:34px;height:34px;border-radius:10px"></div><div class="dash-kpi-teks"><span>Memuat</span><div class="dash-skeleton" style="width:80px"></div></div></div>
+        <div class="dash-kpi"><div class="dash-skeleton" style="width:34px;height:34px;border-radius:10px"></div><div class="dash-kpi-teks"><span>Memuat</span><div class="dash-skeleton" style="width:80px"></div></div></div>
+        <div class="dash-kpi"><div class="dash-skeleton" style="width:34px;height:34px;border-radius:10px"></div><div class="dash-kpi-teks"><span>Memuat</span><div class="dash-skeleton" style="width:80px"></div></div></div>
+      </div>
+      <div class="dash-live-strip" id="dashLive"></div>
+    </section>
+
+    <div class="dash-grid dash-grid-1">
+      <section class="dash-card">
+        <div class="dash-card-head">
+          <div><h2>Energy generation</h2><div class="sub">Solar hari ini &amp; Battery SOC</div></div>
+          <div class="dash-total" id="dashChartTotal">— <small>kWh</small></div>
+        </div>
+        <div id="dashChart" class="dash-chart"><div class="dash-chart-empty">Memuat grafik…</div></div>
+        <div class="dash-legend"><span><i class="solar"></i>Solar (W)</span><span><i class="soc"></i>Battery SOC (%)</span></div>
+      </section>
+      <section class="dash-card">
+        <div class="dash-card-head"><div><h2>Energy flow</h2><div class="sub">Kondisi sistem saat ini</div></div></div>
+        <div id="dashFlow"><div class="dash-skeleton" style="height:150px;border-radius:14px"></div></div>
+      </section>
+    </div>
+
+    <div class="dash-grid dash-grid-2">
+      <section class="dash-card">
+        <div class="dash-card-head"><div><h2>Pemakaian bulanan</h2><div class="sub">6 bulan terakhir</div></div><div class="dash-total" id="dashUsageTotal">—</div></div>
+        <div id="dashUsage"><div class="dash-skeleton" style="height:180px;border-radius:12px"></div></div>
+      </section>
+      <section class="dash-card">
+        <div class="dash-card-head"><div><h2>System health</h2><div class="sub">Baterai &amp; inverter</div></div></div>
+        <div id="dashHealth"><div class="dash-skeleton" style="height:150px;border-radius:12px"></div></div>
+      </section>
+    </div>
+
+    <div class="dash-grid dash-grid-3">
+      <section class="dash-card">
+        <div class="dash-card-head"><div><h2>Aktivitas terakhir</h2><div class="sub">Catatan pemakaian terbaru</div></div></div>
+        <div id="dashTable"><div class="dash-skeleton" style="height:140px;border-radius:10px"></div></div>
+      </section>
+      <section class="dash-card">
+        <div class="dash-card-head"><div><h2>Ringkasan cepat</h2><div class="sub">Angka penting hari ini</div></div></div>
+        <div id="dashSummary"><div class="dash-skeleton" style="height:140px;border-radius:10px"></div></div>
+      </section>
+    </div>
+
+  </div>
+</div>
+
 <!-- ================= MODAL IMPOR ================= -->
 <div class="backdrop hidden" id="modalImpor" role="dialog" aria-modal="true" aria-labelledby="judulImpor">
   <div class="modal">
@@ -597,5 +688,6 @@
 <script src="app.js"></script>
 <script src="backup.js"></script>
 <script src="plts.js"></script>
+<script src="dashboard.js"></script>
 </body>
 </html>

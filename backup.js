@@ -73,7 +73,7 @@
 
   /* ---------------- tampilkan halaman ---------------- */
   function tampilkanLaman(nama) {
-    var laman = ["pencatatan", "plts", "backup"];
+    var laman = ["dashboard", "pencatatan", "plts", "backup"];
     if (laman.indexOf(nama) === -1) nama = "pencatatan";
     var tombolNav = document.querySelectorAll("#navLaman button");
     Array.prototype.forEach.call(tombolNav, function (b) {
@@ -85,6 +85,7 @@
     });
     var keBackup = nama === "backup";
     keadaaan.halamanBackup = keBackup;
+    if (window.DashboardListrik) window.DashboardListrik.setAktif(nama === "dashboard");
     if (window.PltsListrik) window.PltsListrik.setAktif(nama === "plts");
     if (keBackup) {
       muatStatus();
@@ -92,7 +93,7 @@
     }
     if (typeof window.scrollTo === "function") window.scrollTo({ top: 0, behavior: "smooth" });
     try {
-      history.replaceState(null, "", nama === "backup" ? "#backup" : nama === "plts" ? "#plts" : "#catatan");
+      history.replaceState(null, "", nama === "backup" ? "#backup" : nama === "plts" ? "#plts" : nama === "dashboard" ? "#dashboard" : "#catatan");
     } catch (e) { /* file:// kadang membatasi history */ }
   }
 
@@ -708,7 +709,7 @@
     pasangEvent();
     setSibuk(true); // sampai helper terdeteksi
     var hashAwal = (window.location.hash || "").replace("#", "");
-    if (hashAwal === "backup" || hashAwal === "plts") tampilkanLaman(hashAwal);
+    if (hashAwal === "backup" || hashAwal === "plts" || hashAwal === "dashboard") tampilkanLaman(hashAwal);
     else tampilkanLaman("pencatatan");
     // cek ringan di latar supaya tombol langsung siap saat pindah halaman
     muatStatus().then(function () {

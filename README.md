@@ -74,6 +74,24 @@ Jadi tidak perlu lagi menebak urutan; cukup isi tanggal, sisa kWh, dan (bila ada
 - **Impor** CSV / backup JSON, **ekspor** CSV / JSON, dan **cetak laporan** A4 untuk bulan yang sedang dipilih.
 - **Tema gelap**, tampilan responsif untuk HP, pintasan `Ctrl+Enter` untuk menyimpan, `Esc` menutup dialog.
 
+## Dashboard (halaman baru)
+
+Menu **Dashboard** adalah halaman tampilan baru bergaya *solar energy management* (kartu glass, aksen biru).
+Halaman lama (Catatan Listrik, PLTS, Backup & Restore) tetap utuh dan tidak diubah desainnya.
+
+Isi Dashboard:
+
+- Sapaan, tanggal, status **Normal Off-grid**, suhu inverter.
+- KPI: pemakaian/biaya bulan lalu (atau bulan berjalan bila sudah ada), sisa token, hasil PLTS hari ini.
+- Grafik **Energy generation** (Solar W + Battery SOC) dari sampel helper.
+- **Energy flow** (Solar -> inverter -> beban, plus baterai/grid).
+- Grafik pemakaian bulanan 6 bulan terakhir.
+- **System health** (SOC, SOH baterai, suhu, waktu data inverter).
+- Tabel aktivitas terakhir dan ringkasan cepat.
+
+Data diambil dari state aplikasi (localStorage) dan helper Solax (/api/solax/status, /api/solax/grafik).
+Dashboard diperbarui tiap 60 detik selama halaman aktif.
+
 ## PLTS (Solar) â€” monitor SolaxCloud
 
 Link SolaxCloud yang dibagikan (`global.solaxcloud.com/green/#/overview?...&onlyView=1`) **tidak bisa ditempel
