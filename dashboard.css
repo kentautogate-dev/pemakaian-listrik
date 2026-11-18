@@ -588,3 +588,18 @@
 /* Dashboard: Energy Flow di atas, Energy generation di bawahnya */
 #halaman-dashboard .dash-grid-1 { grid-template-columns: minmax(0, 1fr); }
 #halaman-dashboard .dash-flow-card #dashFlow { max-width: 900px; margin: 0 auto; }
+
+/* Energy Flow lebih dominan; Energy generation dipadatkan */
+#halaman-dashboard .dash-flow-card .dash-eflow { height: 470px; }
+#halaman-dashboard .dash-flow-card #dashFlow { max-width: 1000px; }
+#halaman-dashboard .dash-generation-card { padding: 13px 18px; }
+#halaman-dashboard .dash-generation-card .dash-chart { max-height: 200px; overflow: hidden; }
+#halaman-dashboard .dash-generation-card .dash-chart svg { height: 200px; width: 100%; }
+@media (max-width: 980px) {
+  #halaman-dashboard .dash-flow-card .dash-eflow { height: 420px; }
+  #halaman-dashboard .dash-generation-card .dash-chart { max-height: 180px; }
+  #halaman-dashboard .dash-generation-card .dash-chart svg { height: 180px; }
+}
+@media (max-width: 620px) {
+  #halaman-dashboard .dash-flow-card .dash-eflow { height: 390px; }
+}
