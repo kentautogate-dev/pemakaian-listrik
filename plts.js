@@ -87,12 +87,14 @@
       "<li>Kalau belum ada akses API: pakai penanda manual “PLTS off-grid” di catatan harian.</li>" +
       "</ul></div>";
     $("pltsStatus").innerHTML = html;
+    if (window.EnergyFlowRender) window.EnergyFlowRender($("pltsEnergyFlow"), null);
     $("pltsWaktu").textContent = "";
   }
 
   function renderGalat(pesan) {
     $("pltsStatus").innerHTML = '<div class="plts-galat"><b>Tidak bisa mengambil data SolaxCloud.</b><p>' +
       esc(pesan || "kesalahan tidak diketahui") + "</p></div>";
+    if (window.EnergyFlowRender) window.EnergyFlowRender($("pltsEnergyFlow"), null);
     $("pltsWaktu").textContent = "";
   }
 
@@ -273,6 +275,7 @@
       "</div>";
 
     $("pltsStatus").innerHTML = html;
+    if (window.EnergyFlowRender) window.EnergyFlowRender($("pltsEnergyFlow"), d);
     $("pltsWaktu").textContent = "Diperbarui: " + new Date().toLocaleTimeString("id-ID");
   }
 
@@ -616,6 +619,11 @@
   function mulai() {
     pasangEvent();
     renderKorelasi();
+    var halaman = $("halaman-plts");
+    if (halaman && (!halaman.classList.contains("hidden") ||
+        (window.location.hash || "").replace("#", "") === "plts")) {
+      setAktif(true);
+    }
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", mulai);
   else mulai();

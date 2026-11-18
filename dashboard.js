@@ -242,10 +242,8 @@
     box.innerHTML = svg;
   }
 
-  function renderFlow() {
-    var box = $("dashFlow");
+  function renderEnergyFlow(box, live) {
     if (!box) return;
-    var live = keadaan.live;
     var pv = live ? watt(live.pvW) : "—";
     var beban = live ? watt(live.bebanW) : "—";
     var soc = live && live.socPct != null ? angka(live.socPct, 0) + "%" : "—";
@@ -277,6 +275,10 @@
         '<div class="ef-label ef-load"><span class="ef-ikon"><img src="assets/ikon-konsumsi-trim.webp" alt=""></span><span><small>Consumption</small><b>' + esc(beban) + '</b></span></div>' +
       '</div>' +
       '<div class="dash-flow-foot"><span>Status <b>' + esc(live ? (live.inverterStatusTeks || "Normal") : "—") + '</b></span><span>Baterai <b>' + esc(soc) + '</b></span><span>Grid <b>' + esc(gridValue) + '</b></span></div>';
+  }
+
+  function renderFlow() {
+    renderEnergyFlow($("dashFlow"), keadaan.live);
   }
 
   function renderUsage(h) {
@@ -434,6 +436,7 @@
   }
 
   window.DashboardListrik = { muat: muat, setAktif: setAktif };
+  window.EnergyFlowRender = renderEnergyFlow;
 
   function mulai() {
     var el = $("halaman-dashboard");

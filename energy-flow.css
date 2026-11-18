@@ -1,0 +1,74 @@
+/* ==========================================================================
+   Energy Flow — komponen bersama (dipakai Dashboard & halaman PLTS).
+   Aturan tidak di-scope agar bisa dipakai di dua halaman.
+   ========================================================================== */
+
+.plts-eflow-card { grid-column: 1 / -1; }
+.plts-eflow-body { max-width: 900px; margin: 0 auto; }
+.plts-eflow-card .dash-eflow { height: 380px; }
+
+.dash-eflow {
+  position: relative;
+  width: 100%;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid #dbeafb;
+  background: radial-gradient(circle at 50% 35%, #ffffff, #edf7ff 70%);
+}
+.ef-lines { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
+.ef-rumah {
+  position: absolute; z-index: 2; left: 50%; top: 50%;
+  width: 74%; height: 94%;
+  transform: translate(-50%, -52%);
+  object-fit: contain;
+  pointer-events: none;
+  filter: drop-shadow(0 22px 24px rgba(17, 71, 125, .16));
+}
+.ef-label {
+  position: absolute; z-index: 3;
+  display: flex; align-items: center; gap: 8px;
+  max-width: 170px; padding: 7px 10px;
+  border-radius: 11px;
+  border: 1px solid rgba(255, 255, 255, .95);
+  background: rgba(255, 255, 255, .84);
+  box-shadow: 0 12px 26px -22px rgba(16, 35, 63, .65);
+  backdrop-filter: blur(7px);
+}
+.ef-label > span:last-child { display: grid; gap: 1px; min-width: 0; }
+.ef-label small { font-size: .58rem; font-weight: 700; color: #7389a3; letter-spacing: .02em; white-space: nowrap; }
+.ef-label b { font-size: .86rem; line-height: 1.15; white-space: nowrap; font-variant-numeric: tabular-nums; color: #10233f; }
+.ef-label em { font-style: normal; font-size: .56rem; color: #7389a3; white-space: nowrap; }
+.ef-ikon {
+  width: 38px; height: 38px; flex: 0 0 auto; border-radius: 9px;
+  display: grid; place-items: center;
+  background: #f8fbff; border: 1px solid #e6f0fa;
+  overflow: hidden;
+}
+.ef-ikon img { width: 32px; height: 32px; object-fit: contain; display: block; }
+.ef-solar { left: 3%; top: 5%; }
+.ef-grid { right: 3%; top: 5%; }
+.ef-battery { left: 3%; bottom: 5%; }
+.ef-load { right: 3%; bottom: 5%; }
+.dash-flow-foot {
+  display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap;
+  margin-top: 8px; font-size: .7rem; color: #6b7f99;
+  padding: 8px 11px; border-radius: 10px;
+  background: #f7faff; border: 1px solid #e7f0fa;
+}
+.dash-flow-foot b { color: #10233f; }
+
+@media (max-width: 620px) {
+  .plts-eflow-card .dash-eflow { height: 360px; }
+  .dash-eflow { height: 360px; }
+  .ef-rumah { width: 82%; height: 96%; transform: translate(-50%, -53%); }
+  .ef-label { max-width: 128px; padding: 6px 8px; gap: 6px; }
+  .ef-label b { font-size: .76rem; }
+  .ef-label small { font-size: .52rem; }
+  .ef-label em { font-size: .5rem; }
+  .ef-ikon { width: 30px; height: 30px; border-radius: 7px; }
+  .ef-ikon img { width: 25px; height: 25px; }
+  .ef-solar { left: 2%; top: 3%; }
+  .ef-grid { right: 2%; top: 3%; }
+  .ef-battery { left: 2%; bottom: 3%; }
+  .ef-load { right: 2%; bottom: 3%; }
+}

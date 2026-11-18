@@ -7,6 +7,7 @@
 <title>Pemakaian Listrik Rumah — Catatan kWh &amp; Biaya</title>
 <link rel="stylesheet" href="styles.css">
 <link rel="stylesheet" href="dashboard.css">
+<link rel="stylesheet" href="energy-flow.css">
 </head>
 <body>
 
@@ -230,6 +231,11 @@
         </div>
         <div id="pltsGrafik" class="plts-grafik"><div class="muted">Memuat grafik…</div></div>
         <div class="plts-grafik-catatan muted kecil">Grafik diisi otomatis oleh helper setiap 60 detik; data hari ini disimpan lokal di komputer ini.</div>
+      </div>
+
+      <div class="card plts-eflow-card">
+        <h2><span class="dot"></span>Energy Flow</h2>
+        <div id="pltsEnergyFlow" class="plts-eflow-body"><div class="muted">Memuat aliran energi…</div></div>
       </div>
 
       <div class="card plts-config-card">
@@ -687,7 +693,7 @@
 <script src="data-kwh-token.js"></script>
 <script src="app.js"></script>
 <script src="backup.js"></script>
-<script src="plts.js"></script>
 <script src="dashboard.js"></script>
+<script src="plts.js"></script>
 </body>
 </html>
