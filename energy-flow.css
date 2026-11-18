@@ -80,3 +80,33 @@
 
 .plts-status-eflow { width: 100%; justify-self: center; }
 
+
+/* Label Energy Flow diperbesar ~50% */
+.ef-label { max-width: 255px; padding: 10px 14px; gap: 10px; border-radius: 14px; }
+.ef-label small { font-size: .87rem; }
+.ef-label b { font-size: 1.29rem; }
+.ef-label em { font-size: .84rem; }
+.ef-ikon { width: 46px; height: 46px; border-radius: 11px; }
+.ef-ikon img { width: 40px; height: 40px; }
+
+#halaman-dashboard .ef-label { max-width: 255px; padding: 10px 14px; gap: 10px; border-radius: 14px; }
+#halaman-dashboard .ef-label small { font-size: .87rem; }
+#halaman-dashboard .ef-label b { font-size: 1.29rem; }
+#halaman-dashboard .ef-label em { font-size: .84rem; }
+#halaman-dashboard .ef-ikon { width: 46px; height: 46px; border-radius: 11px; }
+#halaman-dashboard .ef-ikon img { width: 40px; height: 40px; }
+
+@media (max-width: 620px) {
+  .ef-label { max-width: 190px; padding: 8px 11px; gap: 8px; }
+  .ef-label small { font-size: .78rem; }
+  .ef-label b { font-size: 1.14rem; }
+  .ef-label em { font-size: .75rem; }
+  .ef-ikon { width: 38px; height: 38px; }
+  .ef-ikon img { width: 32px; height: 32px; }
+  #halaman-dashboard .ef-label { max-width: 190px; padding: 8px 11px; gap: 8px; }
+  #halaman-dashboard .ef-label small { font-size: .78rem; }
+  #halaman-dashboard .ef-label b { font-size: 1.14rem; }
+  #halaman-dashboard .ef-label em { font-size: .75rem; }
+  #halaman-dashboard .ef-ikon { width: 38px; height: 38px; }
+  #halaman-dashboard .ef-ikon img { width: 32px; height: 32px; }
+}
