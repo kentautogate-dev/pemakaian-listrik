@@ -603,3 +603,27 @@
 @media (max-width: 620px) {
   #halaman-dashboard .dash-flow-card .dash-eflow { height: 390px; }
 }
+
+/* Baris info live di hero Dashboard diperbesar */
+#halaman-dashboard .dash-live-strip {
+  gap: 9px;
+  margin-top: 16px;
+  padding-top: 14px;
+  font-size: .95rem;
+}
+#halaman-dashboard .dash-live-strip > span {
+  gap: 7px;
+  padding: 6px 12px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, .62);
+  border: 1px solid rgba(255, 255, 255, .92);
+  box-shadow: 0 8px 20px -20px rgba(7, 93, 197, .55);
+  backdrop-filter: blur(8px);
+}
+#halaman-dashboard .dash-live-strip i { width: 8px; height: 8px; }
+#halaman-dashboard .dash-live-strip b { font-size: 1.1rem; }
+@media (max-width: 620px) {
+  #halaman-dashboard .dash-live-strip { font-size: .84rem; gap: 7px; }
+  #halaman-dashboard .dash-live-strip > span { padding: 5px 9px; }
+  #halaman-dashboard .dash-live-strip b { font-size: .96rem; }
+}
