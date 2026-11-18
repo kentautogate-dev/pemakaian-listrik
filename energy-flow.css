@@ -72,3 +72,11 @@
   .ef-battery { left: 2%; bottom: 3%; }
   .ef-load { right: 2%; bottom: 3%; }
 }
+
+.plts-status-eflow { max-width: 900px; margin: 4px auto 10px; }
+.plts-status-eflow .dash-eflow { height: 380px; }
+@media (max-width: 620px) { .plts-status-eflow .dash-eflow { height: 360px; } }
+
+
+.plts-status-eflow { width: 100%; justify-self: center; }
+
