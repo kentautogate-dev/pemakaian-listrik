@@ -579,3 +579,8 @@
   #halaman-dashboard .ef-ikon { width: 30px; height: 30px; }
   #halaman-dashboard .ef-ikon img { width: 25px; height: 25px; }
 }
+
+/* Kartu Energy generation: judul dibuat lebih kecil agar label Energy Flow lebih menonjol */
+#halaman-dashboard .dash-generation-card .dash-card-head h2 { font-size: .76rem; }
+#halaman-dashboard .dash-generation-card .dash-card-head .sub { font-size: .58rem; }
+#halaman-dashboard .dash-generation-card .dash-total { font-size: 1.16rem; }
