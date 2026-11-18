@@ -1,0 +1,214 @@
+/* ==========================================================================
+   PLTS (Solar) — glassmorphism biru/putih ala SolarPulse.
+   Semua aturan di-scope ke #halaman-plts agar halaman lain tidak berubah.
+   ========================================================================== */
+
+#halaman-plts.plts-glass {
+  --pg-blue: #075dc5;
+  --pg-blue-2: #2f8df4;
+  --pg-ink: #10233f;
+  --pg-muted: #6b7f99;
+  --pg-line: rgba(161, 202, 244, .45);
+  --pg-glass: rgba(255, 255, 255, .66);
+  position: relative;
+  isolation: isolate;
+  padding: 16px;
+  border-radius: 26px;
+  background:
+    radial-gradient(65% 50% at 6% 0%, rgba(47, 141, 244, .20), transparent 70%),
+    radial-gradient(55% 45% at 96% 6%, rgba(42, 215, 200, .16), transparent 72%),
+    linear-gradient(145deg, #edf7ff 0%, #f9fcff 50%, #e7f2ff 100%);
+  border: 1px solid rgba(255, 255, 255, .88);
+  box-shadow: 0 32px 70px -60px rgba(7, 93, 197, .55);
+  overflow: hidden;
+}
+#halaman-plts.plts-glass::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, .36) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, .36) 1px, transparent 1px);
+  background-size: 42px 42px;
+  mask-image: linear-gradient(140deg, transparent 28%, #000 100%);
+}
+#halaman-plts.plts-glass::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  width: 460px;
+  height: 460px;
+  right: -190px;
+  top: -250px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(47, 141, 244, .20), transparent 68%);
+  pointer-events: none;
+}
+
+/* ---------------- kartu ---------------- */
+#halaman-plts .card {
+  background: var(--pg-glass);
+  border: 1px solid rgba(255, 255, 255, .94);
+  border-radius: 22px;
+  box-shadow: 0 24px 52px -42px rgba(7, 93, 197, .48);
+  backdrop-filter: blur(18px) saturate(140%);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  color: var(--pg-ink);
+}
+#halaman-plts .card h2 {
+  color: var(--pg-ink);
+  font-size: .98rem;
+  font-weight: 800;
+  letter-spacing: -.01em;
+}
+#halaman-plts .card h2 .dot {
+  background: var(--pg-blue);
+  box-shadow: 0 0 0 4px rgba(7, 93, 197, .12);
+}
+#halaman-plts .plts-status-card {
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, .84), rgba(236, 246, 255, .60));
+}
+#halaman-plts .plts-grafik-card {
+  background: linear-gradient(135deg, rgba(255, 255, 255, .82), rgba(239, 248, 255, .60));
+}
+#halaman-plts .plts-config-card,
+#halaman-plts .plts-korelasi-card {
+  background: rgba(255, 255, 255, .68);
+}
+
+/* ---------------- status & hasil ---------------- */
+#halaman-plts .plts-status { color: var(--pg-ink); }
+#halaman-plts .plts-status-kepala b {
+  font-size: 1.04rem;
+  font-weight: 800;
+  letter-spacing: -.01em;
+}
+#halaman-plts .plts-titik {
+  background: var(--pg-blue);
+  box-shadow: 0 0 0 4px rgba(7, 93, 197, .14);
+}
+#halaman-plts .plts-live {
+  color: #0b7a4a;
+  background: rgba(229, 250, 240, .9);
+  border-color: rgba(167, 243, 208, .9);
+}
+#halaman-plts .plts-hasil-card {
+  background: rgba(255, 255, 255, .78);
+  border: 1px solid rgba(193, 222, 250, .9);
+  border-radius: 14px;
+  box-shadow: 0 14px 30px -26px rgba(7, 93, 197, .55);
+}
+#halaman-plts .plts-hasil-card span {
+  color: var(--pg-muted);
+  font-size: .64rem;
+  letter-spacing: .08em;
+}
+#halaman-plts .plts-hasil-card b {
+  color: var(--pg-blue);
+  font-size: 1.2rem;
+}
+#halaman-plts .plts-mini-stats > div {
+  background: rgba(255, 255, 255, .72);
+  border: 1px solid rgba(193, 222, 250, .82);
+  border-radius: 12px;
+  box-shadow: 0 10px 22px -24px rgba(7, 93, 197, .45);
+}
+#halaman-plts .plts-mini-stats span { color: var(--pg-muted); }
+#halaman-plts .plts-mini-stats b { color: var(--pg-ink); }
+#halaman-plts .plts-bat-detail {
+  background: rgba(255, 255, 255, .70);
+  border: 1px solid rgba(193, 222, 250, .86);
+  border-radius: 16px;
+  box-shadow: 0 16px 32px -32px rgba(7, 93, 197, .5);
+}
+#halaman-plts .plts-bat-ikon {
+  background: rgba(239, 253, 245, .95);
+  border-color: #35c98b;
+}
+#halaman-plts .plts-meta { color: var(--pg-muted); }
+#halaman-plts .plts-aksi { border-top-color: rgba(161, 202, 244, .36); }
+
+/* ---------------- energy flow ---------------- */
+#halaman-plts .plts-status-eflow { margin: 4px auto 12px; }
+#halaman-plts .dash-eflow {
+  border: 1px solid rgba(188, 220, 249, .92);
+  background:
+    radial-gradient(circle at 50% 32%, rgba(255, 255, 255, .96), rgba(236, 247, 255, .78) 70%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .9), 0 22px 45px -38px rgba(7, 93, 197, .5);
+}
+#halaman-plts .ef-label {
+  border: 1px solid rgba(255, 255, 255, .98);
+  background: rgba(255, 255, 255, .86);
+  box-shadow: 0 16px 30px -26px rgba(7, 93, 197, .55);
+}
+#halaman-plts .dash-flow-foot {
+  background: rgba(255, 255, 255, .64);
+  border-color: rgba(193, 222, 250, .75);
+}
+
+/* ---------------- grafik ---------------- */
+#halaman-plts .plts-grafik {
+  border: 1px solid rgba(193, 222, 250, .9);
+  background: linear-gradient(180deg, rgba(255, 255, 255, .84), rgba(238, 247, 255, .64));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .9);
+}
+#halaman-plts .plts-grafik-legend i.solar { background: var(--pg-blue); }
+#halaman-plts .plts-grafik-legend i.soc { background: #11b8b2; }
+#halaman-plts .plts-grafik-info { color: var(--pg-muted); }
+
+/* ---------------- konfigurasi & korelasi ---------------- */
+#halaman-plts .plts-config-details > summary,
+#halaman-plts .plts-korelasi-details > summary {
+  color: var(--pg-ink);
+  font-weight: 800;
+}
+#halaman-plts .plts-config-details > summary::after,
+#halaman-plts .plts-korelasi-details > summary::after { color: var(--pg-blue); }
+#halaman-plts .plts-config-toggle {
+  background: rgba(255, 255, 255, .6);
+  border-color: rgba(176, 209, 241, .9);
+  color: var(--pg-muted);
+}
+#halaman-plts .field label { color: #405a78; font-weight: 700; }
+#halaman-plts input,
+#halaman-plts select,
+#halaman-plts textarea {
+  background: rgba(255, 255, 255, .82);
+  border: 1px solid rgba(176, 209, 241, .9);
+  border-radius: 10px;
+  color: var(--pg-ink);
+}
+#halaman-plts input:focus,
+#halaman-plts select:focus,
+#halaman-plts textarea:focus {
+  border-color: var(--pg-blue-2);
+  box-shadow: 0 0 0 3px rgba(47, 141, 244, .14);
+  outline: none;
+}
+#halaman-plts .hint,
+#halaman-plts .plts-config-body .muted,
+#halaman-plts .plts-korelasi-body .muted { color: var(--pg-muted); }
+#halaman-plts .primary {
+  background: linear-gradient(135deg, var(--pg-blue), var(--pg-blue-2));
+  border-color: transparent;
+  box-shadow: 0 10px 22px -18px rgba(7, 93, 197, .9);
+}
+#halaman-plts .ghost {
+  background: rgba(255, 255, 255, .58);
+  border-color: rgba(176, 209, 241, .9);
+  color: #24476f;
+}
+#halaman-plts .plts-tag .chip { border-radius: 999px; }
+#halaman-plts .banner-rincian summary { color: #31567d; }
+#halaman-plts .banner-rincian summary:hover { color: var(--pg-blue); }
+
+/* ---------------- responsif ---------------- */
+@media (max-width: 720px) {
+  #halaman-plts.plts-glass { padding: 10px; border-radius: 20px; }
+  #halaman-plts .card { border-radius: 18px; }
+  #halaman-plts .plts-status-kepala b { font-size: .98rem; }
+  #halaman-plts .plts-hasil-card b { font-size: 1.08rem; }
+}
