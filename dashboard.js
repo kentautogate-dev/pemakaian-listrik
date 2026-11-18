@@ -270,11 +270,11 @@
           '<circle cx="310" cy="165" r="4" fill="#4c9ae0"/><circle cx="450" cy="165" r="4" fill="#4c9ae0"/>' +
           '<circle cx="305" cy="268" r="4" fill="#4c9ae0"/><circle cx="455" cy="268" r="4" fill="#4c9ae0"/>' +
         '</svg>' +
-        '<img class="ef-rumah" src="assets/rumah-solar.webp" alt="Rumah dengan panel surya">' +
-        '<div class="ef-label ef-solar"><span class="ef-ikon">' + ikon.solar + '</span><span><small>Solar Generation</small><b>' + esc(pv) + '</b></span></div>' +
-        '<div class="ef-label ef-grid"><span class="ef-ikon">' + ikon.grid + '</span><span><small>' + esc(gridLabel) + '</small><b>' + esc(gridValue) + '</b></span></div>' +
-        '<div class="ef-label ef-battery"><span class="ef-ikon">' + ikon.battery + '</span><span><small>Battery Storage</small><b>' + esc(soc) + '</b><em>' + esc(batSub) + '</em></span></div>' +
-        '<div class="ef-label ef-load"><span class="ef-ikon">' + ikon.bolt + '</span><span><small>Consumption</small><b>' + esc(beban) + '</b></span></div>' +
+        '<img class="ef-rumah" src="assets/rumah-energi.webp" alt="Rumah dengan panel surya">' +
+        '<div class="ef-label ef-solar"><span class="ef-ikon"><img src="assets/ikon-solar-trim.webp" alt=""></span><span><small>Solar Generation</small><b>' + esc(pv) + '</b></span></div>' +
+        '<div class="ef-label ef-grid"><span class="ef-ikon"><img src="assets/ikon-grid-trim.webp" alt=""></span><span><small>' + esc(gridLabel) + '</small><b>' + esc(gridValue) + '</b></span></div>' +
+        '<div class="ef-label ef-battery"><span class="ef-ikon"><img src="assets/ikon-baterai-trim.webp" alt=""></span><span><small>Battery Storage</small><b>' + esc(soc) + '</b><em>' + esc(batSub) + '</em></span></div>' +
+        '<div class="ef-label ef-load"><span class="ef-ikon"><img src="assets/ikon-konsumsi-trim.webp" alt=""></span><span><small>Consumption</small><b>' + esc(beban) + '</b></span></div>' +
       '</div>' +
       '<div class="dash-flow-foot"><span>Status <b>' + esc(live ? (live.inverterStatusTeks || "Normal") : "—") + '</b></span><span>Baterai <b>' + esc(soc) + '</b></span><span>Grid <b>' + esc(gridValue) + '</b></span></div>';
   }

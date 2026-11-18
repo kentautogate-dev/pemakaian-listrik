@@ -563,3 +563,19 @@
 @media (max-width: 620px) {
   #halaman-dashboard .ef-rumah { width: 82%; height: 96%; transform: translate(-50%, -53%); }
 }
+
+/* ikon 3D pada label Energy Flow */
+#halaman-dashboard .ef-ikon { width: 32px; height: 32px; background: #f8fbff; border-color: #e6f0fa; }
+#halaman-dashboard .ef-ikon img { width: 27px; height: 27px; object-fit: contain; display: block; }
+@media (max-width: 620px) {
+  #halaman-dashboard .ef-ikon { width: 27px; height: 27px; }
+  #halaman-dashboard .ef-ikon img { width: 23px; height: 23px; }
+}
+
+/* ikon 3D sedikit lebih besar agar detail terlihat */
+#halaman-dashboard .ef-ikon { width: 38px; height: 38px; }
+#halaman-dashboard .ef-ikon img { width: 32px; height: 32px; }
+@media (max-width: 620px) {
+  #halaman-dashboard .ef-ikon { width: 30px; height: 30px; }
+  #halaman-dashboard .ef-ikon img { width: 25px; height: 25px; }
+}
