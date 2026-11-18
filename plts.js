@@ -181,7 +181,7 @@
       (d.peringatan ? '<div class="plts-peringatan">' + esc(d.peringatan) + "</div>" : "") +
       '<div class="plts-hasil-card"><span>Hasil hari ini</span><b>' + esc(hasil) + "</b></div>" +
 
-      '<div id="pltsStatusEnergyFlow" class="plts-status-eflow"></div>' +
+      '<div id="pltsStatusEnergyFlow" class="plts-status-eflow" data-ikon-solar="assets/solar-panel-baru-trim.webp"></div>' +
       '<div class="plts-mini-stats">' +
         '<div><span>AC output</span><b>' + esc(ac) + "</b></div>" +
         '<div><span>SOC baterai</span><b>' + esc(socTeks) + "</b></div>" +
