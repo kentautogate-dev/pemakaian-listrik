@@ -463,12 +463,12 @@
 
     var svg = '<svg viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="Grafik Solar dan Battery SOC hari ini" preserveAspectRatio="xMidYMid meet">' +
       grid +
-      '<path d="' + areaSoc + '" fill="#06b6d4" fill-opacity=".10"/>' +
+      '<path d="' + areaSoc + '" fill="#38bdf8" fill-opacity=".10"/>' +
       '<path d="' + areaPv + '" fill="#f59e0b" fill-opacity=".14"/>' +
-      '<polyline points="' + titikSoc.join(" ") + '" fill="none" stroke="#06b6d4" stroke-width="2.5" stroke-linejoin="round"/>' +
+      '<polyline points="' + titikSoc.join(" ") + '" fill="none" stroke="#38bdf8" stroke-width="2.5" stroke-linejoin="round"/>' +
       '<polyline points="' + titikPv.join(" ") + '" fill="none" stroke="#f59e0b" stroke-width="2.5" stroke-linejoin="round"/>' +
       '<circle cx="' + akhirX + '" cy="' + yW(pv[pv.length - 1]) + '" r="3.5" fill="#f59e0b"/>' +
-      '<circle cx="' + akhirX + '" cy="' + yS(soc[soc.length - 1]) + '" r="3.5" fill="#06b6d4"/>' +
+      '<circle cx="' + akhirX + '" cy="' + yS(soc[soc.length - 1]) + '" r="3.5" fill="#38bdf8"/>' +
       '<text x="' + L + '" y="' + (T - 2) + '" font-size="11" fill="var(--teks-lembut)">W</text>' +
       '</svg>';
 

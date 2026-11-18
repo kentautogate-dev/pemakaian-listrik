@@ -234,9 +234,9 @@
       grid +
       '<path d="' + area + '" fill="url(#dashSolarArea)"/>' +
       '<polyline points="' + pvPts.join(" ") + '" fill="none" stroke="#075dc5" stroke-width="2.4" stroke-linejoin="round"/>' +
-      '<polyline points="' + socPts.join(" ") + '" fill="none" stroke="#11b8b2" stroke-width="2" stroke-linejoin="round"/>' +
+      '<polyline points="' + socPts.join(" ") + '" fill="none" stroke="#38bdf8" stroke-width="2" stroke-linejoin="round"/>' +
       '<circle cx="' + x1 + '" cy="' + yPv(pv[pv.length - 1]) + '" r="3.2" fill="#fff" stroke="#075dc5" stroke-width="2"/>' +
-      '<circle cx="' + x1 + '" cy="' + ySoc(soc[soc.length - 1]) + '" r="3.2" fill="#fff" stroke="#11b8b2" stroke-width="2"/>' +
+      '<circle cx="' + x1 + '" cy="' + ySoc(soc[soc.length - 1]) + '" r="3.2" fill="#fff" stroke="#38bdf8" stroke-width="2"/>' +
       '<text x="8" y="12" font-size="10" fill="#8ba0b8">W</text>' +
       "</svg>";
     box.innerHTML = svg;

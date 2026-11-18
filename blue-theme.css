@@ -1,0 +1,95 @@
+﻿/* ==========================================================================
+   Blue theme — menghilangkan aksen hijau/tosca pada halaman glass.
+   Warna peringatan merah/kuning tetap dipertahankan.
+   ========================================================================== */
+
+:root {
+  --aksen: #075dc5;
+  --aksen-lembut: #dbeafe;
+  --aksen-tinta: #0b3b75;
+}
+html[data-tema="gelap"] {
+  --aksen: #60a5fa;
+  --aksen-lembut: #12345f;
+  --aksen-tinta: #bfdbfe;
+}
+
+.logo { background: linear-gradient(150deg, #2f8df4, #075dc5); }
+.nav-laman button.on {
+  background: linear-gradient(135deg, #075dc5, #2f8df4);
+  color: #fff;
+  border-color: transparent;
+  box-shadow: 0 8px 18px -14px rgba(7, 93, 197, .9);
+}
+.toast.ok { background: #075dc5; color: #eff6ff; }
+.chip.turun { background: rgba(7, 93, 197, .12); color: #075dc5; }
+.hint.ok { color: #075dc5; }
+.cek-hasil.ok {
+  border-color: rgba(7, 93, 197, .35);
+  background: rgba(7, 93, 197, .06);
+}
+.status-tanda.hidup {
+  background: #075dc5;
+  box-shadow: 0 0 0 3px rgba(7, 93, 197, .22);
+}
+.flow-bar i { background: #075dc5; }
+
+/* PLTS */
+#halaman-plts .plts-live {
+  color: #075dc5;
+  background: rgba(219, 234, 254, .92);
+  border-color: #bfdbfe;
+}
+#halaman-plts .plts-bat-ikon {
+  color: #075dc5;
+  background: #eff6ff;
+  border-color: #60a5fa;
+}
+#halaman-plts .plts-bat-soc-teks > small.isi { color: #075dc5; }
+#halaman-plts .plts-grafik-legend i.soc { background: #38bdf8; }
+#halaman-plts .flow3-status,
+#halaman-plts .flow2-mode {
+  color: #075dc5;
+  background: #eff6ff;
+  border-color: #bfdbfe;
+}
+
+/* Dashboard */
+#halaman-dashboard { --dash-green: #075dc5; }
+#halaman-dashboard .dash-live-dot {
+  background: #2f8df4;
+  box-shadow: 0 0 0 4px rgba(47, 141, 244, .16);
+}
+#halaman-dashboard .dash-kpi-ikon.green {
+  background: #eff6ff;
+  color: #075dc5;
+}
+#halaman-dashboard .dash-kpi-ikon.cyan {
+  background: #eff6ff;
+  color: #075dc5;
+}
+#halaman-dashboard .dash-pill.status {
+  color: #075dc5;
+  background: rgba(219, 234, 254, .86);
+  border-color: #bfdbfe;
+}
+#halaman-dashboard .dash-legend .soc { background: #38bdf8; }
+#halaman-dashboard .dash-node-ikon.bat { color: #075dc5; }
+#halaman-dashboard .dash-bar-item.now .dash-bar {
+  background: linear-gradient(180deg, #60a5fa, #075dc5);
+}
+#halaman-dashboard .dash-badge {
+  background: rgba(219, 234, 254, .92);
+  color: #075dc5;
+}
+#halaman-dashboard .ef-battery .ef-ikon {
+  color: #075dc5;
+  background: #eff6ff;
+  border-color: #bfdbfe;
+}
+
+/* ikon baterai 3D di Energy Flow: geser hijau ke biru */
+#halaman-dashboard .ef-battery .ef-ikon img,
+#halaman-plts .ef-battery .ef-ikon img {
+  filter: hue-rotate(145deg) saturate(1.05) brightness(.98);
+}
