@@ -584,3 +584,7 @@
 #halaman-dashboard .dash-generation-card .dash-card-head h2 { font-size: .76rem; }
 #halaman-dashboard .dash-generation-card .dash-card-head .sub { font-size: .58rem; }
 #halaman-dashboard .dash-generation-card .dash-total { font-size: 1.16rem; }
+
+/* Dashboard: Energy Flow di atas, Energy generation di bawahnya */
+#halaman-dashboard .dash-grid-1 { grid-template-columns: minmax(0, 1fr); }
+#halaman-dashboard .dash-flow-card #dashFlow { max-width: 900px; margin: 0 auto; }
