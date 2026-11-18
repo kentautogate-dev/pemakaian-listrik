@@ -411,7 +411,7 @@
   function muat() {
     muatApp();
     muatLive();
-    muatGrafik();
+    if ($("dashChart")) muatGrafik();
   }
 
   function mulaiTimer() {
