@@ -546,3 +546,20 @@
   #halaman-dashboard .ef-battery { left: 2%; bottom: 3%; }
   #halaman-dashboard .ef-load { right: 2%; bottom: 3%; }
 }
+
+/* Foto rumah 3D sebagai ilustrasi Energy Flow */
+#halaman-dashboard .ef-lines {
+  position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1;
+  pointer-events: none;
+}
+#halaman-dashboard .ef-rumah {
+  position: absolute; z-index: 2; left: 50%; top: 50%;
+  width: 74%; height: 94%;
+  transform: translate(-50%, -52%);
+  object-fit: contain;
+  pointer-events: none;
+  filter: drop-shadow(0 22px 24px rgba(17, 71, 125, .16));
+}
+@media (max-width: 620px) {
+  #halaman-dashboard .ef-rumah { width: 82%; height: 96%; transform: translate(-50%, -53%); }
+}

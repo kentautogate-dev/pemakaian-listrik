@@ -262,36 +262,7 @@
 
     box.innerHTML =
       '<div class="dash-eflow">' +
-        '<svg class="ef-svg" viewBox="0 0 760 420" preserveAspectRatio="xMidYMid slice" aria-hidden="true">' +
-          '<defs>' +
-            '<linearGradient id="efBg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f7fbff"/><stop offset="1" stop-color="#eaf4ff"/></linearGradient>' +
-            '<linearGradient id="efWall" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#deedfb"/></linearGradient>' +
-            '<linearGradient id="efPanel" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2d7fd3"/><stop offset="1" stop-color="#0b4a94"/></linearGradient>' +
-          '</defs>' +
-          '<rect width="760" height="420" fill="url(#efBg)"/>' +
-          '<circle cx="650" cy="70" r="46" fill="#fff5d6" opacity=".65"/>' +
-          '<circle cx="650" cy="70" r="70" fill="#fff5d6" opacity=".18"/>' +
-          '<path d="M0 330 C150 300 270 315 390 335 C520 355 640 320 760 340 L760 420 L0 420 Z" fill="#dff0ff" opacity=".55"/>' +
-          '<ellipse cx="380" cy="335" rx="225" ry="38" fill="#a9cff0" opacity=".28"/>' +
-          '<polygon points="195,290 380,370 565,290 380,210" fill="#eef7ff" stroke="#c8dff5" stroke-width="2"/>' +
-          '<polygon points="195,290 380,370 380,386 195,306" fill="#d7e9fa"/>' +
-          '<polygon points="380,370 565,290 565,306 380,386" fill="#c8e0f7"/>' +
-          /* dinding rumah */
-          '<polygon points="300,235 380,275 380,340 300,300" fill="url(#efWall)" stroke="#b8d2eb" stroke-width="2"/>' +
-          '<polygon points="380,275 470,230 470,295 380,340" fill="#dcebf9" stroke="#b8d2eb" stroke-width="2"/>' +
-          '<polygon points="300,235 380,190 470,230 380,275" fill="#f6fbff" stroke="#b8d2eb" stroke-width="2"/>' +
-          /* panel surya di atap */
-          '<polygon points="316,224 373,201 430,223 373,247" fill="url(#efPanel)" stroke="#ffffff" stroke-width="3"/>' +
-          '<path d="M331 225 L387 247 M347 217 L403 239 M363 209 L419 231 M329 234 L385 256 M345 226 L401 248 M361 218 L417 240" stroke="#8cc2f2" stroke-width="1.2" opacity=".75"/>' +
-          '<path d="M316 224 L373 247 M373 201 L373 247 M430 223 L373 247" stroke="#ffffff" stroke-width="1.4" opacity=".55"/>' +
-          /* jendela */
-          '<polygon points="318,269 350,284 350,314 318,299" fill="#bfe3ff" stroke="#7fb1db" stroke-width="2"/>' +
-          '<polygon points="410,260 449,242 449,272 410,290" fill="#bfe3ff" stroke="#7fb1db" stroke-width="2"/>' +
-          '<polygon points="383,287 404,277 404,313 383,323" fill="#f6d58a" opacity=".85"/>' +
-          '<path d="M383 287 L404 277 M383 323 L404 313" stroke="#d8a94f" stroke-width="1.2"/>' +
-          /* tanaman kecil */
-          '<path d="M268 304 q-8 -18 4 -30 M268 304 q10 -16 20 -20" stroke="#79b68d" stroke-width="3" fill="none" stroke-linecap="round"/>' +
-          /* garis penghubung */
+        '<svg class="ef-lines" viewBox="0 0 760 420" preserveAspectRatio="xMidYMid slice" aria-hidden="true">' +
           '<path d="M155 115 C225 125 270 145 310 165" stroke="#9cc4ea" stroke-width="2" fill="none" stroke-dasharray="4 5"/>' +
           '<path d="M605 115 C535 125 490 145 450 165" stroke="#9cc4ea" stroke-width="2" fill="none" stroke-dasharray="4 5"/>' +
           '<path d="M160 310 C225 295 270 280 305 268" stroke="#9cc4ea" stroke-width="2" fill="none" stroke-dasharray="4 5"/>' +
@@ -299,6 +270,7 @@
           '<circle cx="310" cy="165" r="4" fill="#4c9ae0"/><circle cx="450" cy="165" r="4" fill="#4c9ae0"/>' +
           '<circle cx="305" cy="268" r="4" fill="#4c9ae0"/><circle cx="455" cy="268" r="4" fill="#4c9ae0"/>' +
         '</svg>' +
+        '<img class="ef-rumah" src="assets/rumah-solar.webp" alt="Rumah dengan panel surya">' +
         '<div class="ef-label ef-solar"><span class="ef-ikon">' + ikon.solar + '</span><span><small>Solar Generation</small><b>' + esc(pv) + '</b></span></div>' +
         '<div class="ef-label ef-grid"><span class="ef-ikon">' + ikon.grid + '</span><span><small>' + esc(gridLabel) + '</small><b>' + esc(gridValue) + '</b></span></div>' +
         '<div class="ef-label ef-battery"><span class="ef-ikon">' + ikon.battery + '</span><span><small>Battery Storage</small><b>' + esc(soc) + '</b><em>' + esc(batSub) + '</em></span></div>' +
