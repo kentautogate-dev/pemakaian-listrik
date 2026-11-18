@@ -258,6 +258,7 @@
       ? (live.batPowerW > 0 ? "mengisi " : live.batPowerW < 0 ? "mengosongkan " : "") + watt(Math.abs(live.batPowerW))
       : "—";
     var gambarRumah = box.getAttribute("data-rumah") || "assets/rumah-energi.webp";
+    var ikonSolar = box.getAttribute("data-ikon-solar") || "assets/ikon-solar-trim.webp";
 
     box.innerHTML =
       '<div class="dash-eflow">' +
@@ -270,7 +271,7 @@
           '<circle cx="305" cy="268" r="4" fill="#4c9ae0"/><circle cx="455" cy="268" r="4" fill="#4c9ae0"/>' +
         '</svg>' +
         '<img class="ef-rumah" src="' + esc(gambarRumah) + '" alt="Rumah dengan panel surya">' +
-        '<div class="ef-label ef-solar"><span class="ef-ikon"><img src="assets/ikon-solar-trim.webp" alt=""></span><span><small>Solar Generation</small><b>' + esc(pv) + '</b></span></div>' +
+        '<div class="ef-label ef-solar"><span class="ef-ikon"><img src="' + esc(ikonSolar) + '" alt=""></span><span><small>Solar Generation</small><b>' + esc(pv) + '</b></span></div>' +
         '<div class="ef-label ef-grid"><span class="ef-ikon"><img src="assets/ikon-grid-trim.webp" alt=""></span><span><small>' + esc(gridLabel) + '</small><b>' + esc(gridValue) + '</b></span></div>' +
         '<div class="ef-label ef-battery"><span class="ef-ikon"><img src="assets/ikon-baterai-trim.webp" alt=""></span><span><small>Battery Storage</small><b>' + esc(soc) + '</b><em>' + esc(batSub) + '</em></span></div>' +
         '<div class="ef-label ef-load"><span class="ef-ikon"><img src="assets/ikon-konsumsi-trim.webp" alt=""></span><span><small>Consumption</small><b>' + esc(beban) + '</b></span></div>' +
