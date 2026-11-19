@@ -627,3 +627,13 @@
   #halaman-dashboard .dash-live-strip > span { padding: 5px 9px; }
   #halaman-dashboard .dash-live-strip b { font-size: .96rem; }
 }
+
+/* Baris terbaru di Aktivitas terakhir: highlight kuning muda */
+#halaman-dashboard .dash-table tbody tr.dash-row-latest td {
+  background: rgba(255, 240, 166, .58);
+}
+#halaman-dashboard .dash-table tbody tr.dash-row-latest td:first-child { border-radius: 8px 0 0 8px; }
+#halaman-dashboard .dash-table tbody tr.dash-row-latest td:last-child { border-radius: 0 8px 8px 0; }
+#halaman-dashboard .dash-table tbody tr.dash-row-latest:hover td {
+  background: rgba(255, 236, 145, .72);
+}

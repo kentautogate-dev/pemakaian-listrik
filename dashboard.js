@@ -346,9 +346,9 @@
       return;
     }
     box.innerHTML = '<table class="dash-table"><thead><tr><th>Tanggal</th><th class="num">Sisa</th><th class="num">Pemakaian</th><th class="num">Biaya</th><th>Catatan</th></tr></thead><tbody>' +
-      data.map(function (r) {
+      data.map(function (r, idx) {
         var label = window.KwhCore ? window.KwhCore.labelTanggal(r.tanggal, false) : r.tanggal;
-        return "<tr><td class=\"tanggal\">" + esc(label) + "<small>" + esc(r.hari || "") + "</small></td>" +
+        return "<tr" + (idx === 0 ? ' class="dash-row-latest"' : "") + "><td class=\"tanggal\">" + esc(label) + "<small>" + esc(r.hari || "") + "</small></td>" +
           '<td class="num">' + (r.sisa == null ? "—" : angka(r.sisa, 0)) + "</td>" +
           '<td class="num">' + (r.pemakaian == null ? "—" : angka(r.pemakaian, 1) + " kWh") + "</td>" +
           '<td class="num">' + (r.biaya == null ? "—" : rp(r.biaya)) + "</td>" +

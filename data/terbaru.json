@@ -1248,7 +1248,7 @@
       "masuk": 0,
       "urutanToken": "auto",
       "pltsOff": false,
-      "catatan": "MENDUNG"
+      "catatan": "MEDUNG"
     },
     {
       "id": "bawaan-2026-10-03",
@@ -1338,7 +1338,7 @@
       "masuk": 109,
       "urutanToken": "auto",
       "pltsOff": false,
-      "catatan": "FULL BATERAI - tambah token 109 kWh"
+      "catatan": "MANTAP - tambah token 109 kWh"
     },
     {
       "id": "bawaan-2026-10-13",
@@ -1446,7 +1446,7 @@
       "masuk": 0,
       "urutanToken": "auto",
       "pltsOff": false,
-      "catatan": "FULL BATERAI"
+      "catatan": "MANTAP"
     },
     {
       "id": "bawaan-2026-10-25",
@@ -1509,7 +1509,7 @@
       "masuk": 0,
       "urutanToken": "auto",
       "pltsOff": false,
-      "catatan": "FULL BATERAI"
+      "catatan": "MANTAP"
     },
     {
       "id": "bawaan-2026-11-01",
@@ -1518,160 +1518,7 @@
       "masuk": 0,
       "urutanToken": "auto",
       "pltsOff": false,
-      "catatan": "Mendung"
-    },
-    {
-      "id": "cmvyl60fnzm5c",
-      "tanggal": "2026-11-02",
-      "sisa": 1209,
-      "masuk": 0,
-      "urutanToken": "auto",
-      "pltsOff": false,
-      "catatan": ""
-    },
-    {
-      "id": "cmw01hbc9n155",
-      "tanggal": "2026-11-03",
-      "sisa": 1205,
-      "masuk": 0,
-      "urutanToken": "auto",
-      "pltsOff": false,
-      "catatan": ""
-    },
-    {
-      "id": "cmw1lhps1apke",
-      "tanggal": "2026-11-04",
-      "sisa": 1202,
-      "masuk": 0,
-      "urutanToken": "auto",
-      "pltsOff": false,
-      "catatan": ""
-    },
-    {
-      "id": "cmw2xjqnw06hm",
-      "tanggal": "2026-11-05",
-      "sisa": 1201,
-      "masuk": 0,
-      "urutanToken": "auto",
-      "pltsOff": false,
-      "catatan": ""
-    },
-    {
-      "id": "cmw4cm6iafusj",
-      "tanggal": "2026-11-07",
-      "sisa": 1196,
-      "masuk": 0,
-      "urutanToken": "auto",
-      "pltsOff": false,
-      "catatan": ""
-    },
-    {
-      "id": "cmw74xrmbsd62",
-      "tanggal": "2026-11-08",
-      "sisa": 1190,
-      "masuk": 0,
-      "urutanToken": "auto",
-      "pltsOff": false,
-      "catatan": ""
-    },
-    {
-      "id": "cmw8li46n7rfi",
-      "tanggal": "2026-11-09",
-      "sisa": 1186,
-      "masuk": 0,
-      "urutanToken": "auto",
-      "pltsOff": false,
-      "catatan": ""
-    },
-    {
-      "id": "cmwa2yahco8ir",
-      "tanggal": "2026-11-10",
-      "sisa": 1183,
-      "masuk": 0,
-      "urutanToken": "auto",
-      "pltsOff": false,
-      "catatan": ""
-    },
-    {
-      "id": "cmwbjicvmc5a2",
-      "tanggal": "2026-11-11",
-      "sisa": 1182,
-      "masuk": 109,
-      "urutanToken": "auto",
-      "pltsOff": false,
-      "catatan": "FULL BATERAI - Tambah Token"
-    },
-    {
-      "id": "cmwcut6jvsd7b",
-      "tanggal": "2026-11-12",
-      "sisa": 1291,
-      "masuk": 0,
-      "urutanToken": "auto",
-      "pltsOff": false,
-      "catatan": ""
-    },
-    {
-      "id": "cmwebq4ncfug0",
-      "tanggal": "2026-11-13",
-      "sisa": 1288,
-      "masuk": 0,
-      "urutanToken": "auto",
-      "pltsOff": false,
-      "catatan": "MENDUNG"
-    },
-    {
-      "id": "cmwfpr26tdl8m",
-      "tanggal": "2026-11-14",
-      "sisa": 1280,
-      "masuk": 0,
-      "urutanToken": "auto",
-      "pltsOff": false,
-      "catatan": "HUJAN"
-    },
-    {
-      "id": "cmwh5zv69570d",
-      "tanggal": "2026-11-15",
-      "sisa": 1275,
-      "masuk": 0,
-      "urutanToken": "auto",
-      "pltsOff": false,
-      "catatan": "HUJAN"
-    },
-    {
-      "id": "cmwilqta8wzt2",
-      "tanggal": "2026-11-16",
-      "sisa": 1265,
-      "masuk": 0,
-      "urutanToken": "auto",
-      "pltsOff": false,
-      "catatan": ""
-    },
-    {
-      "id": "cmwk21hsdrpdo",
-      "tanggal": "2026-11-17",
-      "sisa": 1259,
-      "masuk": 0,
-      "urutanToken": "auto",
-      "pltsOff": false,
-      "catatan": "HUJAN"
-    },
-    {
-      "id": "cmwlhcvsir9pu",
-      "tanggal": "2026-11-18",
-      "sisa": 1247,
-      "masuk": 0,
-      "urutanToken": "auto",
-      "pltsOff": false,
-      "catatan": "CERAH"
-    },
-    {
-      "id": "cmwmw5i8yjvn2",
-      "tanggal": "2026-11-19",
-      "sisa": 1246,
-      "masuk": 0,
-      "urutanToken": "auto",
-      "pltsOff": false,
-      "catatan": "CERAH"
+      "catatan": "pembanding"
     }
   ]
 }
