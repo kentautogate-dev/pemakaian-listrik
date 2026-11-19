@@ -263,10 +263,10 @@
     box.innerHTML =
       '<div class="dash-eflow">' +
         '<svg class="ef-lines" viewBox="0 0 760 420" preserveAspectRatio="xMidYMid slice" aria-hidden="true">' +
-          '<path d="M155 115 C225 125 270 145 310 165" stroke="#9cc4ea" stroke-width="2" fill="none" stroke-dasharray="4 5"/>' +
-          '<path d="M605 115 C535 125 490 145 450 165" stroke="#9cc4ea" stroke-width="2" fill="none" stroke-dasharray="4 5"/>' +
-          '<path d="M160 310 C225 295 270 280 305 268" stroke="#9cc4ea" stroke-width="2" fill="none" stroke-dasharray="4 5"/>' +
-          '<path d="M600 310 C535 295 490 280 455 268" stroke="#9cc4ea" stroke-width="2" fill="none" stroke-dasharray="4 5"/>' +
+          '<path d="M155 115 C225 125 270 145 310 165" stroke="#9cc4ea" stroke-width="2" fill="none" stroke-dasharray="4 5" class="ef-line"/>' +
+          '<path d="M605 115 C535 125 490 145 450 165" stroke="#9cc4ea" stroke-width="2" fill="none" stroke-dasharray="4 5" class="ef-line"/>' +
+          '<path d="M160 310 C225 295 270 280 305 268" stroke="#9cc4ea" stroke-width="2" fill="none" stroke-dasharray="4 5" class="ef-line ef-line-reverse"/>' +
+          '<path d="M600 310 C535 295 490 280 455 268" stroke="#9cc4ea" stroke-width="2" fill="none" stroke-dasharray="4 5" class="ef-line ef-line-reverse"/>' +
           '<circle cx="310" cy="165" r="4" fill="#4c9ae0"/><circle cx="450" cy="165" r="4" fill="#4c9ae0"/>' +
           '<circle cx="305" cy="268" r="4" fill="#4c9ae0"/><circle cx="455" cy="268" r="4" fill="#4c9ae0"/>' +
         '</svg>' +

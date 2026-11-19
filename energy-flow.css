@@ -16,6 +16,24 @@
   background: radial-gradient(circle at 50% 35%, #ffffff, #edf7ff 70%);
 }
 .ef-lines { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
+
+/* Garis sambung putus bergerak: aliran Solar → rumah → baterai/konsumsi. */
+.ef-lines .ef-line {
+  animation: ef-line-flow 1.2s linear infinite;
+}
+
+/* Baterai & konsumsi: aliran dari rumah menuju label (arah terbalik). */
+.ef-lines .ef-line-reverse {
+  animation-direction: reverse;
+}
+
+@keyframes ef-line-flow {
+  to { stroke-dashoffset: -28; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ef-lines .ef-line { animation: none; }
+}
 .ef-rumah {
   position: absolute; z-index: 2; left: 50%; top: 50%;
   width: 74%; height: 94%;
