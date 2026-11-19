@@ -418,7 +418,7 @@
     hentikanTimer();
     keadaan.timer = setInterval(function () {
       if (keadaan.aktif && !document.hidden) muat();
-    }, 60000);
+    }, 30000);
   }
 
   function hentikanTimer() {

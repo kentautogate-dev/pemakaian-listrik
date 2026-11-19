@@ -59,7 +59,7 @@
     if (!$("pltsAuto").checked) return;
     keadaan.timer = setInterval(function () {
       if (keadaan.halaman && $("pltsAuto").checked) muat();
-    }, 60000);
+    }, 30000);
   }
   function hentikanAuto() {
     if (keadaan.timer) { clearInterval(keadaan.timer); keadaan.timer = null; }
