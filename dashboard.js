@@ -410,9 +410,9 @@
     box.innerHTML =
       kartu("PV Yield", angka(pv, 2) + " kWh", "produksi surya", "pv", pv) +
       kartu("Konsumsi rumah", angka(cons, 2) + " kWh", periode, "cons", cons) +
-      kartu("Dari PV/baterai", angka(pvHome, 2) + " kWh", porsiPv == null ? "porsi —" : "porsi " + angka(porsiPv, 0) + "%", "pvhome", pvHome) +
+      kartu("Konsumsi Baterai", angka(pvHome, 2) + " kWh", porsiPv == null ? "porsi —" : "porsi " + angka(porsiPv, 0) + "%", "pvhome", pvHome) +
       kartu("Pemakaian token/meter", meter ? angka(meter, 2) + " kWh" : "—", meterCount + " " + satuan, "token", meter || null) +
-      kartu("Total pemakaian", angka(totalGabungan, 2) + " kWh", "PV/baterai + token", "total", totalGabungan);
+      kartu("Total pemakaian", angka(totalGabungan, 2) + " kWh", "Konsumsi Baterai + token", "total", totalGabungan);
   }
 
   function renderEaChart(labels, dariPv, meter) {
@@ -448,7 +448,7 @@
       var total = pv + mt;
       if (pv > 0) {
         var hPv = (pv / skala) * ph;
-        bars += '<rect x="' + (cx - barW / 2) + '" y="' + (bawah - hPv) + '" width="' + barW + '" height="' + hPv + '" rx="3" fill="#075dc5"><title>' + esc(lab + ": PV/baterai " + angka(pv, 2) + " kWh • total " + angka(total, 2) + " kWh") + "</title></rect>";
+        bars += '<rect x="' + (cx - barW / 2) + '" y="' + (bawah - hPv) + '" width="' + barW + '" height="' + hPv + '" rx="3" fill="#075dc5"><title>' + esc(lab + ": Konsumsi Baterai " + angka(pv, 2) + " kWh • total " + angka(total, 2) + " kWh") + "</title></rect>";
       }
       if (mt > 0) {
         var hMt = (mt / skala) * ph;
@@ -459,7 +459,7 @@
         grid += '<text x="' + cx + '" y="' + (H - 15) + '" text-anchor="middle" font-size="10.5" fill="#8ba0b8">' + esc(lab) + "</text>";
       }
     });
-    box.innerHTML = '<svg viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="Grafik PV/baterai dan pemakaian token">' +
+    box.innerHTML = '<svg viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="Grafik Konsumsi Baterai dan pemakaian token">' +
       grid + bars + '<text x="8" y="12" font-size="10" fill="#8ba0b8">kWh</text></svg>';
   }
 
