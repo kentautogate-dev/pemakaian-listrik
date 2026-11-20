@@ -401,15 +401,18 @@
     var periode = mode === "harian" ? "bulan ini" : mode === "bulanan" ? "Mei–November 2026" : "tahun 2026";
     var satuan = mode === "harian" ? "hari tercatat" : mode === "bulanan" ? "bulan tercatat" : "tahun tercatat";
     var porsiPv = cons > 0 ? pvHome / cons * 100 : null;
-    function kartu(label, nilai, sub, warna) {
-      return '<div class="dash-ea-stat ' + (warna || "") + '"><span>' + esc(label) + "</span><b>" + esc(nilai) + "</b><small>" + esc(sub) + "</small></div>";
+    var harga = keadaan.app && keadaan.app.settings ? Number(keadaan.app.settings.hargaKwh) || 1835 : 1835;
+    function kartu(label, nilai, sub, warna, kwh) {
+      var kali = kwh === null || kwh === undefined ? "—" :
+        angka(kwh, 2) + " kWh × " + rp(harga) + " = " + rp(Math.round(kwh * harga));
+      return '<div class="dash-ea-stat ' + (warna || "") + '"><span>' + esc(label) + "</span><b>" + esc(nilai) + "</b><small>" + esc(sub) + '</small><em class="dash-ea-kali">' + esc(kali) + "</em></div>";
     }
     box.innerHTML =
-      kartu("PV Yield", angka(pv, 2) + " kWh", "produksi surya", "pv") +
-      kartu("Konsumsi rumah", angka(cons, 2) + " kWh", periode, "cons") +
-      kartu("Dari PV/baterai", angka(pvHome, 2) + " kWh", porsiPv == null ? "porsi —" : "porsi " + angka(porsiPv, 0) + "%", "pvhome") +
-      kartu("Pemakaian token/meter", meter ? angka(meter, 2) + " kWh" : "—", meterCount + " " + satuan, "token") +
-      kartu("Total pemakaian", angka(totalGabungan, 2) + " kWh", "PV/baterai + token", "total");
+      kartu("PV Yield", angka(pv, 2) + " kWh", "produksi surya", "pv", pv) +
+      kartu("Konsumsi rumah", angka(cons, 2) + " kWh", periode, "cons", cons) +
+      kartu("Dari PV/baterai", angka(pvHome, 2) + " kWh", porsiPv == null ? "porsi —" : "porsi " + angka(porsiPv, 0) + "%", "pvhome", pvHome) +
+      kartu("Pemakaian token/meter", meter ? angka(meter, 2) + " kWh" : "—", meterCount + " " + satuan, "token", meter || null) +
+      kartu("Total pemakaian", angka(totalGabungan, 2) + " kWh", "PV/baterai + token", "total", totalGabungan);
   }
 
   function renderEaChart(labels, dariPv, meter) {
