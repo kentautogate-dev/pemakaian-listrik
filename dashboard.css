@@ -695,3 +695,18 @@
   #halaman-dashboard .dash-ea-chart { min-height: 220px; }
   #halaman-dashboard .dash-ea-legend .muted { width: 100%; margin-left: 0; }
 }
+
+#halaman-dashboard .dash-ea-stat.pvhome { border-color: rgba(147, 197, 253, .9); background: rgba(239, 246, 255, .9); }
+#halaman-dashboard .dash-ea-stat.pvhome b { color: #075dc5; }
+#halaman-dashboard .dash-ea-stat.grid { background: rgba(248, 250, 252, .82); }
+#halaman-dashboard .dash-ea-stat.grid b { color: #2f6ea8; }
+
+#halaman-dashboard .dash-ea-live {
+  display: flex; flex-wrap: wrap; gap: 6px 14px;
+  margin: 0 0 8px; padding: 7px 10px;
+  border: 1px solid rgba(193, 222, 250, .8); border-radius: 10px;
+  background: rgba(247, 251, 255, .8);
+  font-size: .68rem; color: #6b7f99;
+}
+#halaman-dashboard .dash-ea-live span { display: inline-flex; gap: 5px; align-items: center; }
+#halaman-dashboard .dash-ea-live b { color: #10233f; font-variant-numeric: tabular-nums; }
