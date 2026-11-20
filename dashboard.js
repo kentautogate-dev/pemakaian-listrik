@@ -381,17 +381,21 @@
       });
     }
 
-    var pvTotal = 0, totalCons = 0, pvHome = 0, meterTotal = 0, meterCount = 0;
+    var pvTotal = 0, totalCons = 0, pvHome = 0, meterTotal = 0, meterCount = 0, totalGabungan = 0;
     pv.forEach(function (v) { if (v != null) pvTotal += v; });
     total.forEach(function (v) { if (v != null) totalCons += v; });
     dariPv.forEach(function (v) { if (v != null) pvHome += v; });
     meter.forEach(function (v) { if (v != null) { meterTotal += v; meterCount++; } });
+    labels.forEach(function (_, i) {
+      var pv = dariPv[i] || 0, mt = meter[i] || 0;
+      if (dariPv[i] != null || meter[i] != null) totalGabungan += pv + mt;
+    });
 
-    renderEaSummary(pvTotal, totalCons, pvHome, meterTotal, meterCount, mode);
+    renderEaSummary(pvTotal, totalCons, pvHome, meterTotal, meterCount, totalGabungan, mode);
     renderEaChart(labels, dariPv, meter);
   }
 
-  function renderEaSummary(pv, cons, pvHome, meter, meterCount, mode) {
+  function renderEaSummary(pv, cons, pvHome, meter, meterCount, totalGabungan, mode) {
     var box = $("dashEaSummary");
     if (!box) return;
     var periode = mode === "harian" ? "bulan ini" : mode === "bulanan" ? "Mei–November 2026" : "tahun 2026";
@@ -404,15 +408,17 @@
       kartu("PV Yield", angka(pv, 2) + " kWh", "produksi surya", "pv") +
       kartu("Konsumsi rumah", angka(cons, 2) + " kWh", periode, "cons") +
       kartu("Dari PV/baterai", angka(pvHome, 2) + " kWh", porsiPv == null ? "porsi —" : "porsi " + angka(porsiPv, 0) + "%", "pvhome") +
-      kartu("Pemakaian token/meter", meter ? angka(meter, 2) + " kWh" : "—", meterCount + " " + satuan, "token");
+      kartu("Pemakaian token/meter", meter ? angka(meter, 2) + " kWh" : "—", meterCount + " " + satuan, "token") +
+      kartu("Total pemakaian", angka(totalGabungan, 2) + " kWh", "PV/baterai + token", "total");
   }
 
   function renderEaChart(labels, dariPv, meter) {
     var box = $("dashEaChart");
     if (!box) return;
     var all = [];
-    dariPv.forEach(function (v) { if (v != null) all.push(v); });
-    meter.forEach(function (v) { if (v != null) all.push(v); });
+    labels.forEach(function (_, i) {
+      if (dariPv[i] != null || meter[i] != null) all.push((dariPv[i] || 0) + (meter[i] || 0));
+    });
     if (!labels.length || !all.length) {
       box.innerHTML = '<div class="dash-chart-empty">Belum ada data untuk periode ini.</div>';
       return;
@@ -434,12 +440,17 @@
     var langkah = Math.max(1, Math.ceil(labels.length / 12));
     var bars = "";
     labels.forEach(function (lab, i) {
-      var cx = x(i);
-      if (dariPv[i] != null && dariPv[i] > 0) {
-        bars += '<rect x="' + (cx - barW - 1.5) + '" y="' + y(dariPv[i]) + '" width="' + barW + '" height="' + (T + ph - y(dariPv[i])) + '" rx="3" fill="#075dc5"><title>' + esc(lab + ": PV/baterai " + angka(dariPv[i], 2) + " kWh") + "</title></rect>";
+      var cx = x(i), bawah = T + ph;
+      var pv = dariPv[i] || 0, mt = meter[i] || 0;
+      var total = pv + mt;
+      if (pv > 0) {
+        var hPv = (pv / skala) * ph;
+        bars += '<rect x="' + (cx - barW / 2) + '" y="' + (bawah - hPv) + '" width="' + barW + '" height="' + hPv + '" rx="3" fill="#075dc5"><title>' + esc(lab + ": PV/baterai " + angka(pv, 2) + " kWh • total " + angka(total, 2) + " kWh") + "</title></rect>";
       }
-      if (meter[i] != null && meter[i] > 0) {
-        bars += '<rect x="' + (cx + 1.5) + '" y="' + y(meter[i]) + '" width="' + barW + '" height="' + (T + ph - y(meter[i])) + '" rx="3" fill="#93c5fd"><title>' + esc(lab + ": token/meter " + angka(meter[i], 2) + " kWh") + "</title></rect>";
+      if (mt > 0) {
+        var hMt = (mt / skala) * ph;
+        var yMt = bawah - ((pv + mt) / skala) * ph;
+        bars += '<rect x="' + (cx - barW / 2) + '" y="' + yMt + '" width="' + barW + '" height="' + hMt + '" rx="3" fill="#93c5fd"><title>' + esc(lab + ": token/meter " + angka(mt, 2) + " kWh • total " + angka(total, 2) + " kWh") + "</title></rect>";
       }
       if (i % langkah === 0 || i === labels.length - 1) {
         grid += '<text x="' + cx + '" y="' + (H - 15) + '" text-anchor="middle" font-size="10.5" fill="#8ba0b8">' + esc(lab) + "</text>";
