@@ -409,7 +409,6 @@
     }
     box.innerHTML =
       kartu("PV Yield", angka(pv, 2) + " kWh", "produksi surya", "pv", pv) +
-      kartu("Konsumsi rumah", angka(cons, 2) + " kWh", periode, "cons", cons) +
       kartu("Konsumsi Baterai", angka(pvHome, 2) + " kWh", porsiPv == null ? "porsi —" : "porsi " + angka(porsiPv, 0) + "%", "pvhome", pvHome) +
       kartu("Pemakaian token/meter", meter ? angka(meter, 2) + " kWh" : "—", meterCount + " " + satuan, "token", meter || null) +
       kartu("Total pemakaian", angka(totalGabungan, 2) + " kWh", "Konsumsi Baterai + token", "total", totalGabungan);
