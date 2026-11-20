@@ -710,3 +710,6 @@
 }
 #halaman-dashboard .dash-ea-live span { display: inline-flex; gap: 5px; align-items: center; }
 #halaman-dashboard .dash-ea-live b { color: #10233f; font-variant-numeric: tabular-nums; }
+
+#halaman-dashboard .dash-ea-stat.token { border-color: rgba(147, 197, 253, .9); background: rgba(248, 250, 252, .85); }
+#halaman-dashboard .dash-ea-stat.token b { color: #2f6ea8; }
