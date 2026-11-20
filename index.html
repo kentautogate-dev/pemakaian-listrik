@@ -602,6 +602,23 @@
         <div class="dash-card-head"><div><h2>Energy flow</h2><div class="sub">Kondisi sistem saat ini</div></div></div>
         <div id="dashFlow" data-rumah="assets/rumah-sistem-solar.webp" data-ikon-solar="assets/solar-panel-baru-trim.webp"><div class="dash-skeleton" style="height:150px;border-radius:14px"></div></div>
       </section>
+
+      <section class="dash-card dash-ea-card">
+        <div class="dash-card-head dash-ea-head">
+          <div><h2>Energy Analysis</h2><div class="sub">PV Yield dari Solax vs pemakaian kWh meter rumah</div></div>
+          <div class="dash-ea-kontrol">
+            <div class="dash-ea-tabs" id="dashEaTabs">
+              <button type="button" data-ea="harian" class="on">Harian</button>
+              <button type="button" data-ea="bulanan">Bulanan</button>
+              <button type="button" data-ea="tahunan">Tahunan</button>
+            </div>
+            <select id="dashEaBulan" class="dash-ea-select" aria-label="Pilih bulan"></select>
+          </div>
+        </div>
+        <div id="dashEaSummary" class="dash-ea-summary"></div>
+        <div id="dashEaChart" class="dash-chart dash-ea-chart"><div class="dash-chart-empty">Memuat analisis…</div></div>
+        <div class="dash-ea-legend"><span><i class="pv"></i>PV Yield (kWh)</span><span><i class="pakai"></i>Pemakaian meter (kWh)</span><span class="muted">Yield = produksi PV • meter = catatan rumah • konsumsi inverter = pembanding Solax</span></div>
+      </section>
     </div>
 
     <div class="dash-grid dash-grid-2">
@@ -681,6 +698,7 @@
 <script src="core.js"></script>
 <script src="data-oktober-2026.js"></script>
 <script src="data-kwh-token.js"></script>
+<script src="solax-harian-2026.js"></script>
 <script src="app.js"></script>
 <script src="backup.js"></script>
 <script src="dashboard.js"></script>

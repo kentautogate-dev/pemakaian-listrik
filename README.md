@@ -90,6 +90,8 @@ Isi Dashboard:
 - Tabel aktivitas terakhir dan ringkasan cepat.
 
 Data diambil dari state aplikasi (localStorage) dan helper Solax (/api/solax/status, /api/solax/grafik).
+
+**Energy Analysis** di Dashboard membandingkan **PV Yield** (data historis Plant Report SolaxCloud, 190 hari Mei–November 2026) dengan **pemakaian kWh meter** dari catatan aplikasi. Ringkasan juga menampilkan **konsumsi inverter** sebagai pembanding.
 Dashboard diperbarui tiap 60 detik selama halaman aktif.
 
 ## PLTS (Solar) â€” monitor SolaxCloud

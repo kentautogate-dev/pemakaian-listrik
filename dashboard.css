@@ -637,3 +637,61 @@
 #halaman-dashboard .dash-table tbody tr.dash-row-latest:hover td {
   background: rgba(255, 236, 145, .72);
 }
+
+/* ---------------- Energy Analysis: PV Yield vs pemakaian meter ---------------- */
+#halaman-dashboard .dash-ea-card { min-width: 0; }
+#halaman-dashboard .dash-ea-head { align-items: center; }
+#halaman-dashboard .dash-ea-kontrol { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+#halaman-dashboard .dash-ea-tabs {
+  display: inline-flex; gap: 3px; padding: 3px;
+  border: 1px solid rgba(193, 222, 250, .9); border-radius: 10px;
+  background: rgba(255, 255, 255, .7);
+}
+#halaman-dashboard .dash-ea-tabs button {
+  border: 0; border-radius: 7px; padding: 5px 10px;
+  background: transparent; color: #64748b; font-size: .68rem; font-weight: 700;
+  cursor: pointer;
+}
+#halaman-dashboard .dash-ea-tabs button.on {
+  background: linear-gradient(135deg, #075dc5, #2f8df4); color: #fff;
+  box-shadow: 0 6px 14px -10px rgba(7, 93, 197, .8);
+}
+#halaman-dashboard .dash-ea-select {
+  border: 1px solid rgba(176, 209, 241, .9);
+  background: rgba(255, 255, 255, .8); color: #10233f;
+  border-radius: 9px; padding: 5px 8px; font-size: .7rem;
+}
+#halaman-dashboard .dash-ea-summary {
+  display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px; margin: 4px 0 10px;
+}
+#halaman-dashboard .dash-ea-stat {
+  display: grid; gap: 2px; min-width: 0;
+  padding: 9px 11px; border-radius: 11px;
+  border: 1px solid rgba(193, 222, 250, .85);
+  background: rgba(248, 252, 255, .86);
+}
+#halaman-dashboard .dash-ea-stat span { font-size: .6rem; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; color: #6b7f99; }
+#halaman-dashboard .dash-ea-stat b { font-size: 1.02rem; color: #10233f; font-variant-numeric: tabular-nums; white-space: nowrap; }
+#halaman-dashboard .dash-ea-stat small { font-size: .62rem; color: #6b7f99; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#halaman-dashboard .dash-ea-stat.pv { border-color: rgba(147, 197, 253, .9); background: rgba(239, 246, 255, .9); }
+#halaman-dashboard .dash-ea-stat.pv b { color: #075dc5; }
+#halaman-dashboard .dash-ea-stat.pakai { background: rgba(248, 250, 252, .8); }
+#halaman-dashboard .dash-ea-stat.defisit b { color: #b45309; }
+#halaman-dashboard .dash-ea-stat.surplus b { color: #075dc5; }
+#halaman-dashboard .dash-ea-chart { min-height: 260px; }
+#halaman-dashboard .dash-ea-legend { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; margin-top: 5px; font-size: .66rem; color: #6b7f99; }
+#halaman-dashboard .dash-ea-legend span { display: inline-flex; align-items: center; gap: 5px; }
+#halaman-dashboard .dash-ea-legend i { width: 9px; height: 9px; border-radius: 3px; }
+#halaman-dashboard .dash-ea-legend i.pv { background: #075dc5; }
+#halaman-dashboard .dash-ea-legend i.pakai { background: #93c5fd; }
+#halaman-dashboard .dash-ea-legend .muted { margin-left: auto; font-size: .62rem; }
+@media (max-width: 900px) {
+  #halaman-dashboard .dash-ea-summary { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  #halaman-dashboard .dash-ea-head { align-items: flex-start; flex-direction: column; }
+}
+@media (max-width: 620px) {
+  #halaman-dashboard .dash-ea-summary { grid-template-columns: 1fr 1fr; }
+  #halaman-dashboard .dash-ea-chart { min-height: 220px; }
+  #halaman-dashboard .dash-ea-legend .muted { width: 100%; margin-left: 0; }
+}

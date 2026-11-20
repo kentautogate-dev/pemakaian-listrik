@@ -18,7 +18,7 @@
     catch (e) { return "http://127.0.0.1:8787"; }
   })();
 
-  var keadaan = { aktif: false, timer: null, app: null, live: null, grafik: null };
+  var keadaan = { aktif: false, timer: null, app: null, live: null, grafik: null, eaMode: "harian", eaBulan: null, eaTerpasang: false };
   var ikon = {
     bolt: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M13.2 1.8 3.6 13.4a.6.6 0 0 0 .46.98H9l-1.2 7.2a.6.6 0 0 0 1.06.5l9.6-11.6a.6.6 0 0 0-.46-.98H13l1.2-7.2a.6.6 0 0 0-1-.5Z"/></svg>',
     wallet: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="14" rx="3"/><path d="M3 10h18M16 15h2"/></svg>',
@@ -283,6 +283,172 @@
     renderEnergyFlow($("dashFlow"), keadaan.live);
   }
 
+  /* ---------------- Energy Analysis: PV Yield vs pemakaian meter ---------------- */
+  var BULAN_ID = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
+
+  function dataEnergi(h) {
+    var solax = (window.SOLAX_HARIAN_2026 || []).slice();
+    var usageByDate = {}, usageByMonth = {}, usageByYear = {};
+    var appHarian = h && Array.isArray(h.harian) ? h.harian : [];
+    appHarian.forEach(function (r) {
+      if (r.pemakaian === null || r.pemakaian === undefined) return;
+      var t = String(r.tanggal || "");
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(t)) return;
+      usageByDate[t] = Number(r.pemakaian) || 0;
+      var mk = t.slice(0, 7), yk = t.slice(0, 4);
+      usageByMonth[mk] = (usageByMonth[mk] || 0) + (Number(r.pemakaian) || 0);
+      usageByYear[yk] = (usageByYear[yk] || 0) + (Number(r.pemakaian) || 0);
+    });
+    var pvByDate = {}, consByDate = {}, months = {}, years = {};
+    solax.forEach(function (r) {
+      var t = String(r.tanggal || "");
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(t)) return;
+      var pv = Number(r.pvYield) || 0, cons = Number(r.consumptionKwh) || 0;
+      pvByDate[t] = pv; consByDate[t] = cons;
+      var mk = t.slice(0, 7), yk = t.slice(0, 4);
+      if (!months[mk]) months[mk] = { key: mk, pv: 0, cons: 0, usage: 0 };
+      if (!years[yk]) years[yk] = { key: yk, pv: 0, cons: 0, usage: 0 };
+      months[mk].pv += pv; months[mk].cons += cons;
+      years[yk].pv += pv; years[yk].cons += cons;
+    });
+    Object.keys(usageByMonth).forEach(function (k) {
+      if (months[k]) months[k].usage = usageByMonth[k];
+    });
+    Object.keys(usageByYear).forEach(function (k) {
+      if (years[k]) years[k].usage = usageByYear[k];
+    });
+    return {
+      solax: solax, pvByDate: pvByDate, consByDate: consByDate,
+      usageByDate: usageByDate, usageByMonth: usageByMonth, usageByYear: usageByYear,
+      months: Object.keys(months).sort().map(function (k) { return months[k]; }),
+      years: Object.keys(years).sort().map(function (k) { return years[k]; })
+    };
+  }
+
+  function labelBulan(key) {
+    var p = key.split("-");
+    return BULAN_ID[Number(p[1]) - 1] + " " + p[0];
+  }
+
+  function renderEnergyAnalysis(h) {
+    var box = $("dashEaChart");
+    if (!box) return;
+    if (!window.SOLAX_HARIAN_2026) {
+      box.innerHTML = '<div class="dash-chart-empty">Data historis PV belum tersedia.</div>';
+      return;
+    }
+    var data = dataEnergi(h);
+    if (!data.months.length) {
+      box.innerHTML = '<div class="dash-chart-empty">Belum ada data PV historis.</div>';
+      return;
+    }
+    var sel = $("dashEaBulan");
+    if (sel && !sel.options.length) {
+      sel.innerHTML = data.months.map(function (m) {
+        return '<option value="' + m.key + '">' + labelBulan(m.key) + "</option>";
+      }).join("");
+      keadaan.eaBulan = data.months[data.months.length - 1].key;
+      sel.value = keadaan.eaBulan;
+    }
+    if (!keadaan.eaBulan || !data.months.some(function (m) { return m.key === keadaan.eaBulan; })) {
+      keadaan.eaBulan = data.months[data.months.length - 1].key;
+      if (sel) sel.value = keadaan.eaBulan;
+    }
+    if (sel) sel.classList.toggle("hidden", keadaan.eaMode !== "harian");
+
+    var labels = [], pv = [], usage = [], cons = [], mode = keadaan.eaMode || "harian";
+    if (mode === "harian") {
+      var key = keadaan.eaBulan;
+      var bagian = key.split("-"), th = Number(bagian[0]), bl = Number(bagian[1]);
+      var jmlHari = new Date(th, bl, 0).getDate();
+      for (var d = 1; d <= jmlHari; d++) {
+        var tgl = key + "-" + (d < 10 ? "0" : "") + d;
+        labels.push(String(d));
+        pv.push(data.pvByDate[tgl] ?? null);
+        usage.push(data.usageByDate[tgl] ?? null);
+        cons.push(data.consByDate[tgl] ?? null);
+      }
+    } else if (mode === "bulanan") {
+      data.months.forEach(function (m) {
+        labels.push(labelBulan(m.key));
+        pv.push(m.pv); usage.push(m.usage); cons.push(m.cons);
+      });
+    } else {
+      data.years.forEach(function (y) {
+        labels.push(y.key);
+        pv.push(y.pv); usage.push(y.usage); cons.push(y.cons);
+      });
+    }
+
+    var pvTotal = 0, usageTotal = 0, consTotal = 0, usageHari = 0, pvHari = 0;
+    pv.forEach(function (v) { if (v != null) { pvTotal += v; if (v > 0) pvHari++; } });
+    usage.forEach(function (v) { if (v != null) { usageTotal += v; usageHari++; } });
+    cons.forEach(function (v) { if (v != null) consTotal += v; });
+
+    renderEaSummary(pvTotal, usageTotal, consTotal, usageHari, mode);
+    renderEaChart(labels, pv, usage);
+  }
+
+  function renderEaSummary(pv, usage, cons, usageHari, mode) {
+    var box = $("dashEaSummary");
+    if (!box) return;
+    var selisih = usage ? pv - usage : null;
+    var rasio = usage > 0 ? pv / usage * 100 : null;
+    var periode = mode === "harian" ? "bulan ini" : mode === "bulanan" ? "Mei–November 2026" : "tahun 2026";
+    var satuan = mode === "harian" ? "hari tercatat" : mode === "bulanan" ? "bulan tercatat" : "tahun tercatat";
+    function kartu(label, nilai, sub, warna) {
+      return '<div class="dash-ea-stat ' + (warna || "") + '"><span>' + esc(label) + "</span><b>" + esc(nilai) + "</b><small>" + esc(sub) + "</small></div>";
+    }
+    box.innerHTML =
+      kartu("PV Yield", angka(pv, 2) + " kWh", periode, "pv") +
+      kartu("Pemakaian meter", usage ? angka(usage, 2) + " kWh" : "—", usageHari + " " + satuan, "pakai") +
+      kartu("Konsumsi inverter", cons ? angka(cons, 2) + " kWh" : "—", "pembanding Solax", "") +
+      kartu("Selisih PV − meter", selisih == null ? "—" : (selisih >= 0 ? "+" : "") + angka(selisih, 2) + " kWh",
+        rasio == null ? "rasio —" : "rasio " + angka(rasio, 0) + "%", selisih != null && selisih < 0 ? "defisit" : "surplus");
+  }
+
+  function renderEaChart(labels, pv, usage) {
+    var box = $("dashEaChart");
+    if (!box) return;
+    var all = [];
+    pv.forEach(function (v) { if (v != null) all.push(v); });
+    usage.forEach(function (v) { if (v != null) all.push(v); });
+    if (!labels.length || !all.length) {
+      box.innerHTML = '<div class="dash-chart-empty">Belum ada data untuk periode ini.</div>';
+      return;
+    }
+    var W = 1000, H = 300, L = 54, R = 22, T = 18, B = 42;
+    var pw = W - L - R, ph = H - T - B;
+    var maks = Math.max.apply(null, all);
+    var skala = Math.max(10, Math.ceil(maks / 10) * 10);
+    var grup = pw / labels.length;
+    var barW = Math.min(24, Math.max(4, grup * 0.28));
+    var x = function (i) { return L + grup * i + grup / 2; };
+    var y = function (v) { return T + ph - (v / skala) * ph; };
+    var grid = "";
+    for (var g = 0; g <= 4; g++) {
+      var yy = T + ph * g / 4, val = skala * (1 - g / 4);
+      grid += '<line x1="' + L + '" y1="' + yy + '" x2="' + (W - R) + '" y2="' + yy + '" stroke="#eaf2fb" stroke-width="1"/>';
+      grid += '<text x="' + (L - 8) + '" y="' + (yy + 3.5) + '" text-anchor="end" font-size="10.5" fill="#8ba0b8">' + angka(val, 0) + "</text>";
+    }
+    var langkah = Math.max(1, Math.ceil(labels.length / 12));
+    var bars = "";
+    labels.forEach(function (lab, i) {
+      var cx = x(i);
+      if (pv[i] != null && pv[i] > 0) {
+        bars += '<rect x="' + (cx - barW - 1.5) + '" y="' + y(pv[i]) + '" width="' + barW + '" height="' + (T + ph - y(pv[i])) + '" rx="3" fill="#075dc5"><title>' + esc(lab + ": PV " + angka(pv[i], 2) + " kWh") + "</title></rect>";
+      }
+      if (usage[i] != null && usage[i] > 0) {
+        bars += '<rect x="' + (cx + 1.5) + '" y="' + y(usage[i]) + '" width="' + barW + '" height="' + (T + ph - y(usage[i])) + '" rx="3" fill="#93c5fd"><title>' + esc(lab + ": meter " + angka(usage[i], 2) + " kWh") + "</title></rect>";
+      }
+      if (i % langkah === 0 || i === labels.length - 1) {
+        grid += '<text x="' + cx + '" y="' + (H - 15) + '" text-anchor="middle" font-size="10.5" fill="#8ba0b8">' + esc(lab) + "</text>";
+      }
+    });
+    box.innerHTML = '<svg viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="Grafik PV yield dan pemakaian meter">' +
+      grid + bars + '<text x="8" y="12" font-size="10" fill="#8ba0b8">kWh</text></svg>';
+  }
+
   function renderUsage(h) {
     var box = $("dashUsage");
     if (!box) return;
@@ -385,6 +551,7 @@
     renderUsage(h);
     renderTable(h);
     renderSummary(h);
+    renderEnergyAnalysis(h);
   }
 
   function muatLive() {
@@ -443,6 +610,19 @@
   function mulai() {
     var el = $("halaman-dashboard");
     if (!el) return;
+    var tabs = $("dashEaTabs");
+    if (tabs) tabs.addEventListener("click", function (ev) {
+      var b = ev.target.closest("button[data-ea]");
+      if (!b) return;
+      keadaan.eaMode = b.getAttribute("data-ea");
+      Array.prototype.forEach.call(tabs.querySelectorAll("button"), function (x) { x.classList.toggle("on", x === b); });
+      renderEnergyAnalysis(keadaan.app);
+    });
+    var selBulan = $("dashEaBulan");
+    if (selBulan) selBulan.addEventListener("change", function () {
+      keadaan.eaBulan = selBulan.value;
+      renderEnergyAnalysis(keadaan.app);
+    });
     if (!el.classList.contains("hidden")) setAktif(true);
     else if ((window.location.hash || "").replace("#", "") === "dashboard") setAktif(true);
   }
