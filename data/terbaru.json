@@ -1681,6 +1681,51 @@
       "urutanToken": "auto",
       "pltsOff": false,
       "catatan": ""
+    },
+    {
+      "id": "cmwpr6ttvw1yd",
+      "tanggal": "2026-11-21",
+      "sisa": 1238,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": "MENDUNG"
+    },
+    {
+      "id": "cmwr7dsy15uo6",
+      "tanggal": "2026-11-22",
+      "sisa": 1231,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": "MENDUNG"
+    },
+    {
+      "id": "cmwskr5wqbxrj",
+      "tanggal": "2026-11-23",
+      "sisa": 1225,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": "CERAH"
+    },
+    {
+      "id": "cmwu17xs07z3x",
+      "tanggal": "2026-11-24",
+      "sisa": 1222,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
+    },
+    {
+      "id": "cmwvhpg2jlzp6",
+      "tanggal": "2026-11-25",
+      "sisa": 1220,
+      "masuk": 0,
+      "urutanToken": "auto",
+      "pltsOff": false,
+      "catatan": ""
     }
   ]
 }
