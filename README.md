@@ -94,6 +94,8 @@ Data diambil dari state aplikasi (localStorage) dan helper Solax (/api/solax/sta
 **Energy Analysis** di Dashboard membandingkan **PV Yield** (data historis Plant Report SolaxCloud, 190 hari Mei–November 2026) dengan **pemakaian kWh meter** dari catatan aplikasi. Ringkasan juga menampilkan **konsumsi inverter** sebagai pembanding.
 Dashboard diperbarui tiap 60 detik selama halaman aktif.
 
+Helper juga mencatat **rekap harian otomatis** dari API realtime (PV yield, impor/ekspor, charge/discharge baterai) ke `solax-harian-auto.json` selama helper berjalan. Data ini digabung dengan histori Plant Report; hari yang helper tidak berjalan tetap perlu sinkron manual.
+
 ## PLTS (Solar) â€” monitor SolaxCloud
 
 Link SolaxCloud yang dibagikan (`global.solaxcloud.com/green/#/overview?...&onlyView=1`) **tidak bisa ditempel

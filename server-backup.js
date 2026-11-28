@@ -69,6 +69,7 @@ const BERKAS_KONFIG = process.env.BACKUP_CONFIG
   : path.join(PROJECT, "backup-config.json");
 
 const BERKAS_GRAFIK = path.join(PROJECT, "plts-harian.json");
+const BERKAS_HARIAN_AUTO = path.join(PROJECT, "solax-harian-auto.json");
 const ID_SNAPSHOT = /^\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}$/;
 const HASH_COMMIT = /^[0-9a-fA-F]{4,40}$/;
 
@@ -804,6 +805,9 @@ function petaSolaxOAuth(konf, inv, bat, plantRt) {
   const soc = angkaAtauNull(bat && bat.batterySOC) !== null ? angkaAtauNull(bat.batterySOC) : angkaAtauNull(inv && inv.batterySOC);
   const batPower = angkaAtauNull(bat && bat.chargeDischargePower);
   const gridPower = angkaAtauNull(inv && inv.gridPower);
+  const dailyYieldKwh = angkaAtauNull(plantRt && plantRt.dailyYield);
+  const dailyImportedKwh = angkaAtauNull(plantRt && plantRt.dailyImported);
+  const dailyExportedKwh = angkaAtauNull(plantRt && plantRt.dailyExported);
   const dailyChargedKwh = angkaAtauNull(plantRt && plantRt.dailyCharged);
   const dailyDischargedKwh = angkaAtauNull(plantRt && plantRt.dailyDischarged);
   const batteryRemainingKwh = angkaAtauNull(bat && bat.batteryRemainings);
@@ -849,6 +853,9 @@ function petaSolaxOAuth(konf, inv, bat, plantRt) {
     batPowerW: batPower,
     socPct: soc,
     feedinpowerW: feedin,
+    dailyYieldKwh: dailyYieldKwh,
+    dailyImportedKwh: dailyImportedKwh,
+    dailyExportedKwh: dailyExportedKwh,
     dailyChargedKwh: dailyChargedKwh,
     dailyDischargedKwh: dailyDischargedKwh,
     batteryRemainingKwh: batteryRemainingKwh,
@@ -973,7 +980,7 @@ async function ambilSolaxRealtime(paksa) {
 
 async function apiSolaxStatus(paksa) {
   const hasil = await ambilSolaxRealtime(paksa);
-  if (hasil && hasil.terkonfigurasi && hasil.data) catatSampel(hasil.data);
+  if (hasil && hasil.terkonfigurasi && hasil.data) { catatSampel(hasil.data); catatHarianAuto(hasil.data); }
   return { ok: true, ...hasil };
 }
 
@@ -1029,13 +1036,77 @@ function apiSolaxGrafik() {
   return { ok: true, tanggal: arsip.tanggal, sampel: arsip.sampel };
 }
 
+/* ---------------- Rekap harian otomatis ---------------- */
+
+function angka2(n) { return n === null || n === undefined ? null : Math.round(Number(n) * 100) / 100; }
+
+function bacaHarianAuto() {
+  try {
+    const isi = JSON.parse(fs.readFileSync(BERKAS_HARIAN_AUTO, "utf8"));
+    return Array.isArray(isi) ? isi : [];
+  } catch (e) {
+    return [];
+  }
+}
+
+function simpanHarianAuto(records) {
+  try {
+    fs.writeFileSync(BERKAS_HARIAN_AUTO, JSON.stringify(records));
+  } catch (e) {
+    console.error("[harian] gagal menyimpan:", e.message);
+  }
+}
+
+function tanggalLokal(d = new Date()) {
+  return d.getFullYear() + "-" + dua(d.getMonth() + 1) + "-" + dua(d.getDate());
+}
+
+function catatHarianAuto(data) {
+  if (!data) return;
+  const tanggal = tanggalLokal();
+  const pv = angkaAtauNull(data.yieldTodayKwh !== null && data.yieldTodayKwh !== undefined ? data.yieldTodayKwh : data.dailyYieldKwh);
+  const imp = angkaAtauNull(data.dailyImportedKwh);
+  const exp = angkaAtauNull(data.dailyExportedKwh);
+  const chg = angkaAtauNull(data.dailyChargedKwh);
+  const dis = angkaAtauNull(data.dailyDischargedKwh);
+  let cons = null;
+  if ([pv, imp, exp, chg, dis].every(function (v) { return v !== null; })) {
+    cons = Math.max(0, pv + imp + dis - chg - exp);
+  }
+  const rec = {
+    tanggal: tanggal,
+    pvYield: angka2(pv),
+    consumptionKwh: angka2(cons),
+    importKwh: angka2(imp),
+    exportKwh: angka2(exp),
+    chargeKwh: angka2(chg),
+    dischargeKwh: angka2(dis),
+    updatedAt: isoWaktu(),
+    final: false
+  };
+  let records = bacaHarianAuto();
+  records = records.filter(function (r) { return r && r.tanggal !== tanggal; });
+  records.push(rec);
+  records.sort(function (a, b) { return String(a.tanggal).localeCompare(String(b.tanggal)); });
+  if (records.length > 400) records = records.slice(-400);
+  simpanHarianAuto(records);
+}
+
+function apiSolaxHarian() {
+  const hariIni = tanggalLokal();
+  const records = bacaHarianAuto().map(function (r) {
+    return Object.assign({}, r, { final: r.tanggal !== hariIni });
+  });
+  return { ok: true, tanggal: hariIni, records: records };
+}
+
 let sedangSampel = false;
 async function sampelBerkala() {
   if (sedangSampel) return;
   sedangSampel = true;
   try {
     const hasil = await ambilSolaxRealtime();
-    if (hasil && hasil.terkonfigurasi && hasil.data) catatSampel(hasil.data);
+    if (hasil && hasil.terkonfigurasi && hasil.data) { catatSampel(hasil.data); catatHarianAuto(hasil.data); }
   } catch (e) {
     /* diamkan: sampler tidak boleh mengganggu server */
   } finally {
@@ -2563,6 +2634,7 @@ async function tangani(req, res) {
           "POST /api/cek-github",
           "GET /api/solax/status",
           "GET /api/solax/grafik",
+          "GET /api/solax/harian",
           "POST /api/solax/konfigurasi",
           "POST /api/backup",
           "POST /api/restore",
@@ -2609,6 +2681,11 @@ async function tangani(req, res) {
 
     if (metode === "GET" && jalur === "/api/solax/grafik") {
       kirim(res, 200, apiSolaxGrafik());
+      return;
+    }
+
+    if (metode === "GET" && jalur === "/api/solax/harian") {
+      kirim(res, 200, apiSolaxHarian());
       return;
     }
 

@@ -18,7 +18,7 @@
     catch (e) { return "http://127.0.0.1:8787"; }
   })();
 
-  var keadaan = { aktif: false, timer: null, app: null, live: null, grafik: null, eaMode: "harian", eaBulan: null, eaTerpasang: false };
+  var keadaan = { aktif: false, timer: null, app: null, live: null, grafik: null, autoHarian: [], eaMode: "harian", eaBulan: null, eaTerpasang: false };
   var ikon = {
     bolt: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M13.2 1.8 3.6 13.4a.6.6 0 0 0 .46.98H9l-1.2 7.2a.6.6 0 0 0 1.06.5l9.6-11.6a.6.6 0 0 0-.46-.98H13l1.2-7.2a.6.6 0 0 0-1-.5Z"/></svg>',
     wallet: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="14" rx="3"/><path d="M3 10h18M16 15h2"/></svg>',
@@ -287,7 +287,17 @@
   var BULAN_ID = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
 
   function dataEnergi(h) {
-    var solax = (window.SOLAX_HARIAN_2026 || []).slice();
+    var peta = {};
+    (window.SOLAX_HARIAN_2026 || []).forEach(function (r) { if (r && r.tanggal) peta[r.tanggal] = r; });
+    (keadaan.autoHarian || []).forEach(function (r) {
+      if (!r || !r.tanggal) return;
+      var dasar = peta[r.tanggal] ? Object.assign({}, peta[r.tanggal]) : {};
+      ["pvYield", "consumptionKwh", "importKwh", "exportKwh"].forEach(function (k) {
+        if (r[k] !== null && r[k] !== undefined) dasar[k] = r[k];
+      });
+      peta[r.tanggal] = dasar;
+    });
+    var solax = Object.keys(peta).sort().map(function (k) { return peta[k]; });
     var pvByDate = {}, consByDate = {}, importByDate = {};
     var usageByDate = {}, usageByMonth = {}, usageByYear = {};
     var appHarian = h && Array.isArray(h.harian) ? h.harian : [];
@@ -605,9 +615,19 @@
     });
   }
 
+  function muatAutoHarian() {
+    return panggil("/api/solax/harian").then(function (jawab) {
+      if (jawab && jawab.ok && Array.isArray(jawab.records)) {
+        keadaan.autoHarian = jawab.records;
+        if (keadaan.app) renderEnergyAnalysis(keadaan.app);
+      }
+    });
+  }
+
   function muat() {
     muatApp();
     muatLive();
+    muatAutoHarian();
     if ($("dashChart")) muatGrafik();
   }
 
